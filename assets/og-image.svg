@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0a0a0b"/>
+  <circle cx="600" cy="280" r="280" fill="url(#glow)" opacity="0.4"/>
+  <rect x="520" y="160" width="80" height="80" rx="20" fill="url(#logo)"/>
+  <path d="M545 215L560 185L575 215H545Z" fill="white" opacity="0.95"/>
+  <text x="600" y="310" text-anchor="middle" fill="#fafafa" font-family="system-ui, sans-serif" font-size="72" font-weight="600" letter-spacing="-2">IWANNABERICH</text>
+  <text x="600" y="380" text-anchor="middle" fill="#a1a1aa" font-family="Georgia, serif" font-size="36" font-style="italic">Wealth, accelerated.</text>
+  <text x="600" y="520" text-anchor="middle" fill="#71717a" font-family="system-ui, sans-serif" font-size="20">The premium platform for wanting to be rich.</text>
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop stop-color="#6366f1" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="logo" x1="520" y1="160" x2="600" y2="240">
+      <stop stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+</svg>

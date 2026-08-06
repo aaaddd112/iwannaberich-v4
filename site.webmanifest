@@ -1,0 +1,17 @@
+{
+  "name": "IWANNABERICH",
+  "short_name": "IWANNABERICH",
+  "description": "Wealth, accelerated. The premium platform for wanting to be rich.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#0a0a0b",
+  "icons": [
+    {
+      "src": "assets/apple-touch-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

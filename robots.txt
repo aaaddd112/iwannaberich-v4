@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aaaddd112.github.io/iwannaberich-v3/sitemap.xml
