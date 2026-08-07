@@ -122,6 +122,30 @@ function initWealthValue(total = 0) {
     );
   }
 }
+
+/* =========================
+   PROGRESS BAR
+========================= */
+
+function updateProgress(total) {
+
+    const GOAL = 1000000000; // 1 miliard €
+
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+
+    if (!progressFill || !progressText) return;
+
+    const percent = (total / GOAL) * 100;
+
+    progressFill.style.width = percent + "%";
+
+    progressText.textContent =
+        "Progress: " +
+        percent.toFixed(8) +
+        "%";
+}
+
   /* =========================
      RANDOM NOTIFICATIONS
   ========================= */
@@ -626,6 +650,7 @@ async function loadDonations(supabaseClient) {
   console.log("Calling initWealthValue with:", total);
 
   initWealthValue(total);
+  updateProgress(total);
 
 
 }
