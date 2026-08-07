@@ -162,7 +162,10 @@ const heroTitles = [
 
     sections.forEach((id) => {
       const el = document.getElementById(id);
+
       if (el) observer.observe(el);
+    }
+    
     });
   }
 
