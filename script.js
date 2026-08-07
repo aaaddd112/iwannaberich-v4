@@ -319,28 +319,40 @@ document.querySelectorAll("[data-count]").forEach((el) => {
     });
   }
 
-  /* ---- Payment Links ---- */
+/* ---- Payment Links ---- */
 
-  function initPaymentLinks() {
-    const map = {
-      payRevolut: revolut.me/raulu8m39
-      payPayPal: paypal.me/RaulTupan
+function initPaymentLinks() {
 
-    };
+  const map = {
+    payRevolut: "https://revolut.me/raulu8m39",
+    payPayPal: "https://paypal.me/RaulTupan"
+  };
 
-    Object.entries(map).forEach(([id, href]) => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.href = href;
-        el.addEventListener('click', (e) => {
-          if (href.endsWith('/')) {
-            e.preventDefault();
-            showToast('Add your payment username in script.js → PAYMENT_LINKS');
-          }
-        });
-      }
-    });
-  }
+  Object.entries(map).forEach(([id, href]) => {
+
+    const el = document.getElementById(id);
+
+    if (el) {
+
+      el.href = href;
+
+      el.addEventListener("click", (e) => {
+
+        if (href.endsWith("/")) {
+
+          e.preventDefault();
+
+          showToast("Add your payment username in script.js → PAYMENT_LINKS");
+
+        }
+
+      });
+
+    }
+
+  });
+
+}
 
   /* ---- Invest Tiers ---- */
 
