@@ -5,7 +5,6 @@
 
   function init() {
     initLoadingScreen();
-    initWealthValue(0);
     initNotifications();
     initCalculator();
     initCursorGlow();
