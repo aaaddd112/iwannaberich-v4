@@ -36,7 +36,7 @@ function initDonationModal() {
   }
 
   let selectedAmount = null;
-  let selectedMethod = "paypal";
+  let selectedMethod = "Patreon";
 
   function setError(message) {
     errorEl.textContent = message || "";
@@ -116,7 +116,7 @@ function initDonationModal() {
 
     const amount = selectedAmount.toFixed(2);
     const url =
-      selectedMethod === "paypal"
+      selectedMethod === "Patreon"
         ? `${link}/${amount}EUR`
         : `${link}?amount=${amount}&currency=EUR`;
 
