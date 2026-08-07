@@ -681,6 +681,334 @@
         width: calc(100% - 40px);
       }
     }
+
+    /* ============================================
+       DONATION MODAL — modernized
+       ============================================ */
+
+    .donation-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(6, 6, 9, 0.78);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .donation-modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .donation-card {
+      position: relative;
+      width: min(560px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(184, 255, 90, 0.07), transparent 45%),
+        linear-gradient(180deg, #17171f, #101015);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 38px;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
+      transform: translateY(14px) scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .donation-modal.show .donation-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .donation-card::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .donation-card::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 8px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--card-light);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: #22222b;
+      border-color: #4b4b58;
+      transform: rotate(90deg);
+    }
+
+    .donation-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 30px;
+      padding-right: 30px;
+    }
+
+    .donation-icon {
+      flex: none;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      border-radius: 12px;
+      background: rgba(184, 255, 90, 0.12);
+      border: 1px solid rgba(184, 255, 90, 0.25);
+    }
+
+    .donation-header h2 {
+      font-size: 1.55rem;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .donation-header h2 span {
+      color: var(--green);
+    }
+
+    .donation-header p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .donation-header strong {
+      color: var(--text);
+    }
+
+    .donation-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .field label {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .field label small {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .field > small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .field input[type="text"],
+    .field input[type="number"],
+    .field textarea {
+      width: 100%;
+      background: #101014;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .field textarea {
+      height: 78px;
+      resize: none;
+      font-family: inherit;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(184, 255, 90, 0.14);
+    }
+
+    .field + .field {
+      margin-top: 22px;
+    }
+
+    .amount-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .amount-button {
+      height: 52px;
+      border-radius: 10px;
+      background: var(--card-light);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .amount-button:hover {
+      border-color: #4b4b58;
+      transform: translateY(-2px);
+    }
+
+    .amount-button.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #111;
+      box-shadow: 0 0 22px rgba(184, 255, 90, 0.28);
+    }
+
+    #customAmount {
+      grid-column: 1 / -1;
+      height: 48px;
+      margin-top: 4px;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .payment-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      background: var(--card-light);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--text);
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .payment-card::before {
+      content: "";
+      flex: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--line);
+      transition: 0.18s ease;
+    }
+
+    .payment-card:hover {
+      border-color: #4b4b58;
+    }
+
+    .payment-card strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .payment-card span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .payment-card.selected {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px var(--green) inset;
+    }
+
+    .payment-card.selected::before {
+      border-color: var(--green);
+      background: var(--green);
+      box-shadow: inset 0 0 0 3px var(--card-light);
+    }
+
+    .continue-button {
+      width: 100%;
+      height: 54px;
+      margin-top: 30px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #111;
+      background: var(--green);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .continue-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(184, 255, 90, 0.22);
+    }
+
+    .continue-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .donation-error {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--red);
+      text-align: center;
+      min-height: 18px;
+    }
+
+    @media (max-width: 560px) {
+      .donation-card {
+        padding: 26px 20px;
+      }
+
+      .donation-header h2 {
+        font-size: 1.3rem;
+      }
+
+      .donation-grid,
+      .payment-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .amount-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
   </style>
 </head>
 

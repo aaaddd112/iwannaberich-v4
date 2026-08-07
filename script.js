@@ -7,37 +7,124 @@
    DONATION MODAL
 ========================= */
 
+// Replace these with your real payment links.
+const PAYMENT_LINKS = {
+  paypal: "https://paypal.me/REPLACE_WITH_YOUR_PAYPAL",
+  revolut: "https://revolut.me/REPLACE_WITH_YOUR_REVOLUT",
+};
+
 function initDonationModal() {
 
   const modal = document.getElementById("donationModal");
   const closeBtn = document.getElementById("closeDonationModal");
+  const donateButton = document.getElementById("openDonationModal");
 
-  // Butonul Donate existent pe site
+  const amountButtons = Array.from(
+    modal.querySelectorAll(".amount-button")
+  );
+  const customAmountInput = document.getElementById("customAmount");
+  const paymentCards = Array.from(
+    modal.querySelectorAll(".payment-card")
+  );
+  const continueBtn = document.getElementById("continueDonation");
 
-const donateButton =
-document.getElementById("openDonationModal");
+  let errorEl = modal.querySelector(".donation-error");
 
-donateButton.addEventListener("click", () => {
+  if (!errorEl) {
+    errorEl = document.createElement("div");
+    errorEl.className = "donation-error";
+    continueBtn.insertAdjacentElement("afterend", errorEl);
+  }
 
+  let selectedAmount = null;
+  let selectedMethod = "paypal";
+
+  function setError(message) {
+    errorEl.textContent = message || "";
+  }
+
+  function selectPresetAmount(button) {
+    amountButtons.forEach((btn) => btn.classList.remove("active"));
+    button.classList.add("active");
+    customAmountInput.value = "";
+    selectedAmount = Number(button.dataset.value) || null;
+    setError("");
+  }
+
+  amountButtons.forEach((button) => {
+    button.addEventListener("click", () => selectPresetAmount(button));
+  });
+
+  customAmountInput.addEventListener("input", () => {
+    amountButtons.forEach((btn) => btn.classList.remove("active"));
+    const value = Number(customAmountInput.value);
+    selectedAmount = value > 0 ? value : null;
+    setError("");
+  });
+
+  paymentCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      paymentCards.forEach((c) => c.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedMethod = card.dataset.method;
+    });
+  });
+
+  function resetDonationForm() {
+    amountButtons.forEach((btn) => btn.classList.remove("active"));
+    customAmountInput.value = "";
+    selectedAmount = null;
+    setError("");
+    document.getElementById("donationName").value = "";
+    document.getElementById("donationMessage").value = "";
+  }
+
+  function openModal() {
     modal.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
 
-  });
-
-  closeBtn.addEventListener("click", () => {
-
+  function closeModal() {
     modal.classList.remove("show");
+    document.body.style.overflow = "";
+  }
 
+  donateButton.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
   });
 
-  modal.addEventListener("click", e => {
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("show")) {
+      closeModal();
+    }
+  });
 
-    if (e.target === modal) {
-
-      modal.classList.remove("show");
-
+  continueBtn.addEventListener("click", () => {
+    if (!selectedAmount || selectedAmount <= 0) {
+      setError("Pick an amount first \u2014 even \u20ac1 counts.");
+      return;
     }
 
-});
+    const link = PAYMENT_LINKS[selectedMethod];
+
+    if (!link || link.includes("REPLACE_WITH")) {
+      setError("Payment link isn't configured yet.");
+      return;
+    }
+
+    const amount = selectedAmount.toFixed(2);
+    const url =
+      selectedMethod === "paypal"
+        ? `${link}/${amount}EUR`
+        : `${link}?amount=${amount}&currency=EUR`;
+
+    window.open(url, "_blank", "noopener,noreferrer");
+    closeModal();
+    resetDonationForm();
+  });
 
 }
 
