@@ -6,6 +6,16 @@
 (function () {
   'use strict';
 
+console.log("script.js loaded");
+console.log(window.supabase);
+const supabaseUrl = "https://ofcdtwrgyxjrpoxuikxg.supabase.co/rest/v1/";
+const supabaseKey = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
+
+const supabase = window.supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+
   /* ---- State ---- */
   const GOAL = 100_000_000;
   let raised = 2847;
@@ -481,6 +491,15 @@ const map = {
 
   /* ---- Init ---- */
 
+async function testSupabase() {
+    const { data, error } = await supabase
+        .from("donations")
+        .select("*");
+
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
+}
+
   function init() {
     initNavbar();
     initSmoothScroll();
@@ -494,6 +513,8 @@ const map = {
     initEasterEggs();
     initTicker();
     initFAQ();
+
+    testSupabase();
 
     // Trigger hero reveals immediately
     setTimeout(() => {
