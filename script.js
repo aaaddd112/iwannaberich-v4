@@ -63,9 +63,9 @@ const heroTitles = [
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
 
-  const navbar = $('#navbar');
-  const navToggle = $('#navToggle');
-  const navMenu = $('#navMenu');
+  const navbar = $('.nav');
+  const navToggle = null;
+  const navMenu = $('.links');
   const logo = $('#logo');
   const planModal = $('#planModal');
   const toast = $('#toast');
