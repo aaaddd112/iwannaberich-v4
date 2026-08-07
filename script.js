@@ -110,6 +110,8 @@ const heroTitles = [
 
   /* ---- Navbar ---- */
 
+/* ---- Navbar ---- */
+
 function initNavbar() {
 
     const navbar = document.querySelector(".nav");
@@ -126,13 +128,11 @@ function initNavbar() {
 
 }
 
-} // < aici se închide initNavbar()
+/* ---- următoarea funcție ---- */
 
-function initScrollSpy() {
+function initLoadingScreen() {
     ...
 }
-
-function initNavbar() {
 
     const navbar = document.querySelector(".nav");
 
