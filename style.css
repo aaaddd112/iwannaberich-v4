@@ -345,7 +345,7 @@ img, svg {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: calc(var(--ticker-height) + var(--nav-height) + 80px) 0 120px;
+  padding: calc(var(--ticker-height) + var(--nav-height) + 60px) 0 80px;
   overflow: hidden;
 }
 
@@ -376,7 +376,7 @@ img, svg {
   background: var(--bg-glass);
   border: 1px solid var(--border-subtle);
   border-radius: 100px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .badge-dot {
@@ -388,11 +388,11 @@ img, svg {
 }
 
 .hero-title {
-  font-size: clamp(48px, 8vw, 80px);
+  font-size: clamp(42px, 6vw, 64px);
   font-weight: 600;
   letter-spacing: -0.04em;
-  line-height: 1.05;
-  margin-bottom: 24px;
+  line-height: 1.08;
+  margin-bottom: 20px;
 }
 
 .hero-title-line {
@@ -411,8 +411,8 @@ img, svg {
 
 .hero-subtitle {
   max-width: 560px;
-  margin: 0 auto 40px;
-  font-size: 17px;
+  margin: 0 auto 32px;
+  font-size: 16px;
   line-height: 1.7;
   color: var(--text-secondary);
 }
@@ -422,15 +422,15 @@ img, svg {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 64px;
+  margin-bottom: 40px;
 }
 
 .hero-stats {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
-  padding: 24px 0;
+  gap: 28px;
+  padding: 16px 0;
 }
 
 .hero-stat {
@@ -464,7 +464,7 @@ img, svg {
 }
 
 .hero-whisper {
-  margin-top: 48px;
+  margin-top: 32px;
   font-size: 13px;
   color: var(--text-tertiary);
   font-style: italic;
@@ -481,12 +481,12 @@ img, svg {
 /* ---- Sections ---- */
 
 .section {
-  padding: 120px 0;
+  padding: 80px 0;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 64px;
+  margin-bottom: 44px;
 }
 
 .section-tag {
@@ -500,7 +500,7 @@ img, svg {
 }
 
 .section-title {
-  font-size: clamp(32px, 5vw, 44px);
+  font-size: clamp(30px, 4vw, 38px);
   font-weight: 600;
   letter-spacing: -0.03em;
   margin-bottom: 16px;
@@ -509,7 +509,7 @@ img, svg {
 .section-desc {
   max-width: 480px;
   margin: 0 auto;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text-secondary);
 }
 
@@ -523,7 +523,7 @@ img, svg {
 }
 
 .dashboard-card {
-  padding: 24px;
+  padding: 20px;
 }
 
 .card-header {
@@ -564,7 +564,7 @@ img, svg {
 }
 
 .card-value {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -605,7 +605,7 @@ img, svg {
 /* ---- Progress Bar ---- */
 
 .progress-section {
-  padding: 32px;
+  padding: 24px;
   background: var(--bg-glass);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
@@ -619,7 +619,7 @@ img, svg {
 }
 
 .progress-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -630,7 +630,7 @@ img, svg {
 }
 
 .progress-percent {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--accent-light);
@@ -700,7 +700,7 @@ img, svg {
 .timeline-item {
   position: relative;
   padding-left: 48px;
-  padding-bottom: 32px;
+  padding-bottom: 24px;
 }
 
 .timeline-item:last-child {
@@ -732,7 +732,7 @@ img, svg {
 }
 
 .timeline-content {
-  padding: 24px;
+  padding: 18px;
 }
 
 .timeline-date {
@@ -1112,7 +1112,7 @@ img, svg {
 }
 
 .faq-question {
-  padding: 24px 0;
+  padding: 18px 0;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -1218,7 +1218,7 @@ img, svg {
 /* ---- Footer ---- */
 
 .footer {
-  padding: 64px 0 32px;
+  padding: 48px 0 24px;
   border-top: 1px solid var(--border-subtle);
 }
 
