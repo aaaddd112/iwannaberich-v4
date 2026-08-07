@@ -1263,6 +1263,83 @@
     Professional Enabler &nbsp; +100 Karma
   </div>
 
+<!-- DONATION MODAL -->
+
+<div class="donation-modal" id="donationModal">
+
+  <div class="donation-box">
+
+    <button class="close-modal" id="closeDonationModal">
+      ✕
+    </button>
+
+    <h2>💚 Support the Billionaire Challenge</h2>
+
+    <p>
+      Help fund the world's most ambitious journey to €1,000,000,000.
+    </p>
+
+    <label>Display name (optional)</label>
+
+    <input
+      type="text"
+      id="donationName"
+      placeholder="Anonymous"
+    >
+
+    <label>Message (optional)</label>
+
+    <textarea
+      id="donationMessage"
+      placeholder="Wish me luck..."
+    ></textarea>
+
+    <label>Choose amount</label>
+
+    <div class="donation-amounts">
+
+      <button class="amount-btn" data-value="5">€5</button>
+      <button class="amount-btn" data-value="10">€10</button>
+      <button class="amount-btn" data-value="20">€20</button>
+      <button class="amount-btn" data-value="50">€50</button>
+
+    </div>
+
+    <input
+      type="number"
+      id="customAmount"
+      placeholder="Custom amount (€)"
+      min="1"
+    >
+
+    <label>Payment method</label>
+
+    <div class="payment-methods">
+
+      <button
+        class="payment-btn paypal"
+        data-method="paypal"
+      >
+        🟦 PayPal
+      </button>
+
+      <button
+        class="payment-btn revolut"
+        data-method="revolut"
+      >
+        🟪 Revolut
+      </button>
+
+    </div>
+
+    <button id="continueDonation">
+      Continue
+    </button>
+
+  </div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 

@@ -3,9 +3,55 @@
 
   document.addEventListener("DOMContentLoaded", init);
 
+/* =========================
+   DONATION MODAL
+========================= */
+
+function initDonationModal() {
+
+  const modal = document.getElementById("donationModal");
+  const closeBtn = document.getElementById("closeDonationModal");
+
+  // Butonul Donate existent pe site
+  const donateButtons = document.querySelectorAll(
+    "#investBtn, .invest-btn, .donate-btn, a[href='#donate']"
+  );
+
+  donateButtons.forEach(button => {
+
+    button.addEventListener("click", e => {
+
+      e.preventDefault();
+
+      modal.classList.add("show");
+
+    });
+
+  });
+
+  closeBtn.addEventListener("click", () => {
+
+    modal.classList.remove("show");
+
+  });
+
+  modal.addEventListener("click", e => {
+
+    if (e.target === modal) {
+
+      modal.classList.remove("show");
+
+    }
+
+  });
+
+}
+
+
   function init() {
     initLoadingScreen();
     initNotifications();
+    initDonationModal();
     initCalculator();
     initCursorGlow();
     initScrollReveal();

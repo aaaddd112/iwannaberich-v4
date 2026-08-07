@@ -1656,4 +1656,130 @@ img, svg {
     color:#57ff9a;
 }
 
+
+/* =========================
+   DONATION MODAL
+========================= */
+
+.donation-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(10px);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    padding:20px;
+}
+
+.donation-modal.show{
+    display:flex;
+}
+
+.donation-box{
+    width:100%;
+    max-width:520px;
+    background:#111827;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:30px;
+    position:relative;
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+}
+
+.donation-box h2{
+    margin:0 0 10px;
+}
+
+.donation-box p{
+    opacity:.8;
+    margin-bottom:20px;
+}
+
+.donation-box label{
+    display:block;
+    margin:18px 0 8px;
+    font-weight:600;
+}
+
+.donation-box input,
+.donation-box textarea{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.12);
+    background:#1b2433;
+    color:#fff;
+    box-sizing:border-box;
+}
+
+.donation-box textarea{
+    resize:vertical;
+    min-height:90px;
+}
+
+.donation-amounts{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.amount-btn,
+.payment-btn,
+#continueDonation{
+    cursor:pointer;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.amount-btn{
+    background:#1b2433;
+    color:white;
+}
+
+.amount-btn:hover{
+    transform:translateY(-2px);
+}
+
+.payment-methods{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+}
+
+.paypal{
+    background:#0070ba;
+    color:white;
+}
+
+.revolut{
+    background:#7b61ff;
+    color:white;
+}
+
+#continueDonation{
+    width:100%;
+    margin-top:24px;
+    background:#22c55e;
+    color:white;
+    font-size:16px;
+}
+
+.close-modal{
+    position:absolute;
+    right:18px;
+    top:18px;
+    background:none;
+    border:none;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+}
+
 }
