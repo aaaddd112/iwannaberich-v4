@@ -610,27 +610,6 @@ async function loadDonations(supabaseClient) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Load Donations error:", error);
-    return;
-  }
-
-  console.log("Donations:", data);
-
-  const total = data.reduce(
-    (sum, donation) => sum + Number(donation.amount || 0),
-    0
-  );
-
-  console.log("Total donated:", total);
-
-async function loadDonations(supabaseClient) {
-
-  const { data, error } = await supabaseClient
-    .from("Donations")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
     console.error("Load donations error:", error);
     return;
   }
@@ -644,12 +623,10 @@ async function loadDonations(supabaseClient) {
 
   console.log("Total donated:", total);
 
-  const wealthValue = document.getElementById("wealthValue");
+  console.log("Calling initWealthValue with:", total);
 
-console.log("Calling initWealthValue with:", total);
+  initWealthValue(total);
 
-initWealthValue(total);
-console.log("initWealthValue received:", total);
 }
 
 }
