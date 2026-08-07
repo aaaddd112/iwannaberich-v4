@@ -37,7 +37,7 @@ donateButton.addEventListener("click", () => {
 
     }
 
-
+});
 
 }
 
