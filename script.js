@@ -216,12 +216,10 @@ function randomHeroTitle() {
   function initHero() {
   randomHeroTitle();
 
-    $$('[data-count]').forEach(...)   
-
- $$('[data-count]').forEach((el) => {
-      const target = parseInt(el.dataset.count, 10);
-      if (!isNaN(target)) animateCount(el, target);
-    });
+document.querySelectorAll("[data-count]").forEach((el) => {
+    const target = parseInt(el.dataset.count, 10);
+    if (!isNaN(target)) animateCount(el, target);
+});
 
     // Hero whisper reveals on scroll
     let whisperIndex = 0;
