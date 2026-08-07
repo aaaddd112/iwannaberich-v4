@@ -209,7 +209,6 @@ function updateLeaderboard(donations) {
     }
    const notifications = [
 
-const notifications = [
 
   // ===== Visitors =====
   { title: "👀 A visitor from Germany is exploring the challenge.", amount: "Just now" },
