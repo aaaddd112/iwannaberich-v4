@@ -595,7 +595,7 @@ async function testSupabaseConnection(supabaseClient) {
   } catch (error) {
     console.error("Supabase request failed:", error);
   }
-} // <-- ADAUGĂ ACEASTĂ ACOLADĂ
+}
 
 async function loadDonations(supabaseClient) {
 
@@ -620,5 +620,4 @@ async function loadDonations(supabaseClient) {
 
 }
 
-  }
 })();
