@@ -646,8 +646,10 @@ async function loadDonations(supabaseClient) {
 
   const wealthValue = document.getElementById("wealthValue");
 
-initWealthValue(total);
+console.log("Calling initWealthValue with:", total);
 
+initWealthValue(total);
+console.log("initWealthValue received:", total);
 }
 
 }
