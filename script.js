@@ -42,7 +42,7 @@ donateButton.addEventListener("click", () => {
 }
 
 
-  function init() 
+  function init() {
     initLoadingScreen();
     initNotifications();
     initDonationModal();
