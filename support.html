@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<link rel="icon" type="image/png" href="favicon.png?v=2">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Predictions — IWANNABERICH</title>
+
+  <meta name="description" content="Vote and leave a comment: will the Billionaire Challenge succeed?">
+  <meta name="theme-color" content="#09090b">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="wrap nav">
+    <a class="logo" id="logo" href="index.html">
+      I<i>WANNA</i>BERICH
+    </a>
+
+    <nav class="links" aria-label="Main navigation">
+      <a href="index.html#dashboard">Numbers</a>
+      <a href="index.html#plan">The Plan</a>
+      <a href="index.html#milestones">Milestones</a>
+      <a href="index.html#support">Help</a>
+      <a href="about.html">About</a>
+      <a href="support.html">Predictions</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap" style="padding: 60px 0;">
+
+      <div class="eyebrow">Predictions ⭐⭐⭐⭐⭐</div>
+
+      <h1 class="title">
+        Will this challenge<br>
+        succeed?
+      </h1>
+
+      <p class="muted" style="max-width:520px;">
+        Vote, then tell me why. No login, no email — just click and type.
+      </p>
+
+      <div class="card predict-card">
+
+        <div class="predict-options">
+          <button class="predict-btn" id="voteYes" data-vote="yes" type="button">
+            <span class="predict-btn-label">YES</span>
+            <span class="predict-btn-percent" id="yesPercent">–</span>
+          </button>
+
+          <button class="predict-btn" id="voteNo" data-vote="no" type="button">
+            <span class="predict-btn-label">NO</span>
+            <span class="predict-btn-percent" id="noPercent">–</span>
+          </button>
+        </div>
+
+        <div class="predict-bar">
+          <span id="predictYesFill" style="width:0%"></span>
+        </div>
+
+        <div class="muted" id="predictTotal">Loading votes…</div>
+
+      </div>
+
+      <div class="card" style="margin-top:24px;">
+
+        <label for="predictionCommentInput" class="label">
+          Leave a comment
+        </label>
+
+        <textarea
+          id="predictionCommentInput"
+          maxlength="280"
+          placeholder="I don't think he'll make it..."
+          style="width:100%; margin-top:10px; height:90px; background:#101014; border:1px solid var(--line); border-radius:10px; color:var(--text); font:inherit; font-size:0.95rem; padding:12px 14px; resize:none;"
+        ></textarea>
+
+        <div class="predict-comment-actions">
+          <span class="muted" id="predictionCharCount">280 characters left</span>
+          <button id="submitPredictionComment" class="btn primary" type="button">
+            Post comment
+          </button>
+        </div>
+
+        <div class="donation-error" id="predictionError"></div>
+
+      </div>
+
+      <div class="predict-comments" id="predictionComments">
+        <p class="muted" id="predictionCommentsEmpty">Loading comments…</p>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="wrap">
+    <div>
+      © 2026 IWANNABERICH
+    </div>
+
+    <div>
+      No equity. No returns. Not financial advice.
+      Barely a business. Definitely a goal.
+    </div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/predictions.js"></script>
+
+</body>
+</html>
