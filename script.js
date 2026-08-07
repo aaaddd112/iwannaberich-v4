@@ -4,13 +4,12 @@
   document.addEventListener("DOMContentLoaded", init);
 
 /* =========================
-   DONATION MODAL
+DONATION MODAL
 ========================= */
 
-// Replace these with your real payment links.
 const PAYMENT_LINKS = {
-  paypal: "https://paypal.me/REPLACE_WITH_YOUR_PAYPAL",
-  revolut: "https://revolut.me/REPLACE_WITH_YOUR_REVOLUT",
+  paypal: "https://paypal.me/RaulTupan",
+  revolut: "https://revolut.me/raulu8m39",
 };
 
 function initDonationModal() {
