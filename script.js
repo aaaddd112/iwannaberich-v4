@@ -207,106 +207,74 @@ function updateLeaderboard(donations) {
     if (!notification || !notificationTitle || !notificationAmount) {
       return;
     }
+   const notifications = [
 
-    const notifications = [
-      {
-        title: "🔔 Elon Musk has not responded yet.",
-        amount: "Still waiting..."
-      },
-      {
-        title: "🔔 Warren Buffett viewed your business plan.",
-        amount: "No comment."
-      },
-      {
-        title: "🔔 Jeff Bezos accidentally closed the tab.",
-        amount: "Unfortunate."
-      },
-      {
-        title: "🔔 Forbes is pretending not to notice.",
-        amount: "For now."
-      },
-      {
-        title: "🔔 Someone thought this was a real startup.",
-        amount: "Mission accomplished."
-      },
-      {
-        title: "🔔 Someone from Romania believed.",
-        amount: "+€2"
-      },
-      {
-        title: "🔔 Someone from Germany believed.",
-        amount: "+€5"
-      },
-      {
-        title: "🔔 Someone from France found the plan convincing.",
-        amount: "+€10"
-      },
-      {
-        title: "🔔 Someone from Italy is financially concerned.",
-        amount: "+€5"
-      },
-      {
-        title: "🔔 Someone from Spain joined the wealth initiative.",
-        amount: "+€20"
-      },
-      {
-        title: "🔔 Someone from the Netherlands asked no questions.",
-        amount: "+€50"
-      },
-      {
-        title: "🔔 Someone from Switzerland noticed the potential.",
-        amount: "+€100"
-      },
-      {
-        title: "🔔 Someone almost donated.",
-        amount: "😂"
-      },
-      {
-        title: "🔔 Someone opened the business plan twice.",
-        amount: "Suspicious activity."
-      },
-      {
-        title: "🔔 Someone shared this website with a friend.",
-        amount: "Potential investor detected."
-      },
-      {
-        title: "🔔 Someone is comparing this to a real startup.",
-        amount: "Please don't."
-      },
-      {
-        title: "🔔 Someone read the disclaimer.",
-        amount: "They cannot be stopped."
-      },
-      {
-        title: "🔔 Someone asked what they get in return.",
-        amount: "A beautiful experience."
-      },
-      {
-        title: "🔔 A mysterious benefactor appeared.",
-        amount: "+€42"
-      },
-      {
-        title: "🔔 An anonymous believer has arrived.",
-        amount: "+€1"
-      },
-      {
-        title: "🔔 Someone donated before reading the business plan.",
-        amount: "Bold."
-      },
-      {
-        title: "🔔 Someone believes this is a legitimate investment.",
-        amount: "We should probably clarify."
-      },
-      {
-        title: "🔔 Someone is emotionally invested now.",
-        amount: "+€0.34"
-      },
-      {
-        title: "🔔 Someone came back after laughing.",
-        amount: "+€5"
-      }
-    ];
+const notifications = [
 
+  // ===== Visitors =====
+  { title: "👀 A visitor from Germany is exploring the challenge.", amount: "Just now" },
+  { title: "🌍 Someone joined from Canada.", amount: "18 sec ago" },
+  { title: "🇬🇧 A visitor from London opened the roadmap.", amount: "35 sec ago" },
+  { title: "🇯🇵 Someone from Tokyo is checking the numbers.", amount: "1 min ago" },
+  { title: "🇸🇪 Sweden just appeared on the map.", amount: "1 min ago" },
+  { title: "🇫🇷 Paris stopped by for a moment.", amount: "2 min ago" },
+  { title: "🇳🇱 A visitor from Amsterdam is browsing.", amount: "2 min ago" },
+  { title: "🇵🇱 Someone from Warsaw is reading the plan.", amount: "3 min ago" },
+  { title: "🇪🇸 Barcelona joined the challenge.", amount: "4 min ago" },
+  { title: "🇮🇹 Milan is now represented.", amount: "5 min ago" },
+  { title: "🇺🇸 A visitor from New York arrived.", amount: "6 min ago" },
+  { title: "🇦🇺 Sydney checked the leaderboard.", amount: "7 min ago" },
+  { title: "🌎 Another international visitor appeared.", amount: "8 min ago" },
+  { title: "🧭 Someone is reading the strategy.", amount: "Live" },
+  { title: "📖 A visitor opened The Plan section.", amount: "Live" },
+  { title: "📊 Someone is comparing the numbers.", amount: "Live" },
+  { title: "🔍 A curious visitor is doing research.", amount: "Live" },
+  { title: "💡 Someone stayed longer than average.", amount: "Interesting" },
+  { title: "👋 A returning visitor came back.", amount: "Today" },
+  { title: "🌐 Another browser connected.", amount: "Online" },
+
+  // ===== Progress =====
+  { title: "📈 Progress has been recalculated.", amount: "Live" },
+  { title: "🎯 Every euro moves the goal closer.", amount: "Current mission" },
+  { title: "⚡ Live activity detected.", amount: "Now" },
+  { title: "💰 Net worth simulation updated.", amount: "Automatic" },
+  { title: "📊 Dashboard statistics refreshed.", amount: "Live" },
+  { title: "🚀 The journey continues.", amount: "Always" },
+  { title: "📉 Distance to €1B is shrinking.", amount: "Very slowly" },
+  { title: "🌱 Small progress is still progress.", amount: "Reminder" },
+  { title: "🏁 Goal remains unchanged: €1,000,000,000.", amount: "Locked in" },
+  { title: "📡 Live feed synchronized.", amount: "Connected" },
+  { title: "💚 Support keeps the challenge alive.", amount: "Thank you" },
+  { title: "🔥 Momentum is building.", amount: "Steady" },
+  { title: "📌 Mission status updated.", amount: "Active" },
+  { title: "⏳ Billionaire ETA: Unknown.", amount: "Calculating" },
+  { title: "🪙 Every contribution counts.", amount: "Always" },
+
+  // ===== Billionaire jokes =====
+  { title: "💼 Warren Buffett is still thinking about it.", amount: "Probably" },
+  { title: "🚀 Elon Musk left the tab open.", amount: "Unconfirmed" },
+  { title: "🏦 Jeff Bezos remains financially unavailable.", amount: "Busy" },
+  { title: "📞 Bill Gates hasn't called back yet.", amount: "Still waiting" },
+  { title: "🦈 Shark Tank has not responded.", amount: "No update" },
+  { title: "🛥️ A yacht owner looked... then left.", amount: "Understandable" },
+  { title: "💳 Credit card confidence increased by 0.01%.", amount: "Science" },
+  { title: "📉 Billionaire probability adjusted.", amount: "Optimistic" },
+  { title: "🏆 Forbes is not updating the rankings yet.", amount: "Soon™" },
+  { title: "💸 Still cheaper than buying Twitter.", amount: "Fact" },
+  { title: "🥲 Lamborghini dealer remains patient.", amount: "For now" },
+  { title: "🏝️ Private island postponed.", amount: "Again" },
+  { title: "💎 Unicorn investor not found.", amount: "Searching..." },
+  { title: "🐋 Whale detected... false alarm.", amount: "Oops" },
+  { title: "🛩️ Private jet traffic increased by 0%.", amount: "Accurate" },
+
+  // ===== Fun =====
+  { title: "☕ Someone came for the memes and stayed for the mission.", amount: "Respect" },
+  { title: "😄 Another dreamer joined the challenge.", amount: "Welcome" },
+  { title: "🎉 The impossible is still on the roadmap.", amount: "Good" },
+  { title: "🌟 Motivation level: High.", amount: "Today" },
+  { title: "🤝 Community support is growing.", amount: "Slowly" }
+
+];
     let lastIndex = -1;
     let notificationTimer = null;
     let hideTimer = null;
@@ -359,7 +327,7 @@ function updateLeaderboard(donations) {
     function scheduleNotification() {
       window.clearTimeout(notificationTimer);
 
-      const delay = Math.floor(Math.random() * 14000) + 8000;
+      const delay = Math.floor(Math.random() * 14000) + 6000;
 
       notificationTimer = window.setTimeout(showNotification, delay);
     }
