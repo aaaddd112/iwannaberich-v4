@@ -574,6 +574,7 @@
     }
 
     testSupabaseConnection(supabaseClient);
+    loadDonations(supabaseClient);
   }
 
   async function testSupabaseConnection(supabaseClient) {
@@ -594,5 +595,27 @@
     } catch (error) {
       console.error("Supabase request failed:", error);
     }
+
+async function loadDonations(supabaseClient) {
+
+  const { data, error } = await supabaseClient
+    .from("donations")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Load donations error:", error);
+    return;
+  }
+
+  console.log("Donations:", data);
+
+  const total = data.reduce(
+    (sum, donation) => sum + Number(donation.amount || 0),
+    0
+  );
+
+  console.log("Total donated:", total);
+
   }
 })();
