@@ -113,21 +113,18 @@ const heroTitles = [
 function initNavbar() {
 
     const navbar = document.querySelector(".nav");
-    const navToggle = ...;
-    const navMenu = ...;
+
+    if (!navbar) return;
 
     const onScroll = () => {
-        ...
+        navbar.classList.toggle("scrolled", window.scrollY > 20);
     };
 
     onScroll();
+
     window.addEventListener("scroll", onScroll);
 
-    navToggle?.addEventListener(...);
-
-    navMenu?.querySelectorAll(...);
-
-    initScrollSpy();
+}
 
 } // < aici se închide initNavbar()
 
@@ -135,34 +132,21 @@ function initScrollSpy() {
     ...
 }
 
-  function initScrollSpy() {
-    const sections = ['dashboard', 'milestones', 'forbes', 'faq'];
-    const links = navMenu?.querySelectorAll('.nav-links a') ?? [];
+function initNavbar() {
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            links.forEach((link) => {
-              link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
-            });
-          }
-        });
-      },
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
-    );
+    const navbar = document.querySelector(".nav");
 
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
+    if (!navbar) return;
 
-      if (el) {
+    const onScroll = () => {
+        navbar.classList.toggle("scrolled", window.scrollY > 20);
+    };
 
-       observer.observe(el);
-    }
+    onScroll();
 
-    });
-  }
+    window.addEventListener("scroll", onScroll);
+
+}
 
   /* ---- Smooth Scroll ---- */
 
