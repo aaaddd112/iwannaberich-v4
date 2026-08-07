@@ -50,10 +50,12 @@
     }
 
     const messages = [
-      "Analyzing your wealth...",
-      "Checking generosity...",
-      "Loading investment opportunity...",
-      "Done."
+    "Analyzing your wealth...",
+    "Checking generosity...",
+    "Contacting billionaires...",
+    "Calculating impossible odds...",
+    "Loading investment opportunity...",
+    "Preparing dashboard..."
     ];
 
     if (prefersReducedMotion) {
@@ -74,14 +76,14 @@
       window.setTimeout(() => {
         setText(loadingStatus, messages[currentIndex]);
         loadingStatus.style.opacity = "1";
-      }, 180);
+      }, 250);
 
       currentIndex++;
 
       if (currentIndex === messages.length) {
         window.setTimeout(() => {
           loadingScreen.classList.add("hidden");
-        }, 650);
+        }, 900);
       } else {
         window.setTimeout(updateMessage, 850);
       }
@@ -338,10 +340,6 @@ function updateLeaderboard(donations) {
     });
 
     notification.addEventListener("click", hideNotification);
-
-    if (prefersReducedMotion) {
-      return;
-    }
 
     notificationTimer = window.setTimeout(showNotification, 7000);
   }
@@ -605,19 +603,11 @@ function updateLeaderboard(donations) {
       return;
     }
 
-    /*
-      Testarea conexiunii se face doar când adaugi ?debug=1 la URL.
-      Exemplu:
-      https://domeniul-tau.ro/?debug=1
-    */
-
  const debugMode =
   new URLSearchParams(window.location.search).get("debug") === "1";
 
-// Încărcăm ÎNTOTDEAUNA donațiile
 loadDonations(supabaseClient);
 
-// Mesajele de debug apar doar când folosim ?debug=1
 if (debugMode) {
   testSupabaseConnection(supabaseClient);
 }
