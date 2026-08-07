@@ -229,7 +229,6 @@ function randomHeroTitle() {
   function initHero() {
   randomHeroTitle();
 
-    $$('[data-count]').forEach(...)   
 
  $$('[data-count]').forEach((el) => {
       const target = parseInt(el.dataset.count, 10);
