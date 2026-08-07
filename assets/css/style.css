@@ -1090,3 +1090,25 @@
     text-align: center;
   }
 }
+/* =========================
+   Footer Links
+========================= */
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 14px 0;
+}
+
+.footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--text);
+}
