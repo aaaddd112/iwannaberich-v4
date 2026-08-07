@@ -1,793 +1,508 @@
-(() => {
-  "use strict";
+/**
+ * IWANNABERICH — Premium Landing Page
+ * Vanilla JS — no dependencies
+ */
 
-  document.addEventListener("DOMContentLoaded", init);
+(function () {
+  'use strict';
 
-/* =========================
-   DONATION MODAL
-========================= */
+  /* ---- State ---- */
+  const GOAL = 100_000_000;
+  let raised = 2847;
+  let selectedTier = 25;
+  let logoClicks = 0;
+  const konamiCode = [];
 
-// Replace these with your real payment links.
-const PAYMENT_LINKS = {
-  paypal: "https://paypal.me/REPLACE_WITH_YOUR_PAYPAL",
-  revolut: "https://revolut.me/REPLACE_WITH_YOUR_REVOLUT",
-};
+  /** @type {Record<string, string>} Configure your real payment links here */
+  const PAYMENT_LINKS = {
+    revolut: 'https://revolut.me/raulu8m39',
+    paypal: 'https://paypal.me/RaulTupan',
+  };
+  const KONAMI_SEQUENCE = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+    'b', 'a'
+  ];
 
-function initDonationModal() {
+  const whispers = [
+    'Okay fine, it\'s mostly a joke. But the website is real.',
+    "You're still here. That means something. Probably curiosity.",
+    'Every scroll brings you closer to understanding. And me closer to $100M.',
+    'This is what happens when a designer wants money and has too much free time.',
+  ];
 
-  const modal = document.getElementById("donationModal");
-  const closeBtn = document.getElementById("closeDonationModal");
-  const donateButton = document.getElementById("openDonationModal");
+const heroTitles = [
+  { line1: "Help me become", line2: "Ridiculously Rich." },
+  { line1: "Operation:", line2: "Become Rich." },
+  { line1: "Poverty,", line2: "Cancelled." },
+  { line1: "Future", line2: "Billionaire." },
+  { line1: "Currently", line2: "Financially Embarrassed." },
+  { line1: "Funding my", line2: "Financial Delusion." },
+  { line1: "One donation", line2: "Closer to a Yacht." },
+  { line1: "Building", line2: "My Fortune." },
+  { line1: "The World's", line2: "Most Honest Startup." },
+  { line1: "Manifesting", line2: "Extreme Wealth." },
+  { line1: "Broke Today.", line2: "Legend Tomorrow." },
+  { line1: "Invest in", line2: "My Bad Decisions." }
+];
 
-  const amountButtons = Array.from(
-    modal.querySelectorAll(".amount-button")
-  );
-  const customAmountInput = document.getElementById("customAmount");
-  const paymentCards = Array.from(
-    modal.querySelectorAll(".payment-card")
-  );
-  const continueBtn = document.getElementById("continueDonation");
+  /* ---- DOM Refs ---- */
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
 
-  let errorEl = modal.querySelector(".donation-error");
+  const navbar = $('#navbar');
+  const navToggle = $('#navToggle');
+  const navMenu = $('#navMenu');
+  const logo = $('#logo');
+  const planModal = $('#planModal');
+  const toast = $('#toast');
+  const progressFill = $('#progressFill');
+  const progressPercent = $('#progressPercent');
+  const heroWhisper = $('#heroWhisper');
+  const heroTitle = $('#hero-title');
+  const easterEgg = $('#easterEgg');
 
-  if (!errorEl) {
-    errorEl = document.createElement("div");
-    errorEl.className = "donation-error";
-    continueBtn.insertAdjacentElement("afterend", errorEl);
+  /* ---- Utilities ---- */
+
+  function formatNumber(n) {
+    return n.toLocaleString('en-US');
   }
 
-  let selectedAmount = null;
-  let selectedMethod = "paypal";
-
-  function setError(message) {
-    errorEl.textContent = message || "";
+  function formatCurrency(n) {
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  function selectPresetAmount(button) {
-    amountButtons.forEach((btn) => btn.classList.remove("active"));
-    button.classList.add("active");
-    customAmountInput.value = "";
-    selectedAmount = Number(button.dataset.value) || null;
-    setError("");
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
-  amountButtons.forEach((button) => {
-    button.addEventListener("click", () => selectPresetAmount(button));
-  });
+  function animateCount(el, target, duration = 2000) {
+    const start = 0;
+    const startTime = performance.now();
 
-  customAmountInput.addEventListener("input", () => {
-    amountButtons.forEach((btn) => btn.classList.remove("active"));
-    const value = Number(customAmountInput.value);
-    selectedAmount = value > 0 ? value : null;
-    setError("");
-  });
+    function tick(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(start + (target - start) * eased);
+      el.textContent = formatNumber(current);
+      if (progress < 1) requestAnimationFrame(tick);
+    }
 
-  paymentCards.forEach((card) => {
-    card.addEventListener("click", () => {
-      paymentCards.forEach((c) => c.classList.remove("selected"));
-      card.classList.add("selected");
-      selectedMethod = card.dataset.method;
+    requestAnimationFrame(tick);
+  }
+
+  function animateProgress() {
+    const pct = (raised / GOAL) * 100;
+    const displayPct = pct < 0.01 ? pct.toFixed(6) : pct.toFixed(4);
+
+    progressFill.style.width = `${Math.max(pct, 0.05)}%`;
+    progressPercent.textContent = `${displayPct}%`;
+
+    const bar = progressFill.closest('[role="progressbar"]');
+    if (bar) {
+      bar.setAttribute('aria-valuenow', displayPct);
+    }
+  }
+
+  /* ---- Navbar ---- */
+
+  function initNavbar() {
+    const onScroll = () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    navToggle?.addEventListener('click', () => {
+      const open = navMenu.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
     });
-  });
 
-  function resetDonationForm() {
-    amountButtons.forEach((btn) => btn.classList.remove("active"));
-    customAmountInput.value = "";
-    selectedAmount = null;
-    setError("");
-    document.getElementById("donationName").value = "";
-    document.getElementById("donationMessage").value = "";
+    navMenu?.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('open');
+        navToggle?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+
+    initScrollSpy();
   }
+
+  function initScrollSpy() {
+    const sections = ['dashboard', 'milestones', 'forbes', 'faq'];
+    const links = navMenu?.querySelectorAll('.nav-links a') ?? [];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            links.forEach((link) => {
+              link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+            });
+          }
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+    );
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  }
+
+  /* ---- Smooth Scroll ---- */
+
+  function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        const id = anchor.getAttribute('href');
+        if (id === '#') return;
+        e.preventDefault();
+        const target = document.querySelector(id);
+        if (target) {
+          const offset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ticker-height'))
+            + parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height'))
+            + 16;
+          const top = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      });
+    });
+  }
+
+  /* ---- Scroll Reveal ---- */
+
+  function initScrollReveal() {
+    const reveals = $$('.reveal');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    reveals.forEach((el) => observer.observe(el));
+  }
+
+  /* ---- Hero Animations ---- */
+
+function randomHeroTitle() {
+
+    if (!heroTitle) return;
+
+    const random =
+        heroTitles[Math.floor(Math.random() * heroTitles.length)];
+
+    heroTitle.innerHTML = `
+        ${random.line1}<br>
+        <span class="accent">${random.line2}</span>
+    `;
+}
+
+  function initHero() {
+  randomHeroTitle();
+
+    $$('[data-count]').forEach(...)   
+
+ $$('[data-count]').forEach((el) => {
+      const target = parseInt(el.dataset.count, 10);
+      if (!isNaN(target)) animateCount(el, target);
+    });
+
+    // Hero whisper reveals on scroll
+    let whisperIndex = 0;
+    heroWhisper.textContent = whispers[0];
+
+    window.addEventListener('scroll', () => {
+      const scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      if (scrollPct > 0.15 && !heroWhisper.classList.contains('visible')) {
+        heroWhisper.classList.add('visible');
+      }
+      const newIndex = Math.min(Math.floor(scrollPct * whispers.length * 2), whispers.length - 1);
+      if (newIndex !== whisperIndex) {
+        whisperIndex = newIndex;
+        heroWhisper.style.opacity = '0';
+        setTimeout(() => {
+          heroWhisper.textContent = whispers[whisperIndex];
+          heroWhisper.style.opacity = '1';
+        }, 300);
+      }
+    }, { passive: true });
+  }
+
+  /* ---- Dashboard Live Updates ---- */
+
+  function initDashboard() {
+    animateProgress();
+
+    // Subtle live ticker on net worth
+    const netWorthEl = $('#netWorth');
+    if (netWorthEl) {
+      setInterval(() => {
+        const fluctuation = (Math.random() - 0.48) * 0.5;
+        raised = Math.max(0, raised + fluctuation);
+        const display = 4291.47 + (raised - 2847);
+        netWorthEl.textContent = `$${formatCurrency(display)}`;
+        $('#raisedAmount').textContent = formatNumber(Math.floor(raised));
+        $('#forbesWorth').textContent = `$${formatNumber(Math.floor(display))}`;
+        animateProgress();
+      }, 4000);
+    }
+
+    // Forbes rank countdown
+    const forbesRank = $('#forbesRank');
+    if (forbesRank) {
+      let rank = 4291847293;
+      setInterval(() => {
+        if (rank > 1 && Math.random() > 0.6) {
+          rank -= Math.floor(Math.random() * 100) + 1;
+          forbesRank.textContent = formatNumber(rank);
+        }
+      }, 5000);
+    }
+  }
+
+  /* ---- Modal ---- */
 
   function openModal() {
-    modal.classList.add("show");
-    document.body.style.overflow = "hidden";
+    if (planModal?.showModal) {
+      planModal.showModal();
+    } else {
+      planModal?.setAttribute('open', '');
+    }
+    document.body.style.overflow = 'hidden';
   }
 
   function closeModal() {
-    modal.classList.remove("show");
-    document.body.style.overflow = "";
+    if (planModal?.close) {
+      planModal.close();
+    } else {
+      planModal?.removeAttribute('open');
+    }
+    document.body.style.overflow = navMenu?.classList.contains('open') ? 'hidden' : '';
   }
 
-  donateButton.addEventListener("click", openModal);
-  closeBtn.addEventListener("click", closeModal);
+  function initModal() {
+    ['#openPlanBtn', '#heroPlanBtn', '#footerPlanLink'].forEach((sel) => {
+      $(sel)?.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+      });
+    });
 
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
+    $('#closeModal')?.addEventListener('click', closeModal);
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("show")) {
+    planModal?.addEventListener('click', (e) => {
+      if (e.target === planModal) closeModal();
+    });
+
+    $('#modalInvestBtn')?.addEventListener('click', () => {
       closeModal();
-    }
-  });
+      document.querySelector('#invest')?.scrollIntoView({ behavior: 'smooth' });
+      showToast('Redirecting to payment... just kidding. Pick a tier below.');
+    });
 
-  continueBtn.addEventListener("click", () => {
-    if (!selectedAmount || selectedAmount <= 0) {
-      setError("Pick an amount first \u2014 even \u20ac1 counts.");
-      return;
-    }
-
-    const link = PAYMENT_LINKS[selectedMethod];
-
-    if (!link || link.includes("REPLACE_WITH")) {
-      setError("Payment link isn't configured yet.");
-      return;
-    }
-
-    const amount = selectedAmount.toFixed(2);
-    const url =
-      selectedMethod === "paypal"
-        ? `${link}/${amount}EUR`
-        : `${link}?amount=${amount}&currency=EUR`;
-
-    window.open(url, "_blank", "noopener,noreferrer");
-    closeModal();
-    resetDonationForm();
-  });
-
-}
-
-
-  function init() {
-    initLoadingScreen();
-    initNotifications();
-    initDonationModal();
-    initCalculator();
-    initCursorGlow();
-    initScrollReveal();
-    initAchievement();
-    initSupabase();
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && planModal?.open) closeModal();
+    });
   }
 
-  /* =========================
-     HELPERS
-  ========================= */
+  /* ---- Payment Links ---- */
 
-  const $ = (id) => document.getElementById(id);
+  function initPaymentLinks() {
+    const map = {
+      payRevolut: revolut.me/raulu8m39
+      payPayPal: paypal.me/RaulTupan
 
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-
-  function setText(element, value) {
-    if (element) {
-      element.textContent = value;
-    }
-  }
-
-  function randomItem(array) {
-    return array[Math.floor(Math.random() * array.length)];
-  }
-
-  function formatNumber(value) {
-    return new Intl.NumberFormat("en-US").format(value);
-  }
-
-  /* =========================
-     LOADING SCREEN
-  ========================= */
-
-  function initLoadingScreen() {
-    const loadingScreen = $("loadingScreen");
-    const loadingStatus = $("loadingStatus");
-
-    if (!loadingScreen || !loadingStatus) {
-      return;
-    }
-
-    const messages = [
-    "Analyzing your wealth...",
-    "Checking generosity...",
-    "Contacting billionaires...",
-    "Calculating impossible odds...",
-    "Loading investment opportunity...",
-    "Preparing dashboard..."
-    ];
-
-    if (prefersReducedMotion) {
-      loadingScreen.classList.add("hidden");
-      return;
-    }
-
-    let currentIndex = 0;
-
-    const updateMessage = () => {
-      if (currentIndex >= messages.length) {
-        loadingScreen.classList.add("hidden");
-        return;
-      }
-
-      loadingStatus.style.opacity = "0";
-
-      window.setTimeout(() => {
-        setText(loadingStatus, messages[currentIndex]);
-        loadingStatus.style.opacity = "1";
-      }, 250);
-
-      currentIndex++;
-
-      if (currentIndex === messages.length) {
-        window.setTimeout(() => {
-          loadingScreen.classList.add("hidden");
-        }, 900);
-      } else {
-        window.setTimeout(updateMessage, 850);
-      }
     };
 
-    updateMessage();
-  }
-
- /* =========================
-   LIVE WEALTH VALUE
-========================= */
-
-function initWealthValue(total = 0) {
-  const wealthValue = $("wealthValue");
-  const wealthNote = $("wealthNote");
-
-  if (!wealthValue || !wealthNote) {
-    return;
-  }
-
-  setText(
-    wealthValue,
-    "€" + total.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    })
-  );
-
-  if (total === 0) {
-    setText(
-      wealthNote,
-      "Be the first supporter."
-    );
-  } else {
-    setText(
-      wealthNote,
-      `${total.toFixed(2)}€ raised from supporters.`
-    );
-  }
-}
-
-/* =========================
-   PROGRESS BAR
-========================= */
-
-function updateProgress(total) {
-
-    const GOAL = 1000000000; // 1 miliard €
-
-    const progressFill = document.getElementById("progressFill");
-    const progressText = document.getElementById("progressText");
-
-    if (!progressFill || !progressText) return;
-
-    const percent = (total / GOAL) * 100;
-
-    progressFill.style.width = percent + "%";
-
-    progressText.textContent =
-        "Progress: " +
-        percent.toFixed(8) +
-        "%";
-}
-
-/* =========================
-   LEADERBOARD
-========================= */
-
-function updateLeaderboard(donations) {
-
-    const leaderboard = document.getElementById("leaderboard");
-
-    if (!leaderboard) return;
-
-    leaderboard.innerHTML = "";
-
-    const totals = {};
-
-    donations.forEach(donation => {
-
-        const name = donation.nickname || "Anonymous";
-
-        totals[name] = (totals[name] || 0) + Number(donation.amount);
-
-    });
-
-    const ranking = Object.entries(totals)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
-
-    ranking.forEach(([name, amount], index) => {
-
-        const row = document.createElement("div");
-
-        row.className = "leaderboard-row";
-
-        let medal = "";
-
-        if (index === 0) medal = "🥇";
-        else if (index === 1) medal = "🥈";
-        else if (index === 2) medal = "🥉";
-        else medal = "#" + (index + 1);
-
-        row.innerHTML = `
-            <span>${medal} ${name}</span>
-            <strong>€${amount.toFixed(2)}</strong>
-        `;
-
-        leaderboard.appendChild(row);
-
-    });
-
-}
-  /* =========================
-     RANDOM NOTIFICATIONS
-  ========================= */
-
-  function initNotifications() {
-    const notification = $("notification");
-    const notificationTitle = $("notificationTitle");
-    const notificationAmount = $("notificationAmount");
-
-    if (!notification || !notificationTitle || !notificationAmount) {
-      return;
-    }
-   const notifications = [
-
-
-  // ===== Visitors =====
-  { title: "👀 A visitor from Germany is exploring the challenge.", amount: "Just now" },
-  { title: "🌍 Someone joined from Canada.", amount: "18 sec ago" },
-  { title: "🇬🇧 A visitor from London opened the roadmap.", amount: "35 sec ago" },
-  { title: "🇯🇵 Someone from Tokyo is checking the numbers.", amount: "1 min ago" },
-  { title: "🇸🇪 Sweden just appeared on the map.", amount: "1 min ago" },
-  { title: "🇫🇷 Paris stopped by for a moment.", amount: "2 min ago" },
-  { title: "🇳🇱 A visitor from Amsterdam is browsing.", amount: "2 min ago" },
-  { title: "🇵🇱 Someone from Warsaw is reading the plan.", amount: "3 min ago" },
-  { title: "🇪🇸 Barcelona joined the challenge.", amount: "4 min ago" },
-  { title: "🇮🇹 Milan is now represented.", amount: "5 min ago" },
-  { title: "🇺🇸 A visitor from New York arrived.", amount: "6 min ago" },
-  { title: "🇦🇺 Sydney checked the leaderboard.", amount: "7 min ago" },
-  { title: "🌎 Another international visitor appeared.", amount: "8 min ago" },
-  { title: "🧭 Someone is reading the strategy.", amount: "Live" },
-  { title: "📖 A visitor opened The Plan section.", amount: "Live" },
-  { title: "📊 Someone is comparing the numbers.", amount: "Live" },
-  { title: "🔍 A curious visitor is doing research.", amount: "Live" },
-  { title: "💡 Someone stayed longer than average.", amount: "Interesting" },
-  { title: "👋 A returning visitor came back.", amount: "Today" },
-  { title: "🌐 Another browser connected.", amount: "Online" },
-
-  // ===== Progress =====
-  { title: "📈 Progress has been recalculated.", amount: "Live" },
-  { title: "🎯 Every euro moves the goal closer.", amount: "Current mission" },
-  { title: "⚡ Live activity detected.", amount: "Now" },
-  { title: "💰 Net worth simulation updated.", amount: "Automatic" },
-  { title: "📊 Dashboard statistics refreshed.", amount: "Live" },
-  { title: "🚀 The journey continues.", amount: "Always" },
-  { title: "📉 Distance to €1B is shrinking.", amount: "Very slowly" },
-  { title: "🌱 Small progress is still progress.", amount: "Reminder" },
-  { title: "🏁 Goal remains unchanged: €1,000,000,000.", amount: "Locked in" },
-  { title: "📡 Live feed synchronized.", amount: "Connected" },
-  { title: "💚 Support keeps the challenge alive.", amount: "Thank you" },
-  { title: "🔥 Momentum is building.", amount: "Steady" },
-  { title: "📌 Mission status updated.", amount: "Active" },
-  { title: "⏳ Billionaire ETA: Unknown.", amount: "Calculating" },
-  { title: "🪙 Every contribution counts.", amount: "Always" },
-
-  // ===== Billionaire jokes =====
-  { title: "💼 Warren Buffett is still thinking about it.", amount: "Probably" },
-  { title: "🚀 Elon Musk left the tab open.", amount: "Unconfirmed" },
-  { title: "🏦 Jeff Bezos remains financially unavailable.", amount: "Busy" },
-  { title: "📞 Bill Gates hasn't called back yet.", amount: "Still waiting" },
-  { title: "🦈 Shark Tank has not responded.", amount: "No update" },
-  { title: "🛥️ A yacht owner looked... then left.", amount: "Understandable" },
-  { title: "💳 Credit card confidence increased by 0.01%.", amount: "Science" },
-  { title: "📉 Billionaire probability adjusted.", amount: "Optimistic" },
-  { title: "🏆 Forbes is not updating the rankings yet.", amount: "Soon™" },
-  { title: "💸 Still cheaper than buying Twitter.", amount: "Fact" },
-  { title: "🥲 Lamborghini dealer remains patient.", amount: "For now" },
-  { title: "🏝️ Private island postponed.", amount: "Again" },
-  { title: "💎 Unicorn investor not found.", amount: "Searching..." },
-  { title: "🐋 Whale detected... false alarm.", amount: "Oops" },
-  { title: "🛩️ Private jet traffic increased by 0%.", amount: "Accurate" },
-
-  // ===== Fun =====
-  { title: "☕ Someone came for the memes and stayed for the mission.", amount: "Respect" },
-  { title: "😄 Another dreamer joined the challenge.", amount: "Welcome" },
-  { title: "🎉 The impossible is still on the roadmap.", amount: "Good" },
-  { title: "🌟 Motivation level: High.", amount: "Today" },
-  { title: "🤝 Community support is growing.", amount: "Slowly" }
-
-];
-    let lastIndex = -1;
-    let notificationTimer = null;
-    let hideTimer = null;
-
-    function getNextNotification() {
-      if (notifications.length === 1) {
-        return notifications[0];
-      }
-
-      let index;
-
-      do {
-        index = Math.floor(Math.random() * notifications.length);
-      } while (index === lastIndex);
-
-      lastIndex = index;
-      return notifications[index];
-    }
-
-    function hideNotification() {
-      notification.classList.remove("show");
-    }
-
-    function showNotification() {
-      if (document.hidden) {
-        scheduleNotification();
-        return;
-      }
-
-      const item = getNextNotification();
-
-      setText(notificationTitle, item.title);
-      setText(notificationAmount, item.amount);
-
-      notification.classList.remove("show");
-
-      requestAnimationFrame(() => {
-        notification.classList.add("show");
-      });
-
-      window.clearTimeout(hideTimer);
-
-      hideTimer = window.setTimeout(() => {
-        hideNotification();
-      }, 4500);
-
-      scheduleNotification();
-    }
-
-    function scheduleNotification() {
-      window.clearTimeout(notificationTimer);
-
-      const delay = Math.floor(Math.random() * 14000) + 6000;
-
-      notificationTimer = window.setTimeout(showNotification, delay);
-    }
-
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && !notification.classList.contains("show")) {
-        scheduleNotification();
-      }
-    });
-
-    notification.addEventListener("click", hideNotification);
-
-    notificationTimer = window.setTimeout(showNotification, 7000);
-  }
-
-  /* =========================
-     CALCULATOR
-  ========================= */
-
-  function initCalculator() {
-    const peopleSlider = $("peopleSlider");
-    const donationSlider = $("donationSlider");
-    const peopleValue = $("peopleValue");
-    const donationValue = $("donationValue");
-    const calculatorResult = $("calculatorResult");
-    const calculatorMessage = $("calculatorMessage");
-
-    if (
-      !peopleSlider ||
-      !donationSlider ||
-      !peopleValue ||
-      !donationValue ||
-      !calculatorResult ||
-      !calculatorMessage
-    ) {
-      return;
-    }
-
-    function updateCalculator() {
-      const people = Number(peopleSlider.value) || 0;
-      const donation = Number(donationSlider.value) || 0;
-      const total = people * donation;
-
-      setText(peopleValue, formatNumber(people));
-      setText(donationValue, `€${formatNumber(donation)}`);
-      setText(calculatorResult, `€${formatNumber(total)}`);
-
-      if (total >= 1000000000) {
-        setText(
-          calculatorMessage,
-          "Financial history has officially been made."
-        );
-      } else if (total >= 100000000) {
-        setText(
-          calculatorMessage,
-          "We're getting dangerously optimistic."
-        );
-      } else if (total >= 1000000) {
-        setText(
-          calculatorMessage,
-          "That's enough to start pretending this is a company."
-        );
-      } else {
-        setText(
-          calculatorMessage,
-          "That's not the goal yet. But it's a start."
-        );
-      }
-    }
-
-    peopleSlider.addEventListener("input", updateCalculator);
-    donationSlider.addEventListener("input", updateCalculator);
-
-    updateCalculator();
-  }
-
-  /* =========================
-     CURSOR GLOW
-  ========================= */
-
-  function initCursorGlow() {
-    if (prefersReducedMotion || window.matchMedia("(pointer: coarse)").matches) {
-      return;
-    }
-
-    let animationFrame = null;
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-
-    function updateGlow() {
-      document.documentElement.style.setProperty(
-        "--mouse-x",
-        `${mouseX}px`
-      );
-
-      document.documentElement.style.setProperty(
-        "--mouse-y",
-        `${mouseY}px`
-      );
-
-      animationFrame = null;
-    }
-
-    document.addEventListener("mousemove", (event) => {
-      mouseX = event.clientX;
-      mouseY = event.clientY;
-
-      if (!animationFrame) {
-        animationFrame = requestAnimationFrame(updateGlow);
-      }
-    });
-  }
-
-  /* =========================
-     SCROLL REVEAL
-  ========================= */
-
-  function initScrollReveal() {
-    const elements = document.querySelectorAll(".reveal");
-
-    if (!elements.length) {
-      return;
-    }
-
-    if (
-      prefersReducedMotion ||
-      !("IntersectionObserver" in window)
-    ) {
-      elements.forEach((element) => {
-        element.classList.add("on");
-      });
-
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries, currentObserver) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            return;
+    Object.entries(map).forEach(([id, href]) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.href = href;
+        el.addEventListener('click', (e) => {
+          if (href.endsWith('/')) {
+            e.preventDefault();
+            showToast('Add your payment username in script.js → PAYMENT_LINKS');
           }
-
-          entry.target.classList.add("on");
-          currentObserver.unobserve(entry.target);
         });
-      },
-      {
-        threshold: 0.12,
-        rootMargin: "0px 0px -40px 0px"
       }
-    );
-
-    elements.forEach((element) => observer.observe(element));
-  }
-
-  /* =========================
-     ACHIEVEMENT EASTER EGG
-  ========================= */
-
-  function initAchievement() {
-    const logo = $("logo");
-    const toast = $("toast");
-
-    if (!logo || !toast) {
-      return;
-    }
-
-    let clickCount = 0;
-    let resetTimer = null;
-    let toastTimer = null;
-    let audioContext = null;
-
-    function playAchievementSound() {
-      if (prefersReducedMotion) {
-        return;
-      }
-
-      const AudioContext =
-        window.AudioContext || window.webkitAudioContext;
-
-      if (!AudioContext) {
-        return;
-      }
-
-      try {
-        if (!audioContext) {
-          audioContext = new AudioContext();
-        }
-
-        if (audioContext.state === "suspended") {
-          audioContext.resume();
-        }
-
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        const now = audioContext.currentTime;
-
-        oscillator.type = "sine";
-        oscillator.frequency.setValueAtTime(660, now);
-        oscillator.frequency.exponentialRampToValueAtTime(
-          990,
-          now + 0.16
-        );
-
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-
-        oscillator.connect(gain);
-        gain.connect(audioContext.destination);
-
-        oscillator.start(now);
-        oscillator.stop(now + 0.35);
-      } catch (error) {
-        console.warn("Achievement sound unavailable:", error);
-      }
-    }
-
-    function showAchievement() {
-      toast.classList.add("show");
-      playAchievementSound();
-
-      window.clearTimeout(toastTimer);
-
-      toastTimer = window.setTimeout(() => {
-        toast.classList.remove("show");
-      }, 4500);
-    }
-
-    logo.addEventListener("click", () => {
-      clickCount++;
-
-      window.clearTimeout(resetTimer);
-
-      if (clickCount >= 10) {
-        clickCount = 0;
-        showAchievement();
-        return;
-      }
-
-      resetTimer = window.setTimeout(() => {
-        clickCount = 0;
-      }, 1800);
     });
   }
 
-  /* =========================
-     SUPABASE
-  ========================= */
+  /* ---- Invest Tiers ---- */
 
-  function initSupabase() {
-    const supabaseUrl =
-      "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
-
-    const supabaseKey =
-      "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
-
-    if (!window.supabase || !supabaseUrl || !supabaseKey) {
-      console.warn("Supabase is not available.");
-      return;
-    }
-
-    let supabaseClient;
-
-    try {
-      supabaseClient = window.supabase.createClient(
-        supabaseUrl,
-        supabaseKey
-      );
-    } catch (error) {
-      console.error("Supabase initialization failed:", error);
-      return;
-    }
-
- const debugMode =
-  new URLSearchParams(window.location.search).get("debug") === "1";
-
-loadDonations(supabaseClient);
-
-if (debugMode) {
-  testSupabaseConnection(supabaseClient);
-}
-
-}
-
-async function testSupabaseConnection(supabaseClient) {
-  try {
-    const { error } = await supabaseClient
-      .from("Donations")
-      .select("*", {
-        count: "exact",
-        head: true
+  function initInvest() {
+    $$('.tier-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        $$('.tier-card').forEach((c) => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedTier = parseInt(card.dataset.amount, 10);
       });
+    });
 
-    if (error) {
-      console.error("Supabase connection error:", error);
-      return;
+    // Pre-select featured tier
+    $('.tier-featured')?.classList.add('selected');
+
+    $('#investBtn')?.addEventListener('click', () => {
+      showToast(`$${selectedTier} contribution noted. Payment integration coming never.`);
+      raised += selectedTier;
+      animateProgress();
+      $('#raisedAmount').textContent = formatNumber(Math.floor(raised));
+    });
+  }
+
+  /* ---- Share ---- */
+
+  function initShare() {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent('I found a $100M startup. Plot twist: they just want to be rich. IWANNABERICH');
+
+    $('#shareTwitter')?.addEventListener('click', () => {
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'noopener,noreferrer');
+    });
+
+    $('#shareLinkedIn')?.addEventListener('click', () => {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank', 'noopener,noreferrer');
+    });
+
+    $('#shareCopy')?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        showToast('Link copied. Spread the wealth (to me).');
+      } catch {
+        showToast('Could not copy. Select the URL manually.');
+      }
+    });
+  }
+
+  /* ---- Easter Eggs ---- */
+
+  function initEasterEggs() {
+    // Logo click counter
+    logo?.addEventListener('click', (e) => {
+      logoClicks++;
+      logo.classList.add('shake');
+      setTimeout(() => logo.classList.remove('shake'), 600);
+
+      if (logoClicks === 5) {
+        e.preventDefault();
+        showToast('Achievement unlocked: Persistent Believer');
+      }
+      if (logoClicks === 10) {
+        e.preventDefault();
+        revealEasterEgg();
+      }
+    });
+
+    // Konami code
+    document.addEventListener('keydown', (e) => {
+      konamiCode.push(e.key);
+      if (konamiCode.length > KONAMI_SEQUENCE.length) konamiCode.shift();
+
+      if (konamiCode.join(',') === KONAMI_SEQUENCE.join(',')) {
+        revealEasterEgg();
+        showToast('Konami code accepted. Rich mode: enabled (not really).');
+      }
+    });
+
+    // Console message
+    console.log(
+      '%cIWANNABERICH',
+      'font-size: 24px; font-weight: bold; color: #6366f1;'
+    );
+    console.log(
+      '%cYou found the console. A true investor inspects the source. Want to contribute? Scroll up.',
+      'font-size: 12px; color: #a1a1aa;'
+    );
+
+    // Triple-click on Forbes rank
+    let forbesClicks = 0;
+    $('#forbesRank')?.addEventListener('click', () => {
+      forbesClicks++;
+      if (forbesClicks >= 3) {
+        showToast('Fun fact: this ranking is completely fabricated.');
+        forbesClicks = 0;
+      }
+    });
+
+    // Click easter egg to dismiss
+    easterEgg?.addEventListener('click', (e) => {
+      if (e.target === easterEgg) easterEgg.hidden = true;
+    });
+
+    $('#easterClose')?.addEventListener('click', () => {
+      if (easterEgg) easterEgg.hidden = true;
+    });
+  }
+
+  function revealEasterEgg() {
+    if (easterEgg) easterEgg.hidden = false;
+  }
+
+  /* ---- Ticker Duplicate for Seamless Loop ---- */
+
+  function initTicker() {
+    const content = $('.ticker-content');
+    if (content) {
+      content.innerHTML += content.innerHTML;
     }
-
-    console.info("Supabase connection successful.");
-  } catch (error) {
-    console.error("Supabase request failed:", error);
-  }
-}
-
-async function loadDonations(supabaseClient) {
-
-  const { data, error } = await supabaseClient
-    .from("Donations")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Load donations error:", error);
-    return;
   }
 
-  console.log("Donations:", data);
+  /* ---- FAQ Accordion Enhancement ---- */
 
-  const total = data.reduce(
-    (sum, donation) => sum + Number(donation.amount || 0),
-    0
-  );
+  function initFAQ() {
+    $$('.faq-item').forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (item.open) {
+          $$('.faq-item').forEach((other) => {
+            if (other !== item) other.open = false;
+          });
+        }
+      });
+    });
+  }
 
-  console.log("Total donated:", total);
+  /* ---- Init ---- */
 
-  console.log("Calling initWealthValue with:", total);
+  function init() {
+    initNavbar();
+    initSmoothScroll();
+    initScrollReveal();
+    initHero();
+    initDashboard();
+    initModal();
+    initInvest();
+    initShare();
+    initPaymentLinks();
+    initEasterEggs();
+    initTicker();
+    initFAQ();
 
-  initWealthValue(total);
-  updateProgress(total);
-  updateLeaderboard(data);
+    // Trigger hero reveals immediately
+    setTimeout(() => {
+      $$('.hero .reveal').forEach((el) => el.classList.add('visible'));
+    }, 100);
+  }
 
-}
 
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
