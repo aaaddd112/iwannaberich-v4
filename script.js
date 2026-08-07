@@ -8,7 +8,7 @@
 
 console.log("script.js loaded");
 console.log(window.supabase);
-const supabaseUrl = "https://ofcdtwrgyxjrpoxuikxg.supabase.co/rest/v1/";
+const supabaseUrl = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
 const supabaseKey = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
 
 const supabase = window.supabase.createClient(
@@ -27,7 +27,7 @@ const supabase = window.supabase.createClient(
 
 const PAYMENT_LINKS = {
     paypal: 'https://paypal.me/RaulTupan',
-    revolut: 'https://revolut.me/raulu8m39,
+    revolut: 'https://revolut.me/raulu8m39',
 };
   const KONAMI_SEQUENCE = [
     'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
