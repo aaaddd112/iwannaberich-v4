@@ -5,7 +5,7 @@
 
   function init() {
     initLoadingScreen();
-    initWealthValue();
+    initWealthValue(0);
     initNotifications();
     initCalculator();
     initCursorGlow();
@@ -91,32 +91,38 @@
     updateMessage();
   }
 
-  /* =========================
-     LIVE WEALTH VALUE
-  ========================= */
+ /* =========================
+   LIVE WEALTH VALUE
+========================= */
 
-  function initWealthValue() {
-    const wealthValue = $("wealthValue");
-    const wealthNote = $("wealthNote");
+function initWealthValue(total = 0) {
+  const wealthValue = $("wealthValue");
+  const wealthNote = $("wealthNote");
 
-    if (!wealthValue || !wealthNote) {
-      return;
-    }
-
-    const variations = [27.31, 27.34, 27.37, 27.4];
-    const wealth = randomItem(variations);
-
-    setText(wealthValue, `€${wealth.toFixed(2)}`);
-
-    if (wealth > 27.34) {
-      setText(wealthNote, "Wealth increased. Nobody knows why.");
-    } else if (wealth < 27.34) {
-      setText(wealthNote, "A minor setback. Blame the market.");
-    } else {
-      setText(wealthNote, "Refresh detected. Wealth recalculated.");
-    }
+  if (!wealthValue || !wealthNote) {
+    return;
   }
 
+  setText(
+    wealthValue,
+    "€" + total.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+  );
+
+  if (total === 0) {
+    setText(
+      wealthNote,
+      "Be the first supporter."
+    );
+  } else {
+    setText(
+      wealthNote,
+      `${total.toFixed(2)}€ raised from supporters.`
+    );
+  }
+}
   /* =========================
      RANDOM NOTIFICATIONS
   ========================= */
@@ -641,13 +647,7 @@ async function loadDonations(supabaseClient) {
 
   const wealthValue = document.getElementById("wealthValue");
 
-  if (wealthValue) {
-      wealthValue.textContent =
-          "€" + total.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-          });
-  }
+initWealthValue(total);
 
 }
 
