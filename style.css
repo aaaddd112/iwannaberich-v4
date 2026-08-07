@@ -2220,7 +2220,7 @@ img, svg {
 
     }
 
-
+<style>
     :root {
       --bg: #09090b;
       --card: #15151b;
@@ -2859,6 +2859,6 @@ img, svg {
         width: calc(100% - 40px);
       }
     }
-  
+  </style>
 
 }
