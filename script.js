@@ -8,7 +8,7 @@ DONATION MODAL
 ========================= */
 
 const PAYMENT_LINKS = {
-  paypal: "https://paypal.me/RaulTupan",
+  patreon: "https://patreon.com/IwannaBeRich",
   revolut: "https://revolut.me/raulu8m39",
 };
 
