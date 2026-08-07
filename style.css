@@ -1640,4 +1640,20 @@ img, svg {
   .ticker-content {
     animation: none;
   }
+.leaderboard-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.leaderboard-row:last-child{
+    border-bottom:none;
+}
+
+.leaderboard-row strong{
+    color:#57ff9a;
+}
+
 }

@@ -146,6 +146,55 @@ function updateProgress(total) {
         "%";
 }
 
+/* =========================
+   LEADERBOARD
+========================= */
+
+function updateLeaderboard(donations) {
+
+    const leaderboard = document.getElementById("leaderboard");
+
+    if (!leaderboard) return;
+
+    leaderboard.innerHTML = "";
+
+    const totals = {};
+
+    donations.forEach(donation => {
+
+        const name = donation.nickname || "Anonymous";
+
+        totals[name] = (totals[name] || 0) + Number(donation.amount);
+
+    });
+
+    const ranking = Object.entries(totals)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+    ranking.forEach(([name, amount], index) => {
+
+        const row = document.createElement("div");
+
+        row.className = "leaderboard-row";
+
+        let medal = "";
+
+        if (index === 0) medal = "🥇";
+        else if (index === 1) medal = "🥈";
+        else if (index === 2) medal = "🥉";
+        else medal = "#" + (index + 1);
+
+        row.innerHTML = `
+            <span>${medal} ${name}</span>
+            <strong>€${amount.toFixed(2)}</strong>
+        `;
+
+        leaderboard.appendChild(row);
+
+    });
+
+}
   /* =========================
      RANDOM NOTIFICATIONS
   ========================= */
@@ -651,7 +700,7 @@ async function loadDonations(supabaseClient) {
 
   initWealthValue(total);
   updateProgress(total);
-
+  updateLeaderboard(data);
 
 }
 
