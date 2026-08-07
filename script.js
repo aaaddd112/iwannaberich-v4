@@ -580,7 +580,7 @@
 async function testSupabaseConnection(supabaseClient) {
   try {
     const { error } = await supabaseClient
-      .from("donations")
+      .from("onations")
       .select("*", {
         count: "exact",
         head: true
@@ -600,12 +600,12 @@ async function testSupabaseConnection(supabaseClient) {
 async function loadDonations(supabaseClient) {
 
   const { data, error } = await supabaseClient
-    .from("donations")
+    .from("Donations")
     .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Load donations error:", error);
+    console.error("Load Donations error:", error);
     return;
   }
 
