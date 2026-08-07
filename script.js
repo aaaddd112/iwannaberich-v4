@@ -1,3 +1,5 @@
+alert("SCRIPT LOADED");
+
 /**
  * IWANNABERICH — Premium Landing Page
  * Vanilla JS — no dependencies
