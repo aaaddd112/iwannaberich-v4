@@ -644,16 +644,16 @@ function updateLeaderboard(donations) {
       https://domeniul-tau.ro/?debug=1
     */
 
-    const debugMode =
-      new URLSearchParams(window.location.search).get("debug") === "1";
+ const debugMode =
+  new URLSearchParams(window.location.search).get("debug") === "1";
 
-    if (!debugMode) {
-      return;
-    }
+// Încărcăm ÎNTOTDEAUNA donațiile
+loadDonations(supabaseClient);
 
-    testSupabaseConnection(supabaseClient);
-    loadDonations(supabaseClient);
-  }
+// Mesajele de debug apar doar când folosim ?debug=1
+if (debugMode) {
+  testSupabaseConnection(supabaseClient);
+}
 
 async function testSupabaseConnection(supabaseClient) {
   try {
