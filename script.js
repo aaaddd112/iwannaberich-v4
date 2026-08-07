@@ -585,7 +585,7 @@ function initWealthValue(total = 0) {
 async function testSupabaseConnection(supabaseClient) {
   try {
     const { error } = await supabaseClient
-      .from("onations")
+      .from("Donations")
       .select("*", {
         count: "exact",
         head: true
@@ -627,7 +627,6 @@ async function loadDonations(supabaseClient) {
 
   initWealthValue(total);
 
-}
 
 }
 
