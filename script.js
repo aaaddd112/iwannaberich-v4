@@ -13,19 +13,15 @@ function initDonationModal() {
   const closeBtn = document.getElementById("closeDonationModal");
 
   // Butonul Donate existent pe site
-  const donateButtons = document.querySelectorAll(
-    "#investBtn, .invest-btn, .donate-btn, a[href='#donate']"
-  );
 
-  donateButtons.forEach(button => {
+const donateButton =
+document.getElementById("openDonationModal");
 
-    button.addEventListener("click", e => {
+donateButton.addEventListener("click", () => {
 
-      e.preventDefault();
+    modal.classList.add("show");
 
-      modal.classList.add("show");
-
-    });
+});
 
   });
 

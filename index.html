@@ -1135,28 +1135,23 @@
       </p>
 
    <div class="payment-buttons">
-    <a
-        class="btn primary"
-        href="https://paypal.me/RaulTupan"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        PayPal
-    </a>
 
-    <a
-        class="btn secondary"
-        href="https://revolut.me/raulu8m39"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        Revolut
-    </a>
-    <p>
-      No subscriptions. No hidden fees. Just pure financial delusion.
-    </p>
+    <button
+        class="btn primary"
+        id="openDonationModal">
+
+        💚 Support The Challenge
+
+    </button>
 
 </div>
+
+<p class="muted">
+
+No subscriptions. No hidden fees.
+Just pure financial delusion.
+
+</p>
     </section>
 
 <!-- CONTACT -->
@@ -1265,78 +1260,216 @@
 
 <!-- DONATION MODAL -->
 
+<!-- =========================
+     DONATION MODAL
+========================= -->
+
 <div class="donation-modal" id="donationModal">
 
-  <div class="donation-box">
+    <div class="donation-card">
 
-    <button class="close-modal" id="closeDonationModal">
-      ✕
-    </button>
+        <button
+            class="modal-close"
+            id="closeDonationModal">
 
-    <h2>💚 Support the Billionaire Challenge</h2>
+            ✕
 
-    <p>
-      Help fund the world's most ambitious journey to €1,000,000,000.
-    </p>
+        </button>
 
-    <label>Display name (optional)</label>
+        <div class="donation-header">
 
-    <input
-      type="text"
-      id="donationName"
-      placeholder="Anonymous"
-    >
+            <div class="donation-icon">
+                💚
+            </div>
 
-    <label>Message (optional)</label>
+            <div>
 
-    <textarea
-      id="donationMessage"
-      placeholder="Wish me luck..."
-    ></textarea>
+                <h2>
 
-    <label>Choose amount</label>
+                    Support the
+                    <span>Billionaire Challenge</span>
 
-    <div class="donation-amounts">
+                </h2>
 
-      <button class="amount-btn" data-value="5">€5</button>
-      <button class="amount-btn" data-value="10">€10</button>
-      <button class="amount-btn" data-value="20">€20</button>
-      <button class="amount-btn" data-value="50">€50</button>
+                <p>
+
+                    Help fund the world's most ambitious journey
+                    to <strong>€1,000,000,000.</strong>
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="donation-grid">
+
+            <div class="field">
+
+                <label>
+
+                    Display name
+                    <small>(optional)</small>
+
+                </label>
+
+                <input
+                    id="donationName"
+                    type="text"
+                    placeholder="Anonymous">
+
+                <small>
+
+                    This is how your name will appear
+                    on the leaderboard.
+
+                </small>
+
+            </div>
+
+            <div class="field">
+
+                <label>
+
+                    Message
+                    <small>(optional)</small>
+
+                </label>
+
+                <textarea
+                    id="donationMessage"
+                    placeholder="Wish me luck..."></textarea>
+
+                <small>
+
+                    Add a message to appear
+                    on the live feed.
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+
+                Choose amount
+
+            </label>
+
+            <div class="amount-grid">
+
+                <button
+                    class="amount-button"
+                    data-value="5">
+
+                    €5
+
+                </button>
+
+                <button
+                    class="amount-button"
+                    data-value="10">
+
+                    €10
+
+                </button>
+
+                <button
+                    class="amount-button"
+                    data-value="20">
+
+                    €20
+
+                </button>
+
+                <button
+                    class="amount-button"
+                    data-value="50">
+
+                    €50
+
+                </button>
+
+                <input
+                    id="customAmount"
+                    type="number"
+                    placeholder="Custom amount (€)"
+                    min="1">
+
+            </div>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+
+                Payment method
+
+            </label>
+
+            <div class="payment-grid">
+
+                <button
+                    class="payment-card selected"
+                    data-method="paypal">
+
+                    <div>
+
+                        <strong>
+
+                            PayPal
+
+                        </strong>
+
+                        <span>
+
+                            Secure payment with PayPal
+
+                        </span>
+
+                    </div>
+
+                </button>
+
+                <button
+                    class="payment-card"
+                    data-method="revolut">
+
+                    <div>
+
+                        <strong>
+
+                            Revolut
+
+                        </strong>
+
+                        <span>
+
+                            Support via Revolut
+
+                        </span>
+
+                    </div>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <button
+            id="continueDonation"
+            class="continue-button">
+
+            🔒 Continue
+
+        </button>
 
     </div>
-
-    <input
-      type="number"
-      id="customAmount"
-      placeholder="Custom amount (€)"
-      min="1"
-    >
-
-    <label>Payment method</label>
-
-    <div class="payment-methods">
-
-      <button
-        class="payment-btn paypal"
-        data-method="paypal"
-      >
-        🟦 PayPal
-      </button>
-
-      <button
-        class="payment-btn revolut"
-        data-method="revolut"
-      >
-        🟪 Revolut
-      </button>
-
-    </div>
-
-    <button id="continueDonation">
-      Continue
-    </button>
-
-  </div>
 
 </div>
 
