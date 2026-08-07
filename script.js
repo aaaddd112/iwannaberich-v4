@@ -577,24 +577,25 @@
     loadDonations(supabaseClient);
   }
 
-  async function testSupabaseConnection(supabaseClient) {
-    try {
-      const { error } = await supabaseClient
-        .from("donations")
-        .select("*", {
-          count: "exact",
-          head: true
-        });
+async function testSupabaseConnection(supabaseClient) {
+  try {
+    const { error } = await supabaseClient
+      .from("donations")
+      .select("*", {
+        count: "exact",
+        head: true
+      });
 
-      if (error) {
-        console.error("Supabase connection error:", error);
-        return;
-      }
-
-      console.info("Supabase connection successful.");
-    } catch (error) {
-      console.error("Supabase request failed:", error);
+    if (error) {
+      console.error("Supabase connection error:", error);
+      return;
     }
+
+    console.info("Supabase connection successful.");
+  } catch (error) {
+    console.error("Supabase request failed:", error);
+  }
+} // <-- ADAUGĂ ACEASTĂ ACOLADĂ
 
 async function loadDonations(supabaseClient) {
 
@@ -616,6 +617,8 @@ async function loadDonations(supabaseClient) {
   );
 
   console.log("Total donated:", total);
+
+}
 
   }
 })();
