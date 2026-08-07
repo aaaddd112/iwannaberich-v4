@@ -110,37 +110,30 @@ const heroTitles = [
 
   /* ---- Navbar ---- */
 
- function initNavbar() {
+function initNavbar() {
 
     const navbar = document.querySelector(".nav");
-
-    if (!navbar) return;
+    const navToggle = ...;
+    const navMenu = ...;
 
     const onScroll = () => {
-        navbar.classList.toggle("scrolled", window.scrollY > 20);
+        ...
     };
 
     onScroll();
-
     window.addEventListener("scroll", onScroll);
-}
 
-    navToggle?.addEventListener('click', () => {
-      const open = navMenu.classList.toggle('open');
-      navToggle.setAttribute('aria-expanded', String(open));
-      document.body.style.overflow = open ? 'hidden' : '';
-    });
+    navToggle?.addEventListener(...);
 
-    navMenu?.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        navMenu.classList.remove('open');
-        navToggle?.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      });
-    });
+    navMenu?.querySelectorAll(...);
 
     initScrollSpy();
-  }
+
+} // < aici se închide initNavbar()
+
+function initScrollSpy() {
+    ...
+}
 
   function initScrollSpy() {
     const sections = ['dashboard', 'milestones', 'forbes', 'faq'];
@@ -163,9 +156,11 @@ const heroTitles = [
     sections.forEach((id) => {
       const el = document.getElementById(id);
 
-      if (el) observer.observe(el);
+      if (el) {
+
+       observer.observe(el);
     }
-    
+
     });
   }
 
