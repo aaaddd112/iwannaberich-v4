@@ -1,63 +1,1480 @@
-<!DOCTYPE html>
-<html lang="ro">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Donații & Monitorizare Reciclare</title>
-    <link rel="stylesheet" href="style.css">
+
+<link rel="icon" type="image/png" href="favicon.png?v=2">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>IWANNABERICH — Fund My Financial Delusion..</title>
+
+<meta property="og:title" content="IWANNABERICH — Fund My Financial Delusion.">
+
+<meta property="og:description"
+      content="No startup. No crypto. No AI. Just one guy with an unrealistic financial goal.">
+
+<meta property="og:type" content="website">
+
+<meta property="og:url"
+      content="https://iwannaberich.xyz">
+
+<meta property="og:image"
+      content="https://iwannaberich.xyz/og-image.png">
+
+<meta name="twitter:card" content="summary_large_image">
+
+<meta name="twitter:title"
+      content="IWANNABERICH — Fund My Financial Delusion.">
+
+<meta name="twitter:description"
+      content="No startup. No crypto. No AI. Just one guy with an unrealistic financial goal.">
+
+<meta name="twitter:image"
+      content="https://iwannaberich.xyz/og-image.png">
+
+<link rel="canonical" href="https://iwannaberich.xyz">
+
+  <meta
+    name="description"
+    content="No startup. No crypto. No AI. Just one guy with an unrealistic financial goal."
+  >
+
+  <meta name="theme-color" content="#09090b">
+
+  <style>
+    :root {
+      --bg: #09090b;
+      --card: #15151b;
+      --card-light: #1b1b23;
+      --line: #2a2a34;
+      --text: #f7f7f7;
+      --muted: #9999a5;
+      --green: #b8ff5a;
+      --yellow: #ffd56a;
+      --red: #ff9292;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% 0, #25252e, transparent 42%),
+        var(--bg);
+      color: var(--text);
+      font: 16px/1.55 Inter, system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        420px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(184, 255, 90, 0.07),
+        transparent 70%
+      );
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      width: calc(100% - 36px);
+      margin: auto;
+    }
+
+    .nav {
+      height: 78px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: -0.07em;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .logo i {
+      font-style: normal;
+      color: var(--green);
+    }
+
+    .links {
+      display: flex;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .links a {
+      transition: color 0.2s ease;
+    }
+
+    .links a:hover {
+      color: white;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 120px 0 115px;
+    }
+
+    .eyebrow,
+    .label {
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .hero h1,
+    .title {
+      letter-spacing: -0.08em;
+      line-height: 0.92;
+    }
+
+    .hero h1 {
+      font-size: clamp(4rem, 11vw, 9rem);
+      margin: 22px 0 30px;
+    }
+
+    .hero h1 em {
+      color: var(--green);
+      font-style: normal;
+    }
+
+    .lead {
+      font-size: 1.4rem;
+      margin: 0 0 8px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .hero-copy {
+      max-width: 420px;
+      margin: 0 auto 34px;
+      color: var(--muted);
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 13px 19px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-weight: 800;
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .primary {
+      background: var(--green);
+      border-color: var(--green);
+      color: #111;
+    }
+
+    .primary:hover {
+      box-shadow: 0 0 25px rgba(184, 255, 90, 0.25);
+    }
+
+    section {
+      border-top: 1px solid var(--line);
+      padding: 100px 0;
+    }
+
+    .title {
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      margin: 14px 0 42px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #191920, #111116);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 27px;
+      transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #4b4b58;
+    }
+
+    .wealth {
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 900;
+      letter-spacing: -0.1em;
+      line-height: 1;
+      color: var(--green);
+      margin-top: 8px;
+    }
+
+    .wealth-note {
+      min-height: 25px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .bar {
+      height: 9px;
+      background: #303038;
+      border-radius: 9px;
+      margin: 22px 0 12px;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 4px;
+      background: var(--green);
+      box-shadow: 0 0 18px var(--green);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .metric {
+      font-size: 1.35rem;
+      font-weight: 850;
+      margin-top: 8px;
+    }
+
+    .steps {
+      max-width: 780px;
+    }
+
+    .step {
+      display: flex;
+      gap: 24px;
+      border-bottom: 1px solid var(--line);
+      padding: 22px 0;
+    }
+
+    .step b {
+      min-width: 65px;
+      color: var(--green);
+      font-size: 0.8rem;
+    }
+
+    .step span {
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .projection {
+      margin-top: 45px;
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+
+    .projection strong {
+      display: block;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .milestone {
+      min-height: 165px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .amount {
+      font-size: 1.65rem;
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .name {
+      font-weight: 750;
+      font-size: 1.1rem;
+    }
+
+    .forbes {
+      margin-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+    }
+
+    .rank {
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 900;
+      letter-spacing: -0.1em;
+      line-height: 1;
+    }
+
+    .up {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .quote {
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 1.1rem;
+    }
+
+    .stars {
+      color: var(--yellow);
+      letter-spacing: 0.15em;
+    }
+
+    .quote cite {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-style: normal;
+    }
+
+    .leaderboard {
+      max-width: 720px;
+    }
+
+    .leader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 1.15rem;
+    }
+
+    .leader:last-child {
+      border-bottom: 0;
+    }
+
+    .leader-name {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 800;
+    }
+
+    .leader-amount {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .calculator {
+      max-width: 850px;
+    }
+
+    .calculator-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 12px;
+    }
+
+    .slider-value {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .calc-result {
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      font-weight: 900;
+    }
+
+    .calc-result span {
+      color: var(--green);
+    }
+
+    .calc-message {
+      margin-top: 15px;
+      color: var(--muted);
+    }
+
+    .cta {
+      text-align: center;
+      padding-bottom: 120px;
+    }
+
+    .cta .title {
+      max-width: 800px;
+      margin: 14px auto;
+    }
+
+    .cta p {
+      max-width: 580px;
+      margin: 0 auto 30px;
+      color: var(--muted);
+    }
+
+    .ending {
+      text-align: center;
+      padding: 110px 0;
+    }
+
+    .ending h2 {
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      letter-spacing: -0.08em;
+      line-height: 0.95;
+      margin: 15px 0;
+    }
+
+    .ending h2 span {
+      color: var(--red);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: grid;
+      place-items: center;
+      transition:
+        opacity 0.7s ease,
+        visibility 0.7s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loading-content {
+      width: min(440px, calc(100% - 40px));
+    }
+
+    .loading-logo {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      margin-bottom: 30px;
+    }
+
+    .loading-logo span {
+      color: var(--green);
+    }
+
+    .loading-status {
+      color: var(--muted);
+      min-height: 27px;
+      transition: opacity 0.25s ease;
+    }
+
+    .loading-bar {
+      height: 5px;
+      background: #292930;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .loading-bar span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--green);
+      animation: loadingProgress 3.8s ease forwards;
+    }
+
+    @keyframes loadingProgress {
+      to {
+        width: 100%;
+      }
+    }
+
+    .notification {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 500;
+      width: min(340px, calc(100% - 48px));
+      background: #18181f;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--green);
+      border-radius: 12px;
+      padding: 17px 18px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      transform: translateY(30px);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity 0.35s ease,
+        transform 0.35s ease;
+    }
+
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notification-title {
+      font-weight: 850;
+    }
+
+    .notification-amount {
+      margin-top: 4px;
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      z-index: 600;
+      transform: translate(-50%, 30px);
+      opacity: 0;
+      background: var(--green);
+      color: #111;
+      padding: 15px 22px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 900;
+      transition: 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: 0.7s;
+    }
+
+    .reveal.on {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 720px) {
+      .links {
+        gap: 10px;
+        font-size: 0.72rem;
+      }
+
+      .hero {
+        padding: 85px 0;
+      }
+
+      .dashboard,
+      .grid,
+      .calculator-box {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        gap: 10px;
+      }
+
+      .forbes {
+        display: block;
+      }
+
+      .forbes .muted {
+        margin-top: 18px;
+      }
+
+      footer {
+        display: block;
+      }
+
+      footer div + div {
+        margin-top: 10px;
+      }
+
+      .notification {
+        right: 14px;
+        bottom: 14px;
+        width: calc(100% - 28px);
+      }
+
+      .toast {
+        white-space: normal;
+        width: calc(100% - 40px);
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <header>
-        <div class="container">
-            <h1>EcoPlanet Dashboard</h1>
-            <button id="openDonationModal" class="btn-primary">Donează Acum</button>
+
+  <!-- LOADING SCREEN -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-logo">
+        I<span>WANNA</span>BERICH
+      </div>
+
+      <div class="loading-status" id="loadingStatus">
+        Analyzing your wealth...
+      </div>
+
+      <div class="loading-bar">
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="wrap nav">
+    <a class="logo" id="logo" href="#top">
+      I<i>WANNA</i>BERICH
+    </a>
+
+    <nav class="links" aria-label="Main navigation">
+      <a href="#dashboard">Numbers</a>
+      <a href="#plan">The Plan</a>
+      <a href="#milestones">Milestones</a>
+      <a href="#support">Help</a>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="wrap hero reveal">
+      <div class="eyebrow">A personal wealth initiative</div>
+
+     <h1 id="hero-title">
+    Help me become<br>
+    <span class="accent">Ridiculously Rich.</span>
+</h1>
+
+      <p class="lead">
+        I want to become ridiculously rich.
+      </p>
+
+      <p class="hero-copy">
+        No startup.<br>
+        No crypto.<br>
+        No AI.<br>
+        No revolutionary technology.<br><br>
+        Just one guy with an unrealistic financial goal.
+      </p>
+
+      <div class="buttons">
+        <a class="btn primary" href="#support">
+          Help Me Get Rich
+        </a>
+
+        <a class="btn" href="#plan">
+          Read My Terrible Business Plan
+        </a>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="wrap reveal">
+      <div class="eyebrow">Live financial intelligence</div>
+
+      <h2 class="title">
+        The numbers<br>
+        don't lie.
+      </h2>
+
+      <div class="dashboard">
+
+        <div class="card">
+          <div class="label">Current Wealth</div>
+
+          <div class="wealth" id="wealthValue">
+            €27.34
+          </div>
+
+          <div class="wealth-note" id="wealthNote">
+            Refresh detected. Wealth recalculated.
+          </div>
+
+         <div class="bar">
+    <span id="progressFill"></span>
+</div>
+
+<div class="muted" id="progressText">
+    Progress: 0%
+</div>
+
+          <p class="muted">
+            Every euro gets me statistically closer.
+          </p>
         </div>
-    </header>
 
-    <main class="container">
-        <!-- Secțiune Calculator Reciclare -->
-        <section class="calculator-section">
-            <h2>Calculator Impact Reciclare</h2>
-            <div class="form-group">
-                <label for="plasticInput">Plastic colectat (kg):</label>
-                <input type="number" id="plasticInput" min="0" value="0">
-            </div>
-            <div class="form-group">
-                <label for="paperInput">Hârtie/Carton colectat (kg):</label>
-                <input type="number" id="paperInput" min="0" value="0">
-            </div>
-            <button id="calculateBtn" class="btn-secondary">Calculează Impact</button>
-            <div id="calcResult" class="result-box"></div>
-        </section>
+        <div class="metrics">
 
-        <!-- Secțiune Supabase Leaderboard -->
-        <section class="leaderboard-section">
-            <h2>Top Donatori (Supabase Realtime)</h2>
-            <ul id="leaderboardList" class="leaderboard-key">
-                <li>Se încarcă datele...</li>
-            </ul>
-        </section>
-    </main>
+          <div class="card">
+            <div class="label">Target</div>
+            <div class="metric">
+              €1,000,000,000
+            </div>
+          </div>
 
-    <!-- Modalul de Donații cu ID-ul reparat -->
-    <div id="donationModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Susține proiectele noastre</h3>
-                <!-- Am adăugat id="closeDonationModal" pentru a rezolva eroarea din script.js -->
-                <button class="modal-close" id="closeDonationModal">&times;</button>
+          <div class="card">
+            <div class="label">Chance of Success</div>
+            <div class="metric" style="color: var(--green);">
+              104%
             </div>
-            <div class="modal-body">
-                <p>Alege suma pe care dorești să o donezi pentru plantarea de copaci:</p>
-                <div class="donation-options">
-                    <button class="btn-amount">20 RON</button>
-                    <button class="btn-amount">50 RON</button>
-                    <button class="btn-amount">100 RON</button>
-                </div>
+          </div>
+
+          <div class="card">
+            <div class="label">Financial Status</div>
+            <div class="metric">
+              Aggressively Optimistic
             </div>
+          </div>
+
+          <div class="card">
+            <div class="label">Risk Profile</div>
+            <div class="metric">
+              Your call
+            </div>
+          </div>
+
         </div>
+      </div>
+    </section>
+
+    <!-- BUSINESS PLAN -->
+    <section id="plan" class="wrap reveal">
+      <div class="eyebrow">Strategic disclosure</div>
+
+      <h2 class="title">
+        Business<br>
+        Plan
+      </h2>
+
+      <div class="steps">
+
+        <div class="step">
+          <b>STEP 01</b>
+          <span>Become rich.</span>
+        </div>
+
+        <div class="step">
+          <b>STEP 02</b>
+          <span>Figure out how afterwards.</span>
+        </div>
+
+        <div class="step">
+          <b>STEP 03</b>
+          <span>Pretend this was the strategy all along.</span>
+        </div>
+
+      </div>
+
+      <div class="projection">
+        📈
+        <strong>Up only.</strong>
+        (Source: trust me.)
+      </div>
+    </section>
+
+    <!-- MILESTONES -->
+    <section id="milestones" class="wrap reveal">
+      <div class="eyebrow">
+        A proven trajectory of unreasonable ambition
+      </div>
+
+      <h2 class="title">
+        Milestones
+      </h2>
+
+      <div class="grid">
+
+        <div class="card milestone">
+          <div class="amount">€5</div>
+          <div class="name">Coffee</div>
+        </div>
+
+        <div class="card milestone">
+          <div class="amount">€20</div>
+          <div class="name">Pizza</div>
+        </div>
+
+        <div class="card milestone">
+          <div class="amount">€50</div>
+          <div class="name">Stop comparing Lidl prices</div>
+        </div>
+
+        <div class="card milestone">
+          <div class="amount">€500</div>
+          <div class="name">Call myself an entrepreneur</div>
+        </div>
+
+        <div class="card milestone">
+          <div class="amount">€5000</div>
+          <div class="name">LinkedIn influencer</div>
+        </div>
+
+        <div class="card milestone">
+          <div class="amount">€1,000,000,000</div>
+          <div class="name">Mission Complete</div>
+        </div>
+
+      </div>
+
+      <div class="card forbes">
+        <div>
+          <div class="label">Projected Forbes Ranking</div>
+          <div class="rank">#3,928,447,182</div>
+        </div>
+
+        <div>
+          <div class="up">↑ 4 positions today</div>
+          <div class="muted">
+            Mostly because my mom donated. 😂
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section class="wrap reveal">
+      <div class="eyebrow">The people making this possible</div>
+
+      <h2 class="title">
+        Top<br>
+        Investors
+      </h2>
+
+      <div class="card leaderboard">
+
+        <div id="leaderboard"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CALCULATOR -->
+    <section class="wrap reveal">
+      <div class="eyebrow">Crowdsourced wealth simulation</div>
+
+      <h2 class="title">
+        What if<br>
+        everyone helped?
+      </h2>
+
+      <div class="card calculator">
+        <div class="calculator-box">
+
+          <div>
+            <div class="slider-label">
+              <span>Number of generous people</span>
+              <span class="slider-value" id="peopleValue">
+                20,000
+              </span>
+            </div>
+
+            <input
+              type="range"
+              id="peopleSlider"
+              min="1"
+              max="200000"
+              value="20000"
+              step="1"
+            >
+
+            <div class="slider-label" style="margin-top: 28px;">
+              <span>Donation per person</span>
+              <span class="slider-value" id="donationValue">
+                €5
+              </span>
+            </div>
+
+            <input
+              type="range"
+              id="donationSlider"
+              min="1"
+              max="100"
+              value="5"
+              step="1"
+            >
+          </div>
+
+          <div>
+            <div class="label">Projected outcome</div>
+
+            <div class="calc-result" id="calculatorResult">
+              €100,000
+            </div>
+
+            <div class="calc-message" id="calculatorMessage">
+              That's not the goal yet. But it's a start.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="wrap reveal">
+      <div class="eyebrow">Social proof, allegedly</div>
+
+      <h2 class="title">
+        Testimonials
+      </h2>
+
+      <div class="grid">
+
+        <blockquote class="card quote">
+          <div>
+            <div class="stars">★★★★★</div>
+
+            <p>
+              “I laughed.<br>
+              Then I donated.”
+            </p>
+          </div>
+
+          <cite>
+            — Random Internet Person
+          </cite>
+        </blockquote>
+
+        <blockquote class="card quote">
+          <div>
+            <div class="stars">★★★★★</div>
+
+            <p>
+              “I still don't know what I funded.”
+            </p>
+          </div>
+
+          <cite>
+            — Anonymous
+          </cite>
+        </blockquote>
+
+        <blockquote class="card quote">
+          <div>
+            <div class="stars">★★★★★</div>
+
+            <p>
+              “The UI looked expensive.”
+            </p>
+          </div>
+
+          <cite>
+            — Guy with €5 less
+          </cite>
+        </blockquote>
+
+      </div>
+    </section>
+
+<!-- WHO AM I -->
+<section class="wrap reveal" id="about">
+
+    <div class="eyebrow">
+        Behind the experiment
     </div>
 
-    <script src="script.js"></script>
+    <h2 class="title">
+        Who<br>
+        am I?
+    </h2>
+
+    <div class="card" style="max-width:850px">
+
+        <p style="font-size:1.3rem;line-height:1.8">
+
+            Hi.
+
+            <br><br>
+
+            I'm <strong>Raul</strong>.
+
+            <br><br>
+
+            I don't have a revolutionary startup.
+
+            <br>
+            I'm not building the next unicorn.
+
+            <br>
+            I'm not selling a course.
+
+            <br>
+            I'm not promising passive income.
+
+            <br><br>
+
+            I simply wondered...
+
+            <br><br>
+
+            <strong>
+                "What if I built the nicest website I could...
+                just to ask strangers on the internet
+                to help me become ridiculously rich?"
+            </strong>
+
+            <br><br>
+
+            If you're still reading this...
+
+            <br><br>
+
+            the experiment is already working.
+
+            <br><br>
+
+            And if you decide to help—
+
+            you'll officially become part of one of the weirdest internet experiments ever created.
+
+            <br><br>
+
+            Thanks for stopping by.
+
+        </p>
+
+    </div>
+
+</section>
+
+    <!-- CTA -->
+    <section id="support" class="wrap cta reveal">
+      <div class="eyebrow">
+        Your moment in financial history
+      </div>
+
+      <h2 class="title">
+        Let's make financial history.
+      </h2>
+
+      <p>
+        Support the world's least realistic financial plan.
+      </p>
+
+   <div class="payment-buttons">
+
+    <button
+        class="btn primary"
+        id="openDonationModal">
+
+        💚 Support The Challenge
+
+    </button>
+
+</div>
+
+<p class="muted">
+
+No subscriptions. No hidden fees.
+Just pure financial delusion.
+
+</p>
+    </section>
+
+<!-- CONTACT -->
+
+<section class="wrap reveal">
+
+    <div class="eyebrow">
+        Let's talk
+    </div>
+
+    <h2 class="title">
+
+        Still think<br>
+        this is ridiculous?
+
+    </h2>
+
+    <div class="card" style="text-align:center;max-width:700px;margin:auto">
+
+        <p class="lead">
+
+            Questions?
+
+            <br>
+
+            Want to say hi?
+
+            <br>
+
+            Want to convince me this is a terrible idea?
+
+        </p>
+
+        <p class="muted">
+
+            My Telegram is always open.
+
+        </p>
+
+        <br>
+
+        <a
+            class="btn primary"
+            href="https://t.me/raul98t"
+            target="_blank"
+            rel="noopener noreferrer">
+
+            💬 Message me on Telegram
+
+        </a>
+
+    </div>
+
+</section>
+
+    <!-- SCROLL ENDING -->
+    <section class="ending wrap reveal">
+      <div class="eyebrow">
+        End of financial presentation
+      </div>
+
+      <h2>
+        You've reached<br>
+        the bottom.
+      </h2>
+
+      <p class="muted">
+        Unfortunately...
+      </p>
+
+      <h2>
+        <span>I'm still not rich.</span>
+      </h2>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="wrap">
+    <div>
+      © 2026 IWANNABERICH
+    </div>
+
+    <div>
+      No equity. No returns. Not financial advice.
+      Barely a business. Definitely a goal.
+    </div>
+  </footer>
+
+  <!-- NOTIFICATION -->
+  <div class="notification" id="notification">
+    <div class="notification-title" id="notificationTitle">
+      🔔 Someone from Germany believed.
+    </div>
+
+    <div class="notification-amount" id="notificationAmount">
+      +€5
+    </div>
+  </div>
+
+  <!-- ACHIEVEMENT TOAST -->
+  <div class="toast" id="toast">
+    🏆 Achievement Unlocked<br>
+    Professional Enabler &nbsp; +100 Karma
+  </div>
+
+<!-- DONATION MODAL -->
+
+<!-- =========================
+     DONATION MODAL
+========================= -->
+
+<div class="donation-modal" id="donationModal">
+
+    <div class="donation-card">
+
+        <button
+            class="modal-close"
+            id="closeDonationModal">
+
+            ✕
+
+        </button>
+
+        <div class="donation-header">
+
+            <div class="donation-icon">
+                💚
+            </div>
+
+            <div>
+
+                <h2>
+
+                    Support the
+                    <span>Billionaire Challenge</span>
+
+                </h2>
+
+                <p>
+
+                    Help fund the world's most ambitious journey
+                    to <strong>€1,000,000,000.</strong>
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="donation-grid">
+
+            <div class="field">
+
+                <label>
+
+                    Display name
+                    <small>(optional)</small>
+
+                </label>
+
+                <input
+                    id="donationName"
+                    type="text"
+                    placeholder="Anonymous">
+
+                <small>
+
+                    This is how your name will appear
+                    on the leaderboard.
+
+                </small>
+
+            </div>
+
+            <div class="field">
+
+                <label>
+
+                    Message
+                    <small>(optional)</small>
+
+                </label>
+
+                <textarea
+                    id="donationMessage"
+                    placeholder="Wish me luck..."></textarea>
+
+                <small>
+
+                    Add a message to appear
+                    on the live feed.
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+
+                Choose amount
+
+            </label>
+
+            <div class="amount-grid">
+
+                <button
+                    class="amount-button"
+                    data-value="5">
+
+                    €5
+
+                </button>
+
+                <button
+                    class="amount-button"
+                    data-value="10">
+
+                    €10
+
+                </button>
+
+                <button
+                    class="amount-button"
+                    data-value="20">
+
+                    €20
+
+                </button>
+
+                <button
+                    class="amount-button"
+                    data-value="50">
+
+                    €50
+
+                </button>
+
+                <input
+                    id="customAmount"
+                    type="number"
+                    placeholder="Custom amount (€)"
+                    min="1">
+
+            </div>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+
+                Payment method
+
+            </label>
+
+            <div class="payment-grid">
+
+                <button
+                    class="payment-card selected"
+                    data-method="paypal">
+
+                    <div>
+
+                        <strong>
+
+                            PayPal
+
+                        </strong>
+
+                        <span>
+
+                            Secure payment with PayPal
+
+                        </span>
+
+                    </div>
+
+                </button>
+
+                <button
+                    class="payment-card"
+                    data-method="revolut">
+
+                    <div>
+
+                        <strong>
+
+                            Revolut
+
+                        </strong>
+
+                        <span>
+
+                            Support via Revolut
+
+                        </span>
+
+                    </div>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <button
+            id="continueDonation"
+            class="continue-button">
+
+            🔒 Continue
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
