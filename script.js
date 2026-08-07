@@ -14,11 +14,11 @@
   const konamiCode = [];
 
   /** @type {Record<string, string>} Configure your real payment links here */
-  const PAYMENT_LINKS = {
-    venmo: 'https://venmo.com/',
-    paypal: 'https://paypal.me/',
-    kofi: 'https://ko-fi.com/',
-  };
+
+const PAYMENT_LINKS = {
+    paypal: 'https://paypal.me/RaulTupan',
+    revolut: 'https://revolut.me/raulu8m39,
+};
   const KONAMI_SEQUENCE = [
     'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
     'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
@@ -325,11 +325,12 @@ function randomHeroTitle() {
   /* ---- Payment Links ---- */
 
   function initPaymentLinks() {
-    const map = {
-      payVenmo: PAYMENT_LINKS.venmo,
-      payPayPal: PAYMENT_LINKS.paypal,
-      payKofi: PAYMENT_LINKS.kofi,
-    };
+
+const map = {
+    payPayPal: PAYMENT_LINKS.paypal,
+    payRevolut: PAYMENT_LINKS.revolut,
+
+};
 
     Object.entries(map).forEach(([id, href]) => {
       const el = document.getElementById(id);

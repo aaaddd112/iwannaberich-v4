@@ -1175,6 +1175,19 @@ img, svg {
   margin-bottom: 24px;
 }
 
+.payment-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.payment-buttons .btn {
+    flex: 1;
+    min-width: 220px;
+    text-align: center;
+}
+
 .share-buttons {
   display: flex;
   gap: 12px;
