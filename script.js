@@ -655,6 +655,8 @@ if (debugMode) {
   testSupabaseConnection(supabaseClient);
 }
 
+}
+
 async function testSupabaseConnection(supabaseClient) {
   try {
     const { error } = await supabaseClient
