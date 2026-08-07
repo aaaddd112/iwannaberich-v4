@@ -21,8 +21,6 @@ donateButton.addEventListener("click", () => {
 
     modal.classList.add("show");
 
-});
-
   });
 
   closeBtn.addEventListener("click", () => {
