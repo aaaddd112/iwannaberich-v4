@@ -131,7 +131,6 @@ function initNavbar() {
 /* ---- următoarea funcție ---- */
 
 function initLoadingScreen() {
-    ...
 }
 
     const navbar = document.querySelector(".nav");
