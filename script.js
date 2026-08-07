@@ -235,9 +235,11 @@ function randomHeroTitle() {
       if (!isNaN(target)) animateCount(el, target);
     });
 
-    // Hero whisper reveals on scroll
-    let whisperIndex = 0;
-    heroWhisper.textContent = whispers[0];
+   // Hero whisper reveals on scroll
+   if (!heroWhisper) return;
+
+   let whisperIndex = 0;
+   heroWhisper.textContent = whispers[0];
 
     window.addEventListener('scroll', () => {
       const scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
