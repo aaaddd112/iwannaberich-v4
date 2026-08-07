@@ -39,7 +39,7 @@ donateButton.addEventListener("click", () => {
 
     }
 
-  });
+
 
 }
 
