@@ -110,13 +110,20 @@ const heroTitles = [
 
   /* ---- Navbar ---- */
 
-  function initNavbar() {
+ function initNavbar() {
+
+    const navbar = document.querySelector(".nav");
+
+    if (!navbar) return;
+
     const onScroll = () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 20);
+        navbar.classList.toggle("scrolled", window.scrollY > 20);
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+
+    window.addEventListener("scroll", onScroll);
+}
 
     navToggle?.addEventListener('click', () => {
       const open = navMenu.classList.toggle('open');
