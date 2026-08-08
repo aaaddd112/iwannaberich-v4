@@ -548,8 +548,22 @@
       transform: translateY(0);
     }
 
-    .notification-title {
+.notification-title {
       font-weight: 850;
+    }
+
+.notification-kicker {
+      margin: 0 0 6px;
+      color: var(--green);
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+.notification .notification-title {
+      margin: 0;
+      line-height: 1.35;
     }
 
     .notification-amount {

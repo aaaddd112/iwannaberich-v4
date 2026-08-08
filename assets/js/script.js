@@ -13,6 +13,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     initDonationModal();
     initScrollReveal();
+    initFinancialCommentary();
     loadDonations();
   });
 
@@ -93,5 +94,36 @@
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) { items.forEach((item) => item.classList.add("on")); return; }
     const observer = new IntersectionObserver((entries, current) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("on"); current.unobserve(entry.target); } }), { threshold: 0.1 });
     items.forEach((item) => observer.observe(item));
+  }
+
+  function initFinancialCommentary() {
+    const notice = $("financialCommentary");
+    const text = $("commentaryText");
+    if (!notice || !text || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const messages = [
+      "Forbes has not returned our calls.",
+      "Private jet budget: still theoretical.",
+      "Confidence increased by an unverified amount.",
+      "The spreadsheet remains cautiously optimistic.",
+      "A yacht owner has not objected. Yet.",
+      "Billionaire ETA: refresh the page emotionally, not literally.",
+      "Business update: ambition remains fully funded.",
+      "The plan has survived another day of scrutiny.",
+      "Current valuation: vibes, plus a progress bar.",
+      "No investors were harmed in this calculation."
+    ];
+    let previous = -1;
+    const show = () => {
+      if (document.hidden) { window.setTimeout(show, 10000); return; }
+      let next;
+      do { next = Math.floor(Math.random() * messages.length); } while (next === previous);
+      previous = next;
+      text.textContent = messages[next];
+      notice.classList.add("show");
+      window.setTimeout(() => notice.classList.remove("show"), 4800);
+      window.setTimeout(show, 18000 + Math.floor(Math.random() * 10000));
+    };
+    window.setTimeout(show, 8000);
   }
 })();
