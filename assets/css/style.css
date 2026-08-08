@@ -1112,3 +1112,50 @@
 .footer-links a:hover {
     color: var(--text);
 }
+
+/* ============================================
+   V2 POLISH: consistent navigation, footer, and content pages
+   ============================================ */
+.skip-link { position: absolute; left: 12px; top: -60px; z-index: 5000; padding: 10px 14px; background: var(--green); color: #111; border-radius: 8px; font-weight: 800; }
+.skip-link:focus { top: 12px; }
+.accent, .metric-green { color: var(--green); }
+.hero-punchline { max-width: 500px; margin: 0 auto 26px; font-weight: 700; }
+.hero-disclaimer, .cta-note { margin-top: 16px !important; font-size: .82rem; }
+.hero h1 .accent { font-style: normal; }
+.wealth-card { min-height: 260px; }
+.split-card { max-width: 790px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+.split-card-title { font-size: 1.35rem; font-weight: 850; margin: 0 0 8px; letter-spacing: -.03em; }
+.milestone-grid .milestone { min-height: 150px; }
+.site-footer { border-top: 1px solid var(--line); margin-top: 20px; background: rgba(0, 0, 0, .12); }
+.footer-grid { display: grid; grid-template-columns: 1.2fr 1fr .8fr; gap: 32px; padding: 32px 0; color: var(--muted); font-size: .85rem; }
+.footer-grid .logo { color: var(--text); }
+.footer-grid p { margin: 10px 0 0; }
+.footer-grid a:hover { color: var(--green); }
+.footer-links, .footer-legal { display: flex; flex-wrap: wrap; align-content: start; gap: 10px 18px; margin: 0; justify-content: flex-start; }
+.footer-legal { flex-direction: column; gap: 8px; }
+.modal-open { overflow: hidden; }
+.page-hero { padding: 68px 0 36px; border-top: 0; }
+.page-hero .title { margin-bottom: 14px; }
+.page-intro { max-width: 650px; margin: 0; font-size: 1.02rem; }
+.content-section { padding-top: 32px; }
+.content-card { max-width: 800px; }
+.content-card h2 { font-size: 1.25rem; margin: 28px 0 8px; letter-spacing: -.03em; }
+.content-card h2:first-child { margin-top: 0; }
+.content-card p { max-width: 700px; }
+.faq-list { display: grid; gap: 12px; max-width: 800px; }
+.faq-item { padding: 0; overflow: hidden; }
+.faq-item summary { cursor: pointer; padding: 20px; font-weight: 800; list-style-position: inside; }
+.faq-item summary:hover { color: var(--green); }
+.faq-item p { padding: 0 20px 20px; margin: 0; }
+.timeline { max-width: 800px; }
+.timeline .step { padding: 20px 0; }
+.contact-card { border-color: rgba(184, 255, 90, .35); background: linear-gradient(145deg, rgba(184,255,90,.1), #111116 55%); }
+.contact-email { color: var(--green); font-size: clamp(1.2rem, 3vw, 1.7rem); font-weight: 900; word-break: break-word; }
+@media (max-width: 720px) {
+  .nav { height: auto; min-height: 64px; padding: 14px 0; gap: 14px; align-items: flex-start; }
+  .links { justify-content: flex-end; flex-wrap: wrap; row-gap: 7px; }
+  .split-card { display: block; }
+  .split-card .btn { margin-top: 18px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+  .footer-legal { flex-direction: row; }
+}
