@@ -566,6 +566,10 @@
       line-height: 1.35;
     }
 
+@media (prefers-reduced-motion: reduce) {
+  .notification { transition: none; }
+}
+
     .notification-amount {
       margin-top: 4px;
       color: var(--green);

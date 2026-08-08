@@ -99,7 +99,7 @@
   function initFinancialCommentary() {
     const notice = $("financialCommentary");
     const text = $("commentaryText");
-    if (!notice || !text || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!notice || !text) return;
 
     const messages = [
       "Forbes has not returned our calls.",
@@ -124,6 +124,6 @@
       window.setTimeout(() => notice.classList.remove("show"), 4800);
       window.setTimeout(show, 18000 + Math.floor(Math.random() * 10000));
     };
-    window.setTimeout(show, 8000);
+    window.setTimeout(show, 1500);
   }
 })();
