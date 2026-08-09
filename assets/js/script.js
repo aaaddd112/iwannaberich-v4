@@ -65,7 +65,7 @@ let method = "patreon";
     const open = () => {
       lastFocus = document.activeElement;
       modal.classList.add("show"); modal.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open");
-      presetButtons[0]?.focus();
+      methods[0]?.focus();
     };
     const closeModal = () => {
       modal.classList.remove("show"); modal.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open");
