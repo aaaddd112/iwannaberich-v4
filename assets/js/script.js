@@ -38,19 +38,29 @@ const PAYMENT_LINKS = {
     updateProgress(total);
   }
 
-  async function loadDonations() {
-    if (!window.supabase) return;
-    try {
-      const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      const { data, error } = await client.from("Donations").select("amount");
-      if (error) throw error;
-      const total = (data || []).reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
-      renderWealth(total);
-    } catch (error) {
-      console.warn("Could not load current support:", error);
-      renderWealth(0);
-    }
+async function loadDonations() {
+  if (!window.supabase) return;
+
+  try {
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { data, error } = await client
+      .from("donations")
+      .select("amount");
+
+    if (error) throw error;
+
+    const total = (data || []).reduce(
+      (sum, item) => sum + (Number(item.amount) || 0),
+      0
+    );
+
+    renderWealth(total);
+
+  } catch (error) {
+    console.warn("Could not load current support:", error);
+    renderWealth(0);
   }
+}
 
   function initDonationModal() {
     const modal = $("donationModal");
