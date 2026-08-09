@@ -2,10 +2,11 @@
   "use strict";
 
   const GOAL = 1_000_000_000;
-  const PAYMENT_LINKS = {
-    patreon: "https://patreon.com/IwannaBeRich",
-    revolut: "https://revolut.me/raulu8m39"
-  };
+  
+const PAYMENT_LINKS = {
+  patreon: "https://patreon.com/IwannaBeRich",
+  kofi: "https://ko-fi.com/iwannaberich2026",
+};
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
   const $ = (id) => document.getElementById(id);
@@ -56,12 +57,9 @@
     if (!modal) return;
     const close = $("closeDonationModal");
     const continueButton = $("continueDonation");
-    const customAmount = $("customAmount");
     const error = $("donationError");
-    const presetButtons = [...modal.querySelectorAll(".amount-button")];
-    const methods = [...modal.querySelectorAll(".payment-card")];
-    let amount = 0;
-    let method = "patreon";
+const methods = [...modal.querySelectorAll(".payment-card")];
+let method = "patreon";
     let lastFocus = null;
 
     const open = () => {
@@ -77,16 +75,18 @@
     close?.addEventListener("click", closeModal);
     modal.addEventListener("click", (event) => { if (event.target === modal) closeModal(); });
     document.addEventListener("keydown", (event) => { if (event.key === "Escape" && modal.classList.contains("show")) closeModal(); });
-    presetButtons.forEach((button) => button.addEventListener("click", () => { amount = Number(button.dataset.value); customAmount.value = ""; presetButtons.forEach((item) => item.classList.toggle("active", item === button)); error.textContent = ""; }));
-    customAmount?.addEventListener("input", () => { amount = Number(customAmount.value) || 0; presetButtons.forEach((item) => item.classList.remove("active")); error.textContent = ""; });
     methods.forEach((button) => button.addEventListener("click", () => { method = button.dataset.method; methods.forEach((item) => item.classList.toggle("selected", item === button)); }));
-    continueButton?.addEventListener("click", () => {
-      if (!(amount > 0)) { error.textContent = "Choose an amount first — even €1 counts."; return; }
-      const link = PAYMENT_LINKS[method];
-      if (!link) { error.textContent = "That payment method is not available yet."; return; }
-      window.open(method === "revolut" ? `${link}?amount=${amount.toFixed(2)}&currency=EUR` : link, "_blank", "noopener,noreferrer");
-      closeModal();
-    });
+   continueButton?.addEventListener("click", () => {
+  const link = PAYMENT_LINKS[method];
+
+  if (!link) {
+    error.textContent = "That payment method is not available yet.";
+    return;
+  }
+
+  window.open(link, "_blank", "noopener,noreferrer");
+  closeModal();
+});
   }
 
   function initScrollReveal() {
