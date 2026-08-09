@@ -4,7 +4,6 @@
   const GOAL = 1_000_000_000;
   
 const PAYMENT_LINKS = {
-  patreon: "https://patreon.com/IwannaBeRich",
   kofi: "https://ko-fi.com/iwannaberich2026",
 };
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
@@ -62,7 +61,7 @@ renderWealth(Number(data) || 0);
     const continueButton = $("continueDonation");
     const error = $("donationError");
 const methods = [...modal.querySelectorAll(".payment-card")];
-let method = "patreon";
+let method = "kofi";
     let lastFocus = null;
 
     const open = () => {
