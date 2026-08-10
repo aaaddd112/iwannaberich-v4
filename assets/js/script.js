@@ -31,108 +31,23 @@ const PAYMENT_LINKS = {
   }
 
   function updateMilestones(total) {
-    document.querySelectorAll("[data-milestone]").forEach((milestone) => {
-      const target = Number(milestone.dataset.milestone);
-      const status = milestone.querySelector("em");
-      if (!status) return;
+  document.querySelectorAll("[data-milestone]").forEach((milestone) => {
+    const target = Number(milestone.dataset.milestone);
+    const status = milestone.querySelector("em");
 
-      const unlocked = total >= target;
-      milestone.classList.toggle("is-unlocked", unlocked);
-      status.textContent = unlocked ? "UNLOCKED" : "LOCKED";
-    });
-  }
+    if (!status) return;
 
-  function updateNextMilestone(total) {
-    const element = $("nextMilestone");
-    if (!element) return;
+    const unlocked = total >= target;
+    const wasUnlocked = milestone.classList.contains("is-unlocked");
 
-    const milestones = [...document.querySelectorAll("[data-milestone]")]
-      .map((item) => Number(item.dataset.milestone))
-      .filter(Number.isFinite)
-      .sort((a, b) => a - b);
+    milestone.classList.toggle("is-unlocked", unlocked);
+    status.textContent = unlocked ? "UNLOCKED" : "LOCKED";
 
-    const next = milestones.find((target) => total < target);
-
-    if (!next) {
-      element.textContent = "Next milestone: €1 billion — somehow.";
-      return;
+    if (unlocked && !wasUnlocked) {
+      milestone.classList.add("is-new");
+      window.setTimeout(() => milestone.classList.remove("is-new"), 850);
     }
-
-    const remaining = Math.max(next - total, 0);
-    element.innerHTML = `Next milestone: <strong>${formatEuro(next)}</strong> — <strong>${formatEuro(remaining)} to go.</strong>`;
-  }
-
-  function updateFinancialStatus(total) {
-    const element = $("financialStatusMetric");
-    if (!element) return;
-
-    let text = "Aggressively optimistic";
-    if (total >= 1_000_000_000) text = "Billionaire";
-    else if (total >= 1_000_000) text = "Millionaire-ish";
-    else if (total >= 100_000) text = "Suspiciously solvent";
-    else if (total >= 10_000) text = "Getting interesting";
-    else if (total >= 1_000) text = "No longer theoretical";
-    else if (total >= 100) text = "Mildly funded";
-    else if (total > 0) text = "Technically funded";
-
-    element.textContent = text;
-  }
-
-  function updateRiskProfile(total) {
-    const element = $("riskProfileMetric");
-    if (!element) return;
-
-    let text = "Your call";
-    if (total >= 1_000_000_000) text = "Apparently manageable";
-    else if (total >= 1_000_000) text = "Historically questionable";
-    else if (total >= 10_000) text = "Still unreasonable";
-    else if (total >= 100) text = "Mostly emotional";
-    else if (total > 0) text = "€" + total.toFixed(2) + " at stake";
-
-    element.textContent = text;
-  }
-
-  function updateConfidence(total) {
-    const element = $("confidenceMetric");
-    if (!element) return;
-
-    let text = "Unreasonable";
-    if (total >= 1_000_000_000) text = "Fine.";
-    else if (total >= 1_000_000) text = "Okay, this is happening";
-    else if (total >= 1_000) text = "Concerningly plausible";
-    else if (total >= 100) text = "Slightly less unreasonable";
-
-    element.textContent = text;
-  }
-
-  function renderWealth(total) {
-    const value = $("wealthValue");
-    const note = $("wealthNote");
-    if (value) value.textContent = formatEuro(total);
-    if (note) note.textContent = total ? "Updated from publicly recorded support." : "Be the first supporter. The progress bar is emotionally prepared.";
-    updateProgress(total);
-    updateMilestones(total);
-    updateNextMilestone(total);
-    updateConfidence(total);
-    updateFinancialStatus(total);
-    updateRiskProfile(total);
-  }
-
-async function loadDonations() {
-  if (!window.supabase) return;
-
-  try {
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const { data, error } = await client.rpc("get_current_wealth");
-
-if (error) throw error;
-
-renderWealth(Number(data) || 0);
-
-  } catch (error) {
-    console.warn("Could not load current support:", error);
-    renderWealth(0);
-  }
+  });
 }
 
   function initDonationModal() {
@@ -141,8 +56,11 @@ renderWealth(Number(data) || 0);
     const close = $("closeDonationModal");
     const continueButton = $("continueDonation");
     const error = $("donationError");
-const methods = [...modal.querySelectorAll(".payment-card")];
-let method = "kofi";
+    const methods = [...modal.querySelectorAll(".payment-card")];
+    const amountButtons = [...modal.querySelectorAll(".amount-button")];
+    const amountNote = $("amountNote");
+    let method = "kofi";
+    let suggestedAmount = Number(amountButtons[0]?.dataset.amount) || 5;
     let lastFocus = null;
 
     const open = () => {
@@ -159,17 +77,24 @@ let method = "kofi";
     modal.addEventListener("click", (event) => { if (event.target === modal) closeModal(); });
     document.addEventListener("keydown", (event) => { if (event.key === "Escape" && modal.classList.contains("show")) closeModal(); });
     methods.forEach((button) => button.addEventListener("click", () => { method = button.dataset.method; methods.forEach((item) => item.classList.toggle("selected", item === button)); }));
-   continueButton?.addEventListener("click", () => {
-  const link = PAYMENT_LINKS[method];
+    amountButtons.forEach((button) => button.addEventListener("click", () => {
+      suggestedAmount = Number(button.dataset.amount) || 5;
+      amountButtons.forEach((item) => item.classList.toggle("active", item === button));
+      if (amountNote) amountNote.textContent = `Suggested: €${suggestedAmount}. Ko-fi will handle the actual payment.`;
+      if (continueButton) continueButton.textContent = `Open Ko-fi & fund €${suggestedAmount} of the delusion`;
+    }));
 
-  if (!link) {
-    error.textContent = "That payment method is not available yet.";
-    return;
-  }
+    continueButton?.addEventListener("click", () => {
+      const link = PAYMENT_LINKS[method];
 
-  window.open(link, "_blank", "noopener,noreferrer");
-  closeModal();
-});
+      if (!link) {
+        error.textContent = "That payment method is not available yet.";
+        return;
+      }
+
+      window.open(link, "_blank", "noopener,noreferrer");
+      closeModal();
+    });
   }
 
   function initScrollReveal() {

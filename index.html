@@ -231,19 +231,35 @@
   <div class="donation-modal" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationTitle" aria-hidden="true">
     <div class="donation-card" role="document">
       <button class="modal-close" id="closeDonationModal" type="button" aria-label="Close support options">&times;</button>
-      <div class="donation-header"><div class="donation-icon" aria-hidden="true">&#9829;</div><div><p class="modal-kicker">A financially questionable decision</p><h2 id="donationTitle">Have a Ko-fi<br><span>with me.</span></h2><p>Fund the bit. Become part of the story. Pretend this is a sensible use of money.</p></div></div>
+      <div class="donation-header">
+        <div class="donation-icon" aria-hidden="true">&#9829;</div>
+        <div>
+          <p class="modal-kicker">A financially questionable decision</p>
+          <h2 id="donationTitle">How much delusion<br><span>would you like to fund?</span></h2>
+          <p>Fund the bit. Become part of the story. Pretend this is a sensible use of money.</p>
+        </div>
+      </div>
+
       <div class="donation-intent">
         <div><span class="label">What happens next</span><strong>Ko-fi opens in a new tab.</strong></div>
         <div><span class="label">What you get</span><strong>Absolutely no equity.</strong></div>
         <div><span class="label">What I get</span><strong>One more reason to keep going.</strong></div>
       </div>
-      <div class="payment-grid donation-choice-grid">
-        <button class="payment-card selected" data-method="kofi" type="button">
-          <div><strong>Ko-fi</strong><span>One-time or recurring support, handled by Ko-fi.</span></div>
-        </button>
+
+      <div class="donation-levels">
+        <span class="label">Pick your level of financial delusion</span>
+        <div class="amount-grid" role="group" aria-label="Suggested support amounts">
+          <button class="amount-button active" data-amount="5" type="button"><strong>€5</strong><span>I believe in the bit.</span></button>
+          <button class="amount-button" data-amount="10" type="button"><strong>€10</strong><span>Let's see where this goes.</span></button>
+          <button class="amount-button" data-amount="25" type="button"><strong>€25</strong><span>Financially irresponsible.</span></button>
+          <button class="amount-button" data-amount="50" type="button"><strong>€50</strong><span>Questionable decision.</span></button>
+          <button class="amount-button" data-amount="100" type="button"><strong>€100</strong><span>Okay, this is serious.</span></button>
+        </div>
+        <p class="amount-note" id="amountNote">Suggested: €5. Ko-fi will handle the actual payment.</p>
       </div>
-      <button id="continueDonation" class="continue-button" type="button">Open Ko-fi &amp; fund the delusion</button>
-      <p class="donation-footnote">The website does not process your payment. Ko-fi handles the transaction.</p>
+
+      <button id="continueDonation" class="continue-button" type="button">Open Ko-fi &amp; fund €5 of the delusion</button>
+      <p class="donation-footnote">The website does not process your payment. Ko-fi handles the transaction. The amount above is a suggestion only.</p>
       <p class="donation-error" id="donationError" aria-live="polite"></p>
     </div>
   </div>
