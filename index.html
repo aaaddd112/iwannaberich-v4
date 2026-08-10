@@ -33,6 +33,10 @@
     <nav class="links" aria-label="Main navigation">
       <a href="#numbers">Numbers</a>
       <a href="#plan">The plan</a>
+      <a href="#why">Why this exists</a>
+      <a href="#rules">The rules</a>
+      <a href="#log">The log</a>
+      <a href="#internet">The internet</a>
       <a href="support.html">Predictions</a>
       <a href="updates.html">Updates</a>
       <a href="about.html">About</a>
@@ -52,6 +56,23 @@
       <p class="hero-disclaimer">No equity. No returns. No pitch deck hidden behind a PDF.</p>
     </section>
 
+    <section id="why" class="wrap reveal" aria-labelledby="why-title">
+      <p class="eyebrow">Why does this exist?</p>
+      <h2 class="title" id="why-title">Because the internet<br><span class="plan-accent">has funded stranger things.</span></h2>
+      <div class="why-grid">
+        <div class="why-copy">
+          <p class="lead">Movies. Potato salad. Memes. Weird Kickstarter projects.</p>
+          <p class="muted">Somewhere along the way, I started wondering whether the internet could fund something even more ridiculous: one person publicly attempting to become a billionaire.</p>
+          <p class="why-punchline"><strong>It probably can't.</strong><br>That's exactly why we're documenting it.</p>
+        </div>
+        <div class="card why-card">
+          <p class="label">The premise</p>
+          <p class="metric">Turn an impossible idea into a public experiment.</p>
+          <p class="muted">No secret investors. No fake success story. Just the number, the decisions, and whatever happens next.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="numbers" class="wrap reveal" aria-labelledby="numbers-title">
       <p class="eyebrow">Starting from €0.</p>
       <h2 class="title" id="numbers-title">I WANNA BE RICH.</h2>
@@ -66,25 +87,100 @@
           <p class="wealth-note" id="wealthNote">Loading verified support...</p>
           <div class="bar" aria-hidden="true"><span id="progressFill"></span></div>
           <p class="muted" id="progressText">Progress: an objectively tiny percentage.</p>
+          <p class="next-milestone" id="nextMilestone">Next milestone: &euro;10.00 &mdash; &euro;10.00 to go.</p>
         </article>
         <div class="metrics">
           <article class="card"><p class="label">Target</p><p class="metric">&euro;1 billion</p></article>
-          <article class="card"><p class="label">Confidence</p><p class="metric metric-green">Unreasonable</p></article>
+          <article class="card"><p class="label">Confidence</p><p class="metric metric-green" id="confidenceMetric">Unreasonable</p></article>
           <article class="card"><p class="label">Business model</p><p class="metric">Public optimism</p></article>
-          <article class="card"><p class="label">Risk profile</p><p class="metric">Your call</p></article>
+          <article class="card"><p class="label">Financial status</p><p class="metric" id="financialStatusMetric">Aggressively optimistic</p></article>
+          <article class="card"><p class="label">Risk profile</p><p class="metric" id="riskProfileMetric">Your call</p></article>
         </div>
       </div>
     </section>
 
     <section id="plan" class="wrap reveal" aria-labelledby="plan-title">
-      <p class="eyebrow">Strategic disclosure</p>
-      <h2 class="title" id="plan-title">The business<br>plan.</h2>
-      <div class="steps">
-        <div class="step"><b>01</b><div><span>Become rich.</span><p class="muted">Aim high. Avoid unnecessary detail.</p></div></div>
-        <div class="step"><b>02</b><div><span>Keep showing up.</span><p class="muted">Post the progress, the setbacks, and the occasional suspiciously good day.</p></div></div>
-        <div class="step"><b>03</b><div><span>Let the internet decide.</span><p class="muted">The most sophisticated part of the strategy, somehow.</p></div></div>
+      <p class="eyebrow">The plan, unfortunately</p>
+      <h2 class="title" id="plan-title">How this becomes<br><span class="plan-accent">€1 billion.</span></h2>
+      <div class="steps plan-steps">
+        <div class="step is-current" data-milestone="10"><b>01</b><div><span>Get to €10.</span><p class="muted">Prove this can survive its first ten euros without collapsing under the weight of its own ambition.</p></div><em>STARTING</em></div>
+        <div class="step" data-milestone="100"><b>02</b><div><span>Get to €100.</span><p class="muted">Repeat the experiment. Figure out what made people care enough to come back.</p></div><em>LOCKED</em></div>
+        <div class="step" data-milestone="1000"><b>03</b><div><span>Get to €1,000.</span><p class="muted">Turn attention into something useful. Preferably something that is not another donation button.</p></div><em>LOCKED</em></div>
+        <div class="step" data-milestone="1000000"><b>04</b><div><span>Get to €1,000,000.</span><p class="muted">Build something real, document the mistakes, and see whether the internet keeps playing along.</p></div><em>LOCKED</em></div>
+        <div class="step" data-milestone="1000000000"><b>05</b><div><span>Figure out the billion.</span><p class="muted">This is the part where the business plan becomes noticeably less confident.</p></div><em>???</em></div>
       </div>
-      <p class="projection"><strong>That is the entire plan.</strong> I have been advised this may not be enough.</p>
+      <p class="projection"><strong>There is no secret master plan.</strong> The plan gets smarter as the number gets bigger.</p>
+    </section>
+
+    <section id="rules" class="wrap reveal" aria-labelledby="rules-title">
+      <p class="eyebrow">Terms of the delusion</p>
+      <h2 class="title" id="rules-title">The rules.</h2>
+      <div class="rules-list">
+        <div class="rule"><b>01</b><div><span>The number has to be real.</span><p class="muted">Current Wealth only moves when actual support makes it into the experiment.</p></div></div>
+        <div class="rule"><b>02</b><div><span>No pretending to be richer than I am.</span><p class="muted">No fake screenshots, fake donations, or suspiciously creative accounting.</p></div></div>
+        <div class="rule"><b>03</b><div><span>The goal stays €1 billion.</span><p class="muted">Because apparently €100 million was not sufficiently unreasonable.</p></div></div>
+        <div class="rule"><b>04</b><div><span>If the plan changes, I say so.</span><p class="muted">This is a public experiment. The good ideas, bad ideas, and inevitable disasters stay public.</p></div></div>
+        <div class="rule"><b>05</b><div><span>There is no guaranteed outcome.</span><p class="muted">You are supporting the experiment, not buying a piece of the imaginary empire.</p></div></div>
+      </div>
+    </section>
+
+    <section id="log" class="wrap reveal" aria-labelledby="log-title">
+      <p class="eyebrow">The public record</p>
+      <h2 class="title" id="log-title">What has happened<br>so far.</h2>
+      <div class="experiment-log">
+        <article class="log-entry">
+          <span class="log-index">01</span>
+          <div>
+            <p class="log-label">THE IDEA</p>
+            <h3>Set an objectively unreasonable target.</h3>
+            <p class="muted">€1 billion sounded sufficiently ridiculous to be worth documenting.</p>
+          </div>
+        </article>
+        <article class="log-entry">
+          <span class="log-index">02</span>
+          <div>
+            <p class="log-label">THE WEBSITE</p>
+            <h3>Make the experiment public.</h3>
+            <p class="muted">No pitch deck. No startup jargon. Just a number, a plan, and a suspicious amount of CSS.</p>
+          </div>
+        </article>
+        <article class="log-entry">
+          <span class="log-index">03</span>
+          <div>
+            <p class="log-label">THE INTERNET</p>
+            <h3>Ask strangers what they think.</h3>
+            <p class="muted">Some people support the idea. Some people think it is stupid. Both reactions are useful.</p>
+          </div>
+        </article>
+        <article class="log-entry">
+          <span class="log-index">04</span>
+          <div>
+            <p class="log-label">NEXT</p>
+            <h3>Keep going until the internet gets bored.</h3>
+            <p class="muted">Or until the number becomes genuinely difficult to ignore. Whichever happens first.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="internet" class="wrap reveal" aria-labelledby="internet-title">
+      <p class="eyebrow">The internet has opinions</p>
+      <h2 class="title" id="internet-title">The experiment<br>has been reviewed.</h2>
+      <div class="reaction-grid">
+        <blockquote class="reaction card">
+          <p>“The idea is so incredibly stupid, it could work.”</p>
+          <cite>— Reddit</cite>
+        </blockquote>
+        <blockquote class="reaction card">
+          <p>“Bro stop begging...”</p>
+          <cite>— Reddit</cite>
+        </blockquote>
+        <div class="card reaction-summary">
+          <p class="label">Current consensus</p>
+          <p class="metric metric-green">Still stupid.</p>
+          <p class="muted">The useful part is that people are talking about it. The experiment continues.</p>
+        </div>
+      </div>
     </section>
 
     <section class="wrap reveal" aria-labelledby="proof-title">
@@ -129,24 +225,25 @@
   <aside class="notification" id="financialCommentary" aria-live="polite" aria-label="Financial commentary">
     <p class="notification-kicker">Unsolicited financial commentary</p>
     <p class="notification-title" id="commentaryText">Calculating impossible odds...</p>
+    <p class="notification-amount" id="commentaryAmount"></p>
   </aside>
 
   <div class="donation-modal" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationTitle" aria-hidden="true">
     <div class="donation-card" role="document">
       <button class="modal-close" id="closeDonationModal" type="button" aria-label="Close support options">&times;</button>
-      <div class="donation-header"><div class="donation-icon" aria-hidden="true">&#9829;</div><div><h2 id="donationTitle">Support the <span>Billionaire Challenge</span></h2><p>Pick how you want to fuel the delusion.</p></div></div>
-      <div class="field">
-        <label>Do you want to help?</label>
-        <div class="payment-grid">
-          <button class="payment-card selected" data-method="kofi" type="button">
-            <div>
-              <strong>Ko-fi</strong>
-              <span>Buy me a coffee</span>
-            </div>
-          </button>
-        </div>
+      <div class="donation-header"><div class="donation-icon" aria-hidden="true">&#9829;</div><div><p class="modal-kicker">A financially questionable decision</p><h2 id="donationTitle">Have a Ko-fi<br><span>with me.</span></h2><p>Fund the bit. Become part of the story. Pretend this is a sensible use of money.</p></div></div>
+      <div class="donation-intent">
+        <div><span class="label">What happens next</span><strong>Ko-fi opens in a new tab.</strong></div>
+        <div><span class="label">What you get</span><strong>Absolutely no equity.</strong></div>
+        <div><span class="label">What I get</span><strong>One more reason to keep going.</strong></div>
       </div>
-      <button id="continueDonation" class="continue-button" type="button">Continue securely</button>
+      <div class="payment-grid donation-choice-grid">
+        <button class="payment-card selected" data-method="kofi" type="button">
+          <div><strong>Ko-fi</strong><span>One-time or recurring support, handled by Ko-fi.</span></div>
+        </button>
+      </div>
+      <button id="continueDonation" class="continue-button" type="button">Open Ko-fi &amp; fund the delusion</button>
+      <p class="donation-footnote">The website does not process your payment. Ko-fi handles the transaction.</p>
       <p class="donation-error" id="donationError" aria-live="polite"></p>
     </div>
   </div>
