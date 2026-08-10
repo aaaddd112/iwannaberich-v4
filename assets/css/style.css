@@ -1,16 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
     :root {
-      --bg: #09090b;
-      --card: #15151b;
-      --card-light: #1b1b23;
-      --line: #2a2a34;
-      --text: #f7f7f7;
-      --muted: #9999a5;
-      --green: #b8ff5a;
-      --yellow: #ffd56a;
-      --red: #ff9292;
-    }
+  --bg: #09090b;
+  --card: #15151b;
+  --card-light: #1b1b23;
+  --line: #2a2a34;
+  --text: #f7f7f7;
+  --muted: #9999a5;
+  --green: #b8ff5a;
+  --gold: #d4af37;
+  --yellow: #ffd56a;
+  --red: #ff9292;
+}
 
     * {
       box-sizing: border-box;
@@ -77,7 +78,7 @@
 
     .logo i {
       font-style: normal;
-      color: var(--green);
+      color: var(--gold);
     }
 
     .links {
@@ -102,7 +103,7 @@
 
     .eyebrow,
     .label {
-      color: var(--green);
+      color: var(--gold);
       text-transform: uppercase;
       letter-spacing: 0.15em;
       font-size: 0.75rem;
@@ -111,7 +112,8 @@
 
     .hero h1,
     .title {
-      letter-spacing: -0.08em;
+      font-family: "Playfair Display", serif;
+      letter-spacing: -0.04em;
       line-height: 0.92;
     }
 
@@ -121,7 +123,7 @@
     }
 
     .hero h1 em {
-      color: var(--green);
+      color: var(--gold);
       font-style: normal;
     }
 
@@ -191,18 +193,20 @@
     }
 
     .card {
-      background: linear-gradient(145deg, #191920, #111116);
+      background: linear-gradient(145deg, #18181f, #101014);
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 20px;
       transition:
         transform 0.25s ease,
-        border-color 0.25s ease;
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
     }
 
     .card:hover {
-      transform: translateY(-4px);
-      border-color: #4b4b58;
+      transform: translateY(-3px);
+      border-color: #42424c;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
     }
 
     .wealth {
@@ -240,7 +244,26 @@
     .metrics {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 0 22px;
+      align-content: stretch;
+    }
+
+    .metrics .card {
+      border-radius: 0;
+      border-width: 1px 0 0;
+      background: transparent;
+      padding: 18px 0;
+      box-shadow: none;
+    }
+
+    .metrics .card:nth-child(-n + 2) {
+      border-top-color: transparent;
+    }
+
+    .metrics .card:hover {
+      transform: none;
+      border-color: var(--line);
+      box-shadow: none;
     }
 
     .metric {
@@ -262,7 +285,7 @@
 
     .step b {
       min-width: 65px;
-      color: var(--green);
+      color: var(--gold);
       font-size: 0.8rem;
     }
 
@@ -1149,7 +1172,18 @@
    ============================================ */
 .skip-link { position: absolute; left: 12px; top: -60px; z-index: 5000; padding: 10px 14px; background: var(--green); color: #111; border-radius: 8px; font-weight: 800; }
 .skip-link:focus { top: 12px; }
-.accent, .metric-green { color: var(--green); }
+.accent { color: var(--gold); }
+.metric-green { color: var(--green); }
+.section-intro {
+  max-width: 650px;
+  margin: -8px 0 30px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+.section-intro strong {
+  color: var(--gold);
+  font-weight: 800;
+}
 .hero-punchline { max-width: 500px; margin: 0 auto 26px; font-weight: 700; }
 .hero-disclaimer, .cta-note { margin-top: 16px !important; font-size: .82rem; }
 .hero h1 .accent { font-style: normal; }
@@ -1189,4 +1223,67 @@
   .split-card .btn { margin-top: 18px; }
   .footer-grid { grid-template-columns: 1fr; gap: 20px; }
   .footer-legal { flex-direction: row; }
+}
+
+
+/* ============================================
+   V2 VISUAL IDENTITY — dark luxury + absurdity
+   ============================================ */
+
+.hero h1 {
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-copy {
+  line-height: 1.7;
+}
+
+.hero-punchline {
+  color: var(--text);
+  opacity: 0.88;
+}
+
+.hero-disclaimer {
+  color: #777781;
+}
+
+.wealth-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.wealth-card::after {
+  content: "€1B";
+  position: absolute;
+  right: 18px;
+  bottom: -16px;
+  font-family: "Playfair Display", serif;
+  font-size: 5rem;
+  line-height: 1;
+  color: rgba(212, 175, 55, 0.035);
+  pointer-events: none;
+}
+
+.wealth-card .label {
+  color: var(--muted);
+}
+
+.wealth {
+  text-shadow: 0 0 28px rgba(184, 255, 90, 0.12);
+}
+
+.bar {
+  background: #25252c;
+}
+
+.bar span {
+  box-shadow: 0 0 14px rgba(184, 255, 90, 0.45);
+}
+
+@media (max-width: 720px) {
+  .metrics {
+    gap: 0 14px;
+  }
 }

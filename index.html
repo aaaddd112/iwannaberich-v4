@@ -21,6 +21,9 @@
   <meta name="twitter:description" content="No startup. No crypto. No AI. Just one anonymous person trying to become ridiculously rich in public.">
   <meta name="twitter:image" content="https://iwannaberich.xyz/og-image.png">
   <title>IWANNABERICH — Fund My Financial Delusion.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -40,7 +43,7 @@
     <section class="wrap hero reveal" aria-labelledby="hero-title">
       <p class="eyebrow">A public experiment in unreasonable ambition</p>
       <h1 id="hero-title">Help me become<br><span class="accent">ridiculously rich.</span></h1>
-      <p class="hero-copy">No startup. No crypto. No AI. Just a very public attempt to reach &euro;1,000,000,000 through consistency, curiosity, and the internet being the internet.</p>
+      <p class="hero-copy">No startup. No crypto. No AI. Just a very public attempt to reach &euro;1,000,000,000. The strategy is mostly consistency, curiosity, and seeing what the internet does with a terrible idea.</p>
       <p class="hero-punchline">Will it work? Probably not. Is that a reason not to document it? Also probably not.</p>
       <div class="buttons">
         <button class="btn primary" id="openDonationModal" type="button">Support the experiment</button>
@@ -50,8 +53,12 @@
     </section>
 
     <section id="numbers" class="wrap reveal" aria-labelledby="numbers-title">
-      <p class="eyebrow">The only dashboard that matters</p>
-      <h2 class="title" id="numbers-title">The numbers<br>do not lie.</h2>
+      <p class="eyebrow">Starting from €0.</p>
+      <h2 class="title" id="numbers-title">I WANNA BE RICH.</h2>
+      <p class="section-intro">
+        The goal is simple: <strong>€1,000,000,000.</strong><br>
+        The plan is... not so much.
+      </p>
       <div class="dashboard">
         <article class="card wealth-card">
           <p class="label">Current wealth</p>
@@ -128,12 +135,19 @@
     <div class="donation-card" role="document">
       <button class="modal-close" id="closeDonationModal" type="button" aria-label="Close support options">&times;</button>
       <div class="donation-header"><div class="donation-icon" aria-hidden="true">&#9829;</div><div><h2 id="donationTitle">Support the <span>Billionaire Challenge</span></h2><p>Pick how you want to fuel the delusion.</p></div></div>
-      <div class="field"><label>Do you want to help?</label><div class="payment-grid"><button class="payment-card selected" data-method="kofi" type="button">
-  <div>
-    <strong>Ko-fi</strong>
-    <span>Buy me a coffee</span>
-  </div>
-      <button id="continueDonation" class="continue-button" type="button">Continue securely</button><p class="donation-error" id="donationError" aria-live="polite"></p>
+      <div class="field">
+        <label>Do you want to help?</label>
+        <div class="payment-grid">
+          <button class="payment-card selected" data-method="kofi" type="button">
+            <div>
+              <strong>Ko-fi</strong>
+              <span>Buy me a coffee</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      <button id="continueDonation" class="continue-button" type="button">Continue securely</button>
+      <p class="donation-error" id="donationError" aria-live="polite"></p>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
