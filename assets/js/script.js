@@ -30,6 +30,57 @@ const PAYMENT_LINKS = {
     if (text) text.textContent = total ? `${progress.toFixed(7)}% of the way there. Technically.` : "The bar is ready. The money is taking its time.";
   }
 
+  async function loadDonations() {
+    const wealthValue = $("wealthValue");
+    const wealthNote = $("wealthNote");
+    const nextMilestone = $("nextMilestone");
+
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_current_wealth`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: "{}"
+      });
+
+      if (!response.ok) throw new Error(`Supabase returned ${response.status}`);
+
+      const payload = await response.json();
+      const rawTotal = typeof payload === "number"
+        ? payload
+        : Array.isArray(payload)
+          ? payload[0]
+          : payload?.total ?? payload?.current_wealth ?? payload?.wealth ?? payload?.amount;
+      const total = Number(rawTotal);
+
+      if (!Number.isFinite(total)) throw new Error("Unexpected wealth response");
+
+      if (wealthValue) wealthValue.textContent = formatEuro(total);
+      if (wealthNote) wealthNote.textContent = "Updated from publicly recorded support.";
+      updateProgress(total);
+      updateMilestones(total);
+
+      const targets = [...document.querySelectorAll("[data-milestone]")]
+        .map((item) => Number(item.dataset.milestone))
+        .filter(Number.isFinite)
+        .sort((a, b) => a - b);
+      const next = targets.find((target) => total < target);
+      if (nextMilestone) {
+        nextMilestone.textContent = next
+          ? `Next milestone: ${formatEuro(next)} — ${formatEuro(Math.max(next - total, 0))} to go.`
+          : "All listed milestones cleared. The billion remains.";
+      }
+    } catch (error) {
+      console.error("Could not load verified wealth:", error);
+      if (wealthNote) wealthNote.textContent = "Verified support is temporarily unavailable.";
+      updateProgress(0);
+      updateMilestones(0);
+    }
+  }
+
   function updateMilestones(total) {
   const milestones = [...document.querySelectorAll("[data-milestone]")];
 

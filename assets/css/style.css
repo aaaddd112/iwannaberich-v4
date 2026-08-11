@@ -1865,4 +1865,76 @@ body::before {
   font-size: 0.82rem;
   font-weight: 700;
 }
-\n\n/* =========================================================\n   V2.3 — MOBILE POLISH\n   ========================================================= */\n\nhtml, body { overflow-x: hidden; }\n\n@keyframes wealthPulse {\n  0% { transform: scale(1); }\n  45% { transform: scale(1.018); }\n  100% { transform: scale(1); }\n}\n\n@keyframes milestoneUnlock {\n  0% { transform: translateY(0); }\n  35% { transform: translateY(-3px); }\n  100% { transform: translateY(0); }\n}\n\n.wealth-value.is-updating { animation: wealthPulse 520ms ease; }\n.plan-steps .step.is-unlocked.is-new { animation: milestoneUnlock 700ms ease; }\n\n@media (max-width: 560px) {\n  .hero { padding-top: 42px; padding-bottom: 54px; }\n  .hero .eyebrow { max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.45; }\n  .hero h1 { margin-top: 12px; margin-bottom: 18px; font-size: clamp(2.55rem, 13.2vw, 4.2rem); letter-spacing: -0.055em; }\n  .hero-copy { max-width: 350px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.58; }\n  .hero-punchline { max-width: 350px; margin: 0 auto 20px; line-height: 1.45; font-size: 0.92rem; }\n  .hero-disclaimer { max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.45; }\n  .buttons { gap: 10px; }\n  .buttons .btn { min-height: 54px; display: grid; place-items: center; }\n\n  .notification {\n    right: 12px; bottom: max(12px, env(safe-area-inset-bottom));\n    width: calc(100% - 24px); max-width: none;\n    padding: 12px 14px 13px; border-radius: 15px;\n  }\n  .notification-kicker { margin-bottom: 5px; font-size: 0.58rem; letter-spacing: 0.07em; }\n  .notification-kicker::before { width: 6px; height: 6px; }\n  .notification .notification-title { font-size: 0.82rem; line-height: 1.3; }\n  .notification-amount { margin-top: 4px; font-size: 0.7rem; }\n\n  .donation-modal { align-items: flex-end; padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }\n  .donation-card { width: 100%; max-height: calc(100dvh - 20px); border-radius: 20px; padding: 20px 16px; }\n  .donation-header { gap: 12px; }\n  .donation-header h2 { font-size: clamp(1.55rem, 7vw, 2rem); line-height: 0.98; }\n  .donation-intent { gap: 8px; }\n  .donation-intent > div { padding: 10px 12px; }\n  .amount-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }\n  .amount-button { min-height: 72px; }\n  .amount-button:last-child { grid-column: 1 / -1; }\n  .continue-button { min-height: 52px; }\n\n  .metrics { gap: 8px; }\n  .metrics .card { min-height: 100px; }\n  .step { padding: 20px 0; }\n  .step span { line-height: 1.25; }\n  .step .muted { line-height: 1.55; }\n  .cta { padding: 50px 16px; }\n  footer { padding-bottom: max(28px, env(safe-area-inset-bottom)); }\n}\n\n@media (max-width: 360px) {\n  .hero h1 { font-size: 2.5rem; }\n  .hero-copy, .hero-punchline { font-size: 0.86rem; }\n  .notification .notification-title { font-size: 0.78rem; }\n  .notification-kicker { font-size: 0.54rem; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .wealth-value.is-updating, .plan-steps .step.is-unlocked.is-new { animation: none !important; }\n}\n
+
+
+/* =========================================================
+   V2.3 — MOBILE POLISH
+   ========================================================= */
+
+html, body { overflow-x: hidden; }
+
+@keyframes wealthPulse {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.018); }
+  100% { transform: scale(1); }
+}
+
+@keyframes milestoneUnlock {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+.wealth-value.is-updating { animation: wealthPulse 520ms ease; }
+.plan-steps .step.is-unlocked.is-new { animation: milestoneUnlock 700ms ease; }
+
+@media (max-width: 560px) {
+  .hero { padding-top: 42px; padding-bottom: 54px; }
+  .hero .eyebrow { max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.45; }
+  .hero h1 { margin-top: 12px; margin-bottom: 18px; font-size: clamp(2.55rem, 13.2vw, 4.2rem); letter-spacing: -0.055em; }
+  .hero-copy { max-width: 350px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.58; }
+  .hero-punchline { max-width: 350px; margin: 0 auto 20px; line-height: 1.45; font-size: 0.92rem; }
+  .hero-disclaimer { max-width: 340px; margin-left: auto; margin-right: auto; line-height: 1.45; }
+  .buttons { gap: 10px; }
+  .buttons .btn { min-height: 54px; display: grid; place-items: center; }
+
+  .notification {
+    right: 12px; bottom: max(12px, env(safe-area-inset-bottom));
+    width: calc(100% - 24px); max-width: none;
+    padding: 12px 14px 13px; border-radius: 15px;
+  }
+  .notification-kicker { margin-bottom: 5px; font-size: 0.58rem; letter-spacing: 0.07em; }
+  .notification-kicker::before { width: 6px; height: 6px; }
+  .notification .notification-title { font-size: 0.82rem; line-height: 1.3; }
+  .notification-amount { margin-top: 4px; font-size: 0.7rem; }
+
+  .donation-modal { align-items: flex-end; padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+  .donation-card { width: 100%; max-height: calc(100dvh - 20px); border-radius: 20px; padding: 20px 16px; }
+  .donation-header { gap: 12px; }
+  .donation-header h2 { font-size: clamp(1.55rem, 7vw, 2rem); line-height: 0.98; }
+  .donation-intent { gap: 8px; }
+  .donation-intent > div { padding: 10px 12px; }
+  .amount-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .amount-button { min-height: 72px; }
+  .amount-button:last-child { grid-column: 1 / -1; }
+  .continue-button { min-height: 52px; }
+
+  .metrics { gap: 8px; }
+  .metrics .card { min-height: 100px; }
+  .step { padding: 20px 0; }
+  .step span { line-height: 1.25; }
+  .step .muted { line-height: 1.55; }
+  .cta { padding: 50px 16px; }
+  footer { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 360px) {
+  .hero h1 { font-size: 2.5rem; }
+  .hero-copy, .hero-punchline { font-size: 0.86rem; }
+  .notification .notification-title { font-size: 0.78rem; }
+  .notification-kicker { font-size: 0.54rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wealth-value.is-updating, .plan-steps .step.is-unlocked.is-new { animation: none !important; }
+}
