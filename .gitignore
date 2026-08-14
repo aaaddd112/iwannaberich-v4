@@ -6,3 +6,7 @@ desktop.ini
 .env.*
 .vscode/
 .idea/
+
+# Supabase local environment
+supabase/.temp/
+supabase/functions/.env
