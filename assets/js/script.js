@@ -4,7 +4,7 @@
   const GOAL = 1_000_000_000;
   
 const PAYMENT_LINKS = {
-  kofi: "https://ko-fi.com/iwannaberich2026",
+  stripe: "https://buy.stripe.com/bJe5kDfSI9Zf5HEfgpaAw00",
 };
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
@@ -153,39 +153,40 @@ const PAYMENT_LINKS = {
     const close = $("closeDonationModal");
     const continueButton = $("continueDonation");
     const error = $("donationError");
-    const methods = [...modal.querySelectorAll(".payment-card")];
-    const amountButtons = [...modal.querySelectorAll(".amount-button")];
-    const amountNote = $("amountNote");
-    let method = "kofi";
-    let suggestedAmount = Number(amountButtons[0]?.dataset.amount) || 5;
     let lastFocus = null;
 
     const open = () => {
       lastFocus = document.activeElement;
-      modal.classList.add("show"); modal.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open");
-      methods[0]?.focus();
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      continueButton?.focus();
     };
+
     const closeModal = () => {
-      modal.classList.remove("show"); modal.setAttribute("aria-hidden", "true"); document.body.classList.remove("modal-open");
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
       lastFocus?.focus();
     };
-    document.querySelectorAll("#openDonationModal, [data-open-donation]").forEach((button) => button.addEventListener("click", open));
+
+    document.querySelectorAll("#openDonationModal, [data-open-donation]")
+      .forEach((button) => button.addEventListener("click", open));
+
     close?.addEventListener("click", closeModal);
-    modal.addEventListener("click", (event) => { if (event.target === modal) closeModal(); });
-    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && modal.classList.contains("show")) closeModal(); });
-    methods.forEach((button) => button.addEventListener("click", () => { method = button.dataset.method; methods.forEach((item) => item.classList.toggle("selected", item === button)); }));
-    amountButtons.forEach((button) => button.addEventListener("click", () => {
-      suggestedAmount = Number(button.dataset.amount) || 5;
-      amountButtons.forEach((item) => item.classList.toggle("active", item === button));
-      if (amountNote) amountNote.textContent = `Suggested: €${suggestedAmount}. Ko-fi will handle the actual payment.`;
-      if (continueButton) continueButton.textContent = `Open Ko-fi & fund €${suggestedAmount} of the delusion`;
-    }));
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && modal.classList.contains("show")) closeModal();
+    });
 
     continueButton?.addEventListener("click", () => {
-      const link = PAYMENT_LINKS[method];
+      const link = PAYMENT_LINKS.stripe;
 
       if (!link) {
-        error.textContent = "That payment method is not available yet.";
+        if (error) error.textContent = "Stripe checkout is not available yet.";
         return;
       }
 
