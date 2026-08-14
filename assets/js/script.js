@@ -12,11 +12,13 @@ const PAYMENT_LINKS = {
 
   document.addEventListener("DOMContentLoaded", () => {
     initMobileNav();
+    initDropdownNav();
     initDonationModal();
     initScrollReveal();
     initFinancialCommentary();
     initShare();
     initMicroInteractions();
+    initPersonalityLayer();
     loadDonations();
   });
 
@@ -47,6 +49,53 @@ const PAYMENT_LINKS = {
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") closeNav();
+    });
+  }
+
+
+  function initDropdownNav() {
+    const dropdowns = [...document.querySelectorAll(".nav-dropdown")];
+    if (!dropdowns.length) return;
+
+    dropdowns.forEach((dropdown) => {
+      const trigger = dropdown.querySelector(".nav-drop-trigger");
+      if (!trigger) return;
+
+      trigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const willOpen = !dropdown.classList.contains("is-open");
+
+        dropdowns.forEach((item) => {
+          item.classList.remove("is-open");
+          item.querySelector(".nav-drop-trigger")?.setAttribute("aria-expanded", "false");
+        });
+
+        dropdown.classList.toggle("is-open", willOpen);
+        trigger.setAttribute("aria-expanded", String(willOpen));
+      });
+    });
+
+    document.addEventListener("click", () => {
+      dropdowns.forEach((dropdown) => {
+        dropdown.classList.remove("is-open");
+        dropdown.querySelector(".nav-drop-trigger")?.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      dropdowns.forEach((dropdown) => {
+        dropdown.classList.remove("is-open");
+        dropdown.querySelector(".nav-drop-trigger")?.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    document.querySelectorAll(".card, .hero-card, .join-card, .split-card").forEach((card) => {
+      card.addEventListener("pointermove", (event) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mx", `${event.clientX - rect.left - 80}px`);
+        card.style.setProperty("--my", `${event.clientY - rect.top - 80}px`);
+      });
     });
   }
 
@@ -240,26 +289,24 @@ const PAYMENT_LINKS = {
     if (!notice || !text) return;
 
     const notifications = [
-      { title: "🔔 Elon Musk has not responded yet.", amount: "Still waiting..." },
-      { title: "🔔 Warren Buffett viewed your business plan.", amount: "No comment." },
-      { title: "🔔 Jeff Bezos accidentally closed the tab.", amount: "Unfortunate." },
-      { title: "🔔 Forbes is pretending not to notice.", amount: "For now." },
-      { title: "🔔 Mark Cuban said 'interesting'.", amount: "That's basically an investment." },
-      { title: "🔔 Your accountant has questions.", amount: "You don't have an accountant." },
-      { title: "🔔 A billionaire was spotted nearby.", amount: "Probably unrelated." },
-      { title: "🔔 The Forbes 30 Under 30 committee has concerns.", amount: "You were not nominated." },
-      { title: "🔔 Someone searched 'how to become a billionaire'.", amount: "Excellent research." },
-      { title: "🔔 Your net worth has been checked.", amount: "Still €1." },
-      { title: "🔔 Financial Times has entered the chat.", amount: "They left immediately." },
-      { title: "🔔 A venture capitalist asked for your pitch deck.", amount: "You don't have one." },
-      { title: "🔔 Your mother asked what this website is.", amount: "You have no answer." },
+      { title: "🔔 €1.00 has entered the building.", amount: "This changes everything. Probably." },
+      { title: "🔔 Your net worth was checked.", amount: "Still suspiciously low." },
+      { title: "🔔 The billionaire department called.", amount: "Wrong number." },
+      { title: "🔔 Someone opened the business plan.", amount: "There is one page." },
+      { title: "🔔 A financial advisor has concerns.", amount: "You don't have a financial advisor." },
+      { title: "🔔 The internet has been notified.", amount: "Nobody knows what to do with this information." },
+      { title: "🔔 Forbes has not called.", amount: "Everything is proceeding normally." },
+      { title: "🔔 Your accountant is typing…", amount: "You don't have an accountant." },
+      { title: "🔔 Someone suggested getting a real job.", amount: "Counterpoint: website." },
+      { title: "🔔 Billionaire status detected.", amount: "False alarm. Very false alarm." },
       { title: "🔔 Someone on Reddit called this stupid.", amount: "Engagement is engagement." },
-      { title: "🔔 Someone on Reddit actually liked the idea.", amount: "Suspicious." },
-      { title: "🔔 The internet has been notified.", amount: "Nobody knows why." },
-      { title: "🔔 Billionaire status detected.", amount: "False alarm." },
-      { title: "🔔 Private jet department contacted you.", amount: "You don't have a private jet department." },
-      { title: "🔔 Your financial advisor is typing...", amount: "You don't have one." },
-      { title: "🔔 Forbes has refreshed the page.", amount: "Nothing changed." }
+      { title: "🔔 Someone actually likes the idea.", amount: "Suspicious." },
+      { title: "🔔 The plan has been reviewed.", amount: "The plan would like to appeal." },
+      { title: "🔔 Your wealth increased by €1.00.", amount: "Please remain calm." },
+      { title: "🔔 New financial strategy discovered.", amount: "Step 1: make money." },
+      { title: "🔔 Private jet budget created.", amount: "Balance: €0.00." },
+      { title: "🔔 This website is still online.", amount: "Against all odds." },
+      { title: "🔔 Your billionaire application is pending.", amount: "Estimated wait: unreasonable." }
     ];
 
     let previous = -1;
@@ -287,4 +334,104 @@ const PAYMENT_LINKS = {
 
     window.setTimeout(show, 1500);
   }
+  function initPersonalityLayer() {
+    const logo = document.querySelector("#logo");
+    const wealthCard = document.querySelector(".wealth-card");
+    const terminal = $("secretTerminal");
+    const terminalBody = $("secretTerminalBody");
+    const closeSecret = $("closeSecret");
+    let logoClicks = 0;
+    let wealthClicks = 0;
+    let clickTimer = null;
+    let typed = "";
+
+    const openSecret = (mode) => {
+      if (!terminal || !terminalBody) return;
+      const messages = {
+        logo: [
+          "> connecting to billionaire_mainframe…",
+          "> checking wealth…",
+          "> checking ambition…",
+          "> checking common sense…",
+          "> ERROR: common sense not found.",
+          ">",
+          "> <span class=\"secret-purple\">CONGRATULATIONS.</span>",
+          "> You found something that does absolutely nothing.",
+          "> This is probably a metaphor."
+        ],
+        wealth: [
+          "> opening restricted wealth controls…",
+          "> current wealth: real",
+          "> billionaire wealth: unavailable",
+          "> solution: acquire more money",
+          ">",
+          "> <span class=\"secret-purple\">excellent strategy.</span>"
+        ],
+        rich: [
+          "> command received: RICH",
+          "> searching…",
+          "> searching…",
+          "> searching…",
+          ">",
+          "> result: <span class=\"secret-purple\">not yet</span>",
+          "> keep trying."
+        ],
+        konami: [
+          "> CHEAT CODE ACCEPTED",
+          "> unlocking billionaire mode…",
+          "> ███████████████ 100%",
+          ">",
+          "> billionaire mode status: <span class=\"secret-purple\">still locked</span>",
+          "> nice try though."
+        ]
+      };
+      terminalBody.innerHTML = messages[mode].join("\n");
+      terminal.classList.add("show");
+      terminal.setAttribute("aria-hidden","false");
+      document.body.classList.add("secret-glitch");
+      setTimeout(()=>document.body.classList.remove("secret-glitch"),900);
+    };
+
+    const close = () => { terminal?.classList.remove("show"); terminal?.setAttribute("aria-hidden","true"); };
+    closeSecret?.addEventListener("click", close);
+    terminal?.addEventListener("click", e=>{ if(e.target===terminal) close(); });
+
+    logo?.addEventListener("click", e=>{
+      logoClicks++;
+      clearTimeout(clickTimer);
+      clickTimer=setTimeout(()=>logoClicks=0,1200);
+      if(logoClicks>=5){ e.preventDefault(); logoClicks=0; openSecret("logo"); }
+    });
+
+    wealthCard?.addEventListener("click",()=>{
+      wealthClicks++;
+      clearTimeout(clickTimer);
+      clickTimer=setTimeout(()=>wealthClicks=0,1400);
+      if(wealthClicks>=7){ wealthClicks=0; openSecret("wealth"); }
+    });
+
+    document.addEventListener("keydown", e=>{
+      if(e.key.length===1) typed=(typed+e.key.toLowerCase()).slice(-12);
+      if(typed.endsWith("rich")){ typed=""; openSecret("rich"); }
+    });
+
+    const konami=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+    let kp=0;
+    document.addEventListener("keydown",e=>{
+      const key=e.key;
+      if(key===konami[kp] || key.toLowerCase()===konami[kp]) kp++; else kp=0;
+      if(kp===konami.length){ kp=0; openSecret("konami"); }
+    });
+
+    // Very rare visual glitch: intentionally harmless and never changes financial data.
+    const maybeGlitch=()=>{
+      if(Math.random()>.72){
+        document.body.classList.add("rare-glitch");
+        setTimeout(()=>document.body.classList.remove("rare-glitch"),650);
+      }
+      setTimeout(maybeGlitch, 28000+Math.random()*22000);
+    };
+    setTimeout(maybeGlitch, 18000);
+  }
+
 })();

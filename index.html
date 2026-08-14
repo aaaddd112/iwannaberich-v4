@@ -43,14 +43,30 @@
     <a class="logo" id="logo" href="index.html" aria-label="IWANNABERICH home">I<i>WANNA</i>BERICH</a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open navigation"><span></span><span></span><span></span></button>
 <nav class="links" id="main-nav" aria-label="Main navigation">
-      <a href="#numbers">Numbers</a>
-      <a href="#plan">The plan</a>
-      <a href="#why">Why this exists</a>
-      <a href="#rules">The rules</a>
-      <a href="#log">The log</a>
-      <a href="#join">Join the experiment</a>
-      <a href="#internet">The internet</a>
-      <a href="support.html">Predictions</a>
+      <div class="nav-dropdown">
+        <button class="nav-drop-trigger" type="button" aria-expanded="false">Explore <span>⌄</span></button>
+        <div class="nav-drop-menu">
+          <a href="#numbers"><strong>Numbers</strong><small>Live wealth counter</small></a>
+          <a href="#plan"><strong>The plan</strong><small>How the experiment works</small></a>
+          <a href="#milestones"><strong>Milestones</strong><small>What's next</small></a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button class="nav-drop-trigger" type="button" aria-expanded="false">The experiment <span>⌄</span></button>
+        <div class="nav-drop-menu">
+          <a href="#why"><strong>Why this exists</strong><small>The story behind it</small></a>
+          <a href="#rules"><strong>The rules</strong><small>How the game is played</small></a>
+          <a href="#log"><strong>The log</strong><small>Public record</small></a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button class="nav-drop-trigger" type="button" aria-expanded="false">Community <span>⌄</span></button>
+        <div class="nav-drop-menu">
+          <a href="#join"><strong>Join the experiment</strong><small>Telegram community</small></a>
+          <a href="#internet"><strong>The internet</strong><small>What people are saying</small></a>
+          <a href="support.html"><strong>Predictions</strong><small>Make your call</small></a>
+        </div>
+      </div>
       <a href="updates.html">Updates</a>
       <a href="about.html">About</a>
     </nav>
@@ -63,7 +79,7 @@
       <p class="hero-copy">No startup. No crypto. No AI. Just a very public attempt to reach &euro;1,000,000,000. The strategy is mostly consistency, curiosity, and seeing what the internet does with a terrible idea.</p>
       <p class="hero-punchline">Will it work? Probably not. Is that a reason not to document it? Also probably not.</p>
       <div class="buttons">
-        <button class="btn primary" id="openDonationModal" type="button">Support the experiment</button>
+        <button class="btn primary questionable-cta" id="openDonationModal" type="button">MAKE A QUESTIONABLE DECISION <span>↗</span></button>
         <a class="btn" href="#plan">Read the terrible plan</a>
       </div>
       <div class="share-strip" aria-label="Share IWANNABERICH">
@@ -120,10 +136,10 @@
         </article>
         <div class="metrics">
           <article class="card"><p class="label">Target</p><p class="metric">&euro;1 billion</p></article>
-          <article class="card"><p class="label">Confidence</p><p class="metric metric-green" id="confidenceMetric">Unreasonable</p></article>
+          <article class="card funny-tooltip" data-tooltip="Scientifically measured using vibes."><p class="label">Confidence</p><p class="metric metric-green" id="confidenceMetric">Unreasonable</p></article>
           <article class="card"><p class="label">Business model</p><p class="metric">Public optimism</p></article>
           <article class="card"><p class="label">Financial status</p><p class="metric" id="financialStatusMetric">Aggressively optimistic</p></article>
-          <article class="card"><p class="label">Risk profile</p><p class="metric" id="riskProfileMetric">Your call</p></article>
+          <article class="card funny-tooltip" data-tooltip="Risk assessment performed by a guy with a website."><p class="label">Risk profile</p><p class="metric" id="riskProfileMetric">Your call</p></article>
         </div>
       </div>
     </section>
@@ -240,11 +256,29 @@
       </div>
     </section>
 
+    <section id="things-could-go-wrong" class="wrap reveal danger-section" aria-labelledby="danger-title">
+      <div class="danger-head">
+        <div>
+          <p class="eyebrow">A completely unnecessary warning</p>
+          <h2 class="title" id="danger-title">Things that could<br><span class="plan-accent">go wrong.</span></h2>
+        </div>
+        <span class="danger-status mono">STATUS: PROBABLY FINE</span>
+      </div>
+      <div class="danger-grid">
+        <article class="danger-card"><span>01</span><strong>Almost everything.</strong><p>We have deliberately left room for this possibility.</p></article>
+        <article class="danger-card"><span>02</span><strong>The internet gets bored.</strong><p>Honestly, fair. There are many tabs open.</p></article>
+        <article class="danger-card"><span>03</span><strong>The plan stops making sense.</strong><p>Good news: it started that way.</p></article>
+        <article class="danger-card"><span>04</span><strong>Taxes.</strong><p>Future me can worry about future me.</p></article>
+        <article class="danger-card"><span>05</span><strong>We run out of ideas.</strong><p>Then we ask the internet for worse ones.</p></article>
+        <article class="danger-card danger-card-final"><span>06</span><strong>It actually works.</strong><p>This would be extremely inconvenient for the joke.</p></article>
+      </div>
+    </section>
+
     <section id="support" class="wrap cta reveal" aria-labelledby="support-title">
       <p class="eyebrow">Your moment in financial history</p>
       <h2 class="title" id="support-title">Fund the least<br>realistic plan online.</h2>
       <p>One-time support or monthly encouragement. Either way, you become part of an objectively strange story.</p>
-      <button class="btn primary" data-open-donation type="button">Support the experiment</button>
+      <button class="btn primary questionable-cta" data-open-donation type="button">MAKE A QUESTIONABLE DECISION <span>↗</span></button>
       <p class="muted cta-note">Support is voluntary. Contributions are not investments and are not refundable.</p>
     </section>
   </main>
@@ -262,6 +296,8 @@
     <p class="notification-title" id="commentaryText">Calculating impossible odds...</p>
     <p class="notification-amount" id="commentaryAmount"></p>
   </aside>
+
+  <div class="secret-terminal" id="secretTerminal" aria-hidden="true"><div class="secret-terminal-head"><span>IWANNABERICH // INTERNAL</span><button id="closeSecret">×</button></div><div class="secret-terminal-body mono" id="secretTerminalBody"></div></div>
 
   <div class="donation-modal" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationTitle" aria-hidden="true">
     <div class="donation-card" role="document">
