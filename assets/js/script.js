@@ -206,6 +206,7 @@ const PAYMENT_LINKS = {
 
     const open = () => {
       lastFocus = document.activeElement;
+      window.IWBRAnalytics?.trackEvent("contribution_open");
       modal.classList.add("show");
       modal.setAttribute("aria-hidden", "false");
       document.body.classList.add("modal-open");
@@ -239,6 +240,7 @@ const PAYMENT_LINKS = {
         return;
       }
 
+      window.IWBRAnalytics?.trackEvent("stripe_checkout");
       window.open(link, "_blank", "noopener,noreferrer");
       closeModal();
     });

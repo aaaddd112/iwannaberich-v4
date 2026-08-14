@@ -1,0 +1,14 @@
+[33mcommit c27c32fa223ffcc56d611a0c63fd115ccb079bd7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: aaaddd112 <raultupan@gmail.com>
+Date:   Sat Aug 15 00:25:01 2026 +0300
+
+    Add prediction anti-spam protection
+
+ assets/js/predictions.js                           | 124 [32m++++++[m[31m---------[m
+ privacy.html                                       |   2 [32m+[m[31m-[m
+ supabase/README.md                                 |  22 [32m+++[m
+ supabase/functions/submit-prediction/config.toml   |   1 [32m+[m
+ supabase/functions/submit-prediction/index.ts      | 175 [32m+++++++++++++++++++++[m
+ .../202608140002_prediction_moderation.sql         |  86 [32m++++++++++[m
+ support.html                                       |   2 [32m+[m[31m-[m
+ 7 files changed, 330 insertions(+), 82 deletions(-)

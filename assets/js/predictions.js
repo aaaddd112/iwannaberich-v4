@@ -178,6 +178,7 @@
         input.value = "";
         if (honeypot) honeypot.value = "";
         updateCharCount();
+        window.IWBRAnalytics?.trackEvent("prediction_submit");
         await loadComments();
       } catch (error) {
         console.error("Submit comment error:", error);
