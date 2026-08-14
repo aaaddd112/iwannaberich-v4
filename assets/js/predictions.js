@@ -3,13 +3,9 @@
 
   document.addEventListener("DOMContentLoaded", init);
 
-  /* =========================
-     CONFIG
-     (same Supabase project as the rest of the site)
-  ========================= */
-
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
+  const PREDICTION_ENDPOINT = `${SUPABASE_URL}/functions/v1/submit-prediction`;
   const VOTE_STORAGE_KEY = "iwbr_prediction_vote";
   const COMMENT_MAX_LENGTH = 280;
 
@@ -22,7 +18,6 @@
     }
 
     let client;
-
     try {
       client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     } catch (error) {
@@ -34,10 +29,6 @@
     initComments(client);
   }
 
-  /* =========================
-     VOTING
-  ========================= */
-
   function initVoting(client) {
     const yesBtn = $("voteYes");
     const noBtn = $("voteNo");
@@ -46,9 +37,7 @@
     const fillEl = $("predictYesFill");
     const totalEl = $("predictTotal");
 
-    if (!yesBtn || !noBtn || !yesPercentEl || !noPercentEl || !fillEl || !totalEl) {
-      return;
-    }
+    if (!yesBtn || !noBtn || !yesPercentEl || !noPercentEl || !fillEl || !totalEl) return;
 
     let hasVoted = Boolean(localStorage.getItem(VOTE_STORAGE_KEY));
 
@@ -56,15 +45,12 @@
       const total = yesCount + noCount;
       const yesPct = total > 0 ? Math.round((yesCount / total) * 100) : 0;
       const noPct = total > 0 ? 100 - yesPct : 0;
-
       yesPercentEl.textContent = total > 0 ? `${yesPct}%` : "–";
       noPercentEl.textContent = total > 0 ? `${noPct}%` : "–";
       fillEl.style.width = `${yesPct}%`;
-
-      totalEl.textContent =
-        total > 0
-          ? `${total.toLocaleString("en-US")} vote${total === 1 ? "" : "s"} so far`
-          : "Be the first to vote.";
+      totalEl.textContent = total > 0
+        ? `${total.toLocaleString("en-US")} vote${total === 1 ? "" : "s"} so far`
+        : "Be the first to vote.";
     }
 
     function setVotedState() {
@@ -76,66 +62,42 @@
     }
 
     async function loadCounts() {
-      const { data, error } = await client
-        .from("predictions")
-        .select("yes_count, no_count")
-        .eq("id", 1)
-        .single();
-
+      const { data, error } = await client.from("predictions")
+        .select("yes_count, no_count").eq("id", 1).single();
       if (error) {
         console.error("Load predictions error:", error);
         totalEl.textContent = "Votes unavailable right now.";
         return;
       }
-
       renderCounts(Number(data.yes_count) || 0, Number(data.no_count) || 0);
     }
 
     async function castVote(voteType) {
-      if (hasVoted) {
-        return;
-      }
-
+      if (hasVoted) return;
       hasVoted = true;
       localStorage.setItem(VOTE_STORAGE_KEY, voteType);
       setVotedState();
-
-      const { error } = await client.rpc("increment_prediction_vote", {
-        vote_type: voteType,
-      });
-
-      if (error) {
-        console.error("Vote error:", error);
-      }
-
+      const { error } = await client.rpc("increment_prediction_vote", { vote_type: voteType });
+      if (error) console.error("Vote error:", error);
       await loadCounts();
     }
 
     yesBtn.addEventListener("click", () => castVote("yes"));
     noBtn.addEventListener("click", () => castVote("no"));
-
-    if (hasVoted) {
-      setVotedState();
-    }
-
+    if (hasVoted) setVotedState();
     loadCounts();
   }
 
-  /* =========================
-     COMMENTS
-  ========================= */
-
   function initComments(client) {
     const input = $("predictionCommentInput");
+    const honeypot = $("predictionWebsite");
     const charCount = $("predictionCharCount");
     const submitBtn = $("submitPredictionComment");
     const errorEl = $("predictionError");
     const listEl = $("predictionComments");
     const emptyEl = $("predictionCommentsEmpty");
 
-    if (!input || !charCount || !submitBtn || !errorEl || !listEl || !emptyEl) {
-      return;
-    }
+    if (!input || !charCount || !submitBtn || !errorEl || !listEl || !emptyEl) return;
 
     function setError(message) {
       errorEl.textContent = message || "";
@@ -148,7 +110,6 @@
 
     function renderComments(comments) {
       listEl.innerHTML = "";
-
       if (!comments.length) {
         const empty = document.createElement("p");
         empty.className = "muted";
@@ -161,10 +122,8 @@
       comments.forEach((item) => {
         const row = document.createElement("div");
         row.className = "predict-comment";
-
         const p = document.createElement("p");
         p.textContent = `"${item.comment}"`;
-
         row.appendChild(p);
         listEl.appendChild(row);
       });
@@ -186,46 +145,51 @@
         listEl.appendChild(failed);
         return;
       }
-
       renderComments(data || []);
     }
 
     async function submitComment() {
       const value = input.value.trim();
-
-      if (!value) {
-        setError("Write something first.");
-        return;
-      }
-
-      if (value.length > COMMENT_MAX_LENGTH) {
-        setError(`Keep it under ${COMMENT_MAX_LENGTH} characters.`);
-        return;
-      }
+      if (!value) return setError("Write something first.");
+      if (value.length > COMMENT_MAX_LENGTH) return setError(`Keep it under ${COMMENT_MAX_LENGTH} characters.`);
 
       setError("");
       submitBtn.disabled = true;
+      submitBtn.textContent = "Checking...";
 
-      const { error } = await client
-        .from("predictions_comments")
-        .insert({ comment: value });
+      try {
+        const response = await fetch(PREDICTION_ENDPOINT, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            comment: value,
+            website: honeypot?.value || "",
+          }),
+        });
 
-      submitBtn.disabled = false;
+        let result = {};
+        try { result = await response.json(); } catch (_) {}
 
-      if (error) {
+        if (!response.ok) {
+          setError(result.error || "Couldn't post your prediction. Try again.");
+          return;
+        }
+
+        input.value = "";
+        if (honeypot) honeypot.value = "";
+        updateCharCount();
+        await loadComments();
+      } catch (error) {
         console.error("Submit comment error:", error);
-        setError("Couldn't post your comment. Try again.");
-        return;
+        setError("Couldn't reach the prediction system. Try again.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Post prediction";
       }
-
-      input.value = "";
-      updateCharCount();
-      await loadComments();
     }
 
     input.addEventListener("input", updateCharCount);
     submitBtn.addEventListener("click", submitComment);
-
     updateCharCount();
     loadComments();
   }

@@ -55,3 +55,25 @@ Then verify:
 5. Refresh `https://iwannaberich.xyz` and the public counter shows the same amount.
 
 The counter is based on gross EUR contributions, minus recorded refunds. Stripe processing fees are not subtracted from the public experiment total.
+## 6. Prediction anti-spam / moderation
+
+The public prediction form now posts through:
+
+`functions/submit-prediction`
+
+Run the migration:
+
+`migrations/202608140002_prediction_moderation.sql`
+
+Then deploy the Edge Function. It adds:
+
+- server-side profanity filtering (including common obfuscations)
+- 3 posts per 10 minutes per network identifier
+- 10 posts per day per network identifier
+- duplicate prediction blocking for 24 hours
+- a hidden honeypot for simple bots
+- direct anonymous INSERT access to `predictions_comments` disabled
+
+The function uses Supabase's server-side service role automatically. No service-role key belongs in the website.
+
+If abuse becomes significant, Cloudflare Turnstile can be added as a second anti-bot layer without changing the public comments table.
