@@ -1,2 +1,5 @@
 [functions.analytics-events]
 verify_jwt = false
+
+[functions.submit-prediction]
+verify_jwt = false
