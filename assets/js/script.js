@@ -10,6 +10,7 @@ const PAYMENT_LINKS = {
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
   const $ = (id) => document.getElementById(id);
 
+
   document.addEventListener("DOMContentLoaded", () => {
     initMobileNav();
     initDropdownNav();
@@ -20,6 +21,7 @@ const PAYMENT_LINKS = {
     initMicroInteractions();
     initPersonalityLayer();
     loadDonations();
+    initGlobalCurrencyCounter();
   });
 
   function initMobileNav() {
@@ -437,3 +439,110 @@ const PAYMENT_LINKS = {
   }
 
 })();
+
+async function initGlobalCurrencyCounter() {
+  const amountEl = document.getElementById("globalValueAmount");
+  if (!amountEl) return;
+
+  const GLOBAL_CURRENCIES = [
+    { code: "USD", flag: "🇺🇸", symbol: "$", decimals: 2, suffix: "" },
+    { code: "JPY", flag: "🇯🇵", symbol: "¥", decimals: 0, suffix: "" },
+    { code: "INR", flag: "🇮🇳", symbol: "₹", decimals: 0, suffix: "" },
+    { code: "GBP", flag: "🇬🇧", symbol: "£", decimals: 2, suffix: "" },
+    { code: "KRW", flag: "🇰🇷", symbol: "₩", decimals: 0, suffix: "" },
+    { code: "CNY", flag: "🇨🇳", symbol: "¥", decimals: 0, suffix: "" },
+    { code: "RON", flag: "🇷🇴", symbol: "", decimals: 0, suffix: " lei" }
+  ];
+
+  const GLOBAL_VALUE = 1_000_000_000;
+
+  try {
+    
+    const quotes = GLOBAL_CURRENCIES.map((currency) => currency.code).join(",");
+
+    const response = await fetch(
+      `https://api.frankfurter.dev/v2/rates?base=EUR&quotes=${quotes}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Currency API returned ${response.status}`);
+    }
+
+    const rows = await response.json();
+
+    const rates = Object.fromEntries(
+      rows.map((row) => [row.quote, Number(row.rate)])
+    );
+
+    const values = GLOBAL_CURRENCIES
+      .map((currency) => ({
+        ...currency,
+        value: GLOBAL_VALUE * rates[currency.code]
+      }))
+      .filter((currency) => Number.isFinite(currency.value));
+
+    if (!values.length) throw new Error("No currency rates available");
+
+    let index = 0;
+
+    const formatCompact = (value, currency) => {
+      let displayValue = value;
+      let suffix = currency.suffix;
+
+      if (currency.code === "JPY" || currency.code === "INR") {
+        if (value >= 1_000_000_000) {
+          displayValue = value / 1_000_000_000;
+          suffix = "B" + suffix;
+        }
+      } else if (currency.code === "KRW") {
+        if (value >= 1_000_000_000_000) {
+          displayValue = value / 1_000_000_000_000;
+          suffix = "T" + suffix;
+        } else if (value >= 1_000_000_000) {
+          displayValue = value / 1_000_000_000;
+          suffix = "B" + suffix;
+        }
+      } else {
+        if (value >= 1_000_000_000) {
+          displayValue = value / 1_000_000_000;
+          suffix = "B" + suffix;
+        } else if (value >= 1_000_000) {
+          displayValue = value / 1_000_000;
+          suffix = "M" + suffix;
+        }
+      }
+
+      const decimals =
+        suffix.startsWith("T") || suffix.startsWith("B")
+          ? 2
+          : currency.decimals;
+
+      return `${currency.symbol}${displayValue.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      })}${suffix}`;
+    };
+
+    const showNext = () => {
+      const currency = values[index];
+
+      amountEl.classList.add("is-changing");
+
+      setTimeout(() => {
+        amountEl.textContent =
+          `${currency.flag} ${formatCompact(currency.value, currency)}`;
+
+        amountEl.classList.remove("is-changing");
+
+        index = (index + 1) % values.length;
+      }, 180);
+    };
+
+    showNext();
+    setInterval(showNext, 2200);
+
+  } catch (error) {
+    console.warn("Global currency counter unavailable:", error);
+    amountEl.textContent = "€1.00B";
+  }
+}
