@@ -15,6 +15,8 @@
     "scroll_90",
   ]);
 
+  const ATTRIBUTION_KEY = "iwbr_attribution";
+
   function cleanMetadata(metadata) {
     if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
       return {};
@@ -22,8 +24,8 @@
 
     const safe = {};
 
-    Object.entries(metadata).slice(0, 8).forEach(([key, value]) => {
-      const cleanKey = String(key).slice(0, 40);
+    Object.entries(metadata).slice(0, 20).forEach(([key, value]) => {
+      const cleanKey = String(key).slice(0, 60);
 
       if (
         typeof value === "string" ||
@@ -38,13 +40,179 @@
     return safe;
   }
 
+  function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+
+    return {
+      utm_source: params.get("utm_source")?.trim().slice(0, 100) || "",
+      utm_medium: params.get("utm_medium")?.trim().slice(0, 100) || "",
+      utm_campaign: params.get("utm_campaign")?.trim().slice(0, 100) || "",
+      utm_content: params.get("utm_content")?.trim().slice(0, 100) || "",
+      utm_term: params.get("utm_term")?.trim().slice(0, 100) || "",
+    };
+  }
+
+  function getReferrerHost() {
+    if (!document.referrer) return "";
+
+    try {
+      return new URL(document.referrer).hostname.slice(0, 120);
+    } catch {
+      return "";
+    }
+  }
+
+  function getCurrentPage() {
+    return window.location.pathname || "/";
+  }
+
+  function getAttribution() {
+    const params = getUrlParams();
+    const referrerHost = getReferrerHost();
+
+    let stored = {};
+
+    try {
+      const raw = localStorage.getItem(ATTRIBUTION_KEY);
+
+      if (raw) {
+        const parsed = JSON.parse(raw);
+
+        if (parsed && typeof parsed === "object") {
+          stored = parsed;
+        }
+      }
+    } catch {
+      stored = {};
+    }
+
+    const hasUtm =
+      params.utm_source ||
+      params.utm_medium ||
+      params.utm_campaign ||
+      params.utm_content ||
+      params.utm_term;
+
+    /*
+     * First touch:
+     * We only set this once, so the original acquisition source
+     * survives future visits.
+     */
+    if (!stored.first_touch) {
+      let source = params.utm_source || "";
+
+      if (!source && referrerHost) {
+        source = referrerHost;
+      }
+
+      stored.first_touch = {
+        source: source.slice(0, 100),
+        medium: params.utm_medium || "",
+        campaign: params.utm_campaign || "",
+        content: params.utm_content || "",
+        term: params.utm_term || "",
+        landing_page: getCurrentPage(),
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    /*
+     * Last touch:
+     * If the current visit contains UTM parameters, update the
+     * current acquisition source.
+     */
+    if (hasUtm) {
+      stored.last_touch = {
+        source: params.utm_source || "",
+        medium: params.utm_medium || "",
+        campaign: params.utm_campaign || "",
+        content: params.utm_content || "",
+        term: params.utm_term || "",
+        landing_page: getCurrentPage(),
+        timestamp: new Date().toISOString(),
+      };
+    } else if (!stored.last_touch) {
+      let source = referrerHost || "";
+
+      stored.last_touch = {
+        source: source.slice(0, 100),
+        medium: source ? "referral" : "direct",
+        campaign: "",
+        content: "",
+        term: "",
+        landing_page: getCurrentPage(),
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    try {
+      localStorage.setItem(
+        ATTRIBUTION_KEY,
+        JSON.stringify(stored)
+      );
+    } catch {
+      // Ignore localStorage failures.
+    }
+
+    return stored;
+  }
+
+  function getAttributionMetadata() {
+    const attribution = getAttribution();
+
+    const currentParams = getUrlParams();
+
+    return {
+      utm_source: currentParams.utm_source,
+      utm_medium: currentParams.utm_medium,
+      utm_campaign: currentParams.utm_campaign,
+      utm_content: currentParams.utm_content,
+      utm_term: currentParams.utm_term,
+
+      referrer_host: getReferrerHost(),
+
+      landing_page:
+        attribution.last_touch?.landing_page ||
+        getCurrentPage(),
+
+      first_touch_source:
+        attribution.first_touch?.source || "",
+
+      first_touch_medium:
+        attribution.first_touch?.medium || "",
+
+      first_touch_campaign:
+        attribution.first_touch?.campaign || "",
+
+      first_touch_content:
+        attribution.first_touch?.content || "",
+
+      last_touch_source:
+        attribution.last_touch?.source || "",
+
+      last_touch_medium:
+        attribution.last_touch?.medium || "",
+
+      last_touch_campaign:
+        attribution.last_touch?.campaign || "",
+
+      last_touch_content:
+        attribution.last_touch?.content || "",
+    };
+  }
+
   function trackEvent(eventName, metadata = {}) {
     if (!ALLOWED_EVENTS.has(eventName)) return;
 
+    const attributionMetadata = getAttributionMetadata();
+
     const payload = {
       event_name: eventName,
-      page: window.location.pathname || "/",
-      metadata: cleanMetadata(metadata),
+      page: getCurrentPage(),
+      metadata: cleanMetadata({
+        ...attributionMetadata,
+        ...metadata,
+      }),
     };
 
     fetch(ENDPOINT, {
@@ -61,20 +229,17 @@
 
   window.IWBRAnalytics = {
     trackEvent,
+    getAttribution: getAttributionMetadata,
   };
 
   function initAnalytics() {
+    /*
+     * Establish attribution before the first page_view.
+     */
+    getAttribution();
+
     trackEvent("page_view", {
       title: document.title.slice(0, 120),
-      referrer_host: document.referrer
-        ? (() => {
-            try {
-              return new URL(document.referrer).hostname.slice(0, 120);
-            } catch {
-              return "";
-            }
-          })()
-        : "",
     });
 
     document
@@ -117,16 +282,24 @@
       if (percentage >= 0.9 && !scroll90Tracked) {
         scroll90Tracked = true;
         trackEvent("scroll_90");
+
         window.removeEventListener("scroll", checkScroll);
       }
     };
 
-    window.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("scroll", checkScroll, {
+      passive: true,
+    });
+
     checkScroll();
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initAnalytics, { once: true });
+    document.addEventListener(
+      "DOMContentLoaded",
+      initAnalytics,
+      { once: true }
+    );
   } else {
     initAnalytics();
   }
