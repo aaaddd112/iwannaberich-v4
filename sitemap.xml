@@ -2,5 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://iwannaberich.xyz/</loc>
+    <lastmod>2026-08-16</lastmod>
   </url>
+  <url><loc>https://iwannaberich.xyz/about.html</loc><lastmod>2026-08-16</lastmod></url>
+  <url><loc>https://iwannaberich.xyz/faq.html</loc><lastmod>2026-08-16</lastmod></url>
+  <url><loc>https://iwannaberich.xyz/updates.html</loc><lastmod>2026-08-16</lastmod></url>
+  <url><loc>https://iwannaberich.xyz/support.html</loc><lastmod>2026-08-16</lastmod></url>
+  <url><loc>https://iwannaberich.xyz/privacy.html</loc><lastmod>2026-08-16</lastmod></url>
+  <url><loc>https://iwannaberich.xyz/terms.html</loc><lastmod>2026-08-16</lastmod></url>
+  <url><loc>https://iwannaberich.xyz/cookie-policy.html</loc><lastmod>2026-08-16</lastmod></url>
 </urlset>

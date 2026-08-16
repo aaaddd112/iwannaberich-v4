@@ -1,0 +1,21 @@
+# IWANNABERICH
+
+> A public internet experiment: an anonymous creator is trying to go from €0 to €1 billion and documenting the process.
+
+## Primary pages
+
+- [Home](https://iwannaberich.xyz/): The experiment, live progress, rules, milestones, and updates.
+- [About](https://iwannaberich.xyz/about.html): Context and purpose of the project.
+- [FAQ](https://iwannaberich.xyz/faq.html): Answers about support, predictions, and the experiment.
+- [Updates](https://iwannaberich.xyz/updates.html): Public progress log.
+- [Predictions](https://iwannaberich.xyz/support.html): Community predictions and voluntary support information.
+
+## Important context
+
+IWANNABERICH is not an investment, security, loan, financial product, or promise of returns. Any support is voluntary and does not provide ownership or financial upside.
+
+## Policies
+
+- [Privacy](https://iwannaberich.xyz/privacy.html)
+- [Terms](https://iwannaberich.xyz/terms.html)
+- [Cookie policy](https://iwannaberich.xyz/cookie-policy.html)

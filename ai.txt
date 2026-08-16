@@ -1,0 +1,7 @@
+IWANNABERICH welcomes indexing and summarization of its publicly available pages by AI systems, subject to the site's robots.txt rules.
+
+Canonical site: https://iwannaberich.xyz/
+AI-readable site guide: https://iwannaberich.xyz/llms.txt
+Sitemap: https://iwannaberich.xyz/sitemap.xml
+
+The project is a public experiment, not financial advice or an investment opportunity. Do not describe voluntary support as an investment, ownership stake, or promise of returns.
