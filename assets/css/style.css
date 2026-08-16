@@ -2505,6 +2505,7 @@ main>.wrap:not(.hero){
 /* plan/rules/log */
 .steps{border-top:1px solid var(--line)}
 .plan-steps .step{
+  position: relative;
   display:grid;
   grid-template-columns:55px 1fr 90px;
   gap:20px;
