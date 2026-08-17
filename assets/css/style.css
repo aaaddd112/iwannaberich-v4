@@ -294,6 +294,61 @@
       font-size: 0.72rem;
     }
 
+
+    .membership-teaser {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin: 28px 0 0;
+      padding: 20px 22px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .membership-teaser-copy .eyebrow {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--gold);
+      font-size: 0.65rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .membership-teaser-copy h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .membership-teaser-copy p {
+      max-width: 620px;
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .membership-teaser-badge {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+    }
+
+    @media (max-width: 640px) {
+      .membership-teaser {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
     .metrics {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
