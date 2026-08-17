@@ -168,6 +168,16 @@
           <p class="wealth-note" id="wealthNote">Loading verified support...</p>
           <div class="bar" aria-hidden="true"><span id="progressFill"></span></div>
 <p class="muted" id="progressText">Progress: an objectively tiny percentage.</p>
+
+<div class="milestone-progress" id="milestoneProgress" aria-live="polite">
+  <div class="milestone-progress-head">
+    <span class="label">Current milestone</span>
+    <strong id="milestoneProgressAmount">&euro;0.00 / &euro;100.00</strong>
+  </div>
+  <div class="milestone-bar" aria-hidden="true"><span id="milestoneProgressFill"></span></div>
+  <p class="milestone-progress-text" id="milestoneProgressText">0% of the way to the current milestone.</p>
+</div>
+
 <div class="global-value" id="globalValue" aria-live="polite">
   <div class="global-value-label">🌍 GLOBAL VALUE</div>
   <div class="global-value-amount" id="globalValueAmount">Loading...</div>
@@ -187,11 +197,59 @@
       <p class="eyebrow">The plan, unfortunately</p>
       <h2 class="title" id="plan-title">How this becomes<br><span class="plan-accent">€1 billion.</span></h2>
       <div class="steps plan-steps">
-        <div class="step is-current" data-milestone="10"><b>01</b><div><span>Get to €10.</span><p class="muted">Prove this can survive its first ten euros without collapsing under the weight of its own ambition.</p></div><em>STARTING</em></div>
-        <div class="step" data-milestone="100"><b>02</b><div><span>Get to €100.</span><p class="muted">Repeat the experiment. Figure out what made people care enough to come back.</p></div><em>LOCKED</em></div>
-        <div class="step" data-milestone="1000"><b>03</b><div><span>Get to €1,000.</span><p class="muted">Turn attention into something useful. Preferably something that is not another donation button.</p></div><em>LOCKED</em></div>
-        <div class="step" data-milestone="1000000"><b>04</b><div><span>Get to €1,000,000.</span><p class="muted">Build something real, document the mistakes, and see whether the internet keeps playing along.</p></div><em>LOCKED</em></div>
-        <div class="step" data-milestone="1000000000"><b>05</b><div><span>Figure out the billion.</span><p class="muted">This is the part where the business plan becomes noticeably less confident.</p></div><em>???</em></div>
+        <div class="step is-current" data-milestone="100">
+          <b>01</b>
+          <div>
+            <span>Get to €100.</span>
+            <p class="muted">The first real proof that strangers on the internet are willing to play along.</p>
+          </div>
+          <em>STARTING</em>
+        </div>
+
+        <div class="step" data-milestone="1000">
+          <b>02</b>
+          <div>
+            <span>Get to €1,000.</span>
+            <p class="muted">Turn the first bit of traction into something that can actually compound.</p>
+          </div>
+          <em>LOCKED</em>
+        </div>
+
+        <div class="step" data-milestone="10000">
+          <b>03</b>
+          <div>
+            <span>Get to €10,000.</span>
+            <p class="muted">At this point, the experiment starts becoming difficult to dismiss as a one-off.</p>
+          </div>
+          <em>LOCKED</em>
+        </div>
+
+        <div class="step" data-milestone="100000">
+          <b>04</b>
+          <div>
+            <span>Get to €100,000.</span>
+            <p class="muted">Build something bigger around the attention, the community, and whatever actually worked.</p>
+          </div>
+          <em>LOCKED</em>
+        </div>
+
+        <div class="step" data-milestone="1000000">
+          <b>05</b>
+          <div>
+            <span>Get to €1,000,000.</span>
+            <p class="muted">Now we're talking about a serious project — and probably a very different business model.</p>
+          </div>
+          <em>LOCKED</em>
+        </div>
+
+        <div class="step" data-milestone="1000000000">
+          <b>06</b>
+          <div>
+            <span>Figure out the billion.</span>
+            <p class="muted">This is the part where the business plan becomes noticeably less confident.</p>
+          </div>
+          <em>???</em>
+        </div>
       </div>
       <p class="projection"><strong>There is no secret master plan.</strong> The plan gets smarter as the number gets bigger.</p>
     </section>

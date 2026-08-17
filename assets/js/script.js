@@ -113,6 +113,26 @@ const PAYMENT_LINKS = {
     if (text) text.textContent = total ? `${progress.toFixed(7)}% of the way there. Technically.` : "The bar is ready. The money is taking its time.";
   }
 
+  function updateMilestoneProgress(total) {
+    const milestones = [...document.querySelectorAll("[data-milestone]")]
+      .map((item) => Number(item.dataset.milestone))
+      .filter(Number.isFinite)
+      .sort((a, b) => a - b);
+
+    const currentTarget = milestones.find((target) => total < target) ?? GOAL;
+    const previousTarget = milestones.filter((target) => target <= total).at(-1) ?? 0;
+    const span = Math.max(currentTarget - previousTarget, 1);
+    const progress = Math.min(Math.max(((total - previousTarget) / span) * 100, 0), 100);
+
+    const amount = $("milestoneProgressAmount");
+    const fill = $("milestoneProgressFill");
+    const text = $("milestoneProgressText");
+
+    if (amount) amount.textContent = `${formatEuro(total)} / ${formatEuro(currentTarget)}`;
+    if (fill) fill.style.width = `${Math.max(progress, total > 0 ? 0.5 : 0)}%`;
+    if (text) text.textContent = `${progress.toFixed(0)}% of the way to the current milestone.`;
+  }
+
   async function loadDonations() {
     const wealthValue = $("wealthValue");
     const wealthNote = $("wealthNote");
@@ -145,6 +165,7 @@ const PAYMENT_LINKS = {
       if (wealthNote) wealthNote.textContent = "Updated from publicly recorded support.";
       updateProgress(total);
       updateMilestones(total);
+      updateMilestoneProgress(total);
 
       const targets = [...document.querySelectorAll("[data-milestone]")]
         .map((item) => Number(item.dataset.milestone))
@@ -161,6 +182,7 @@ const PAYMENT_LINKS = {
       if (wealthNote) wealthNote.textContent = "Verified support is temporarily unavailable.";
       updateProgress(0);
       updateMilestones(0);
+      updateMilestoneProgress(0);
     }
   }
 

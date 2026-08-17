@@ -243,6 +243,57 @@
       box-shadow: 0 0 18px var(--green);
     }
 
+    .milestone-progress {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .milestone-progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .milestone-progress-head .label {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .milestone-progress-head strong {
+      color: var(--gold);
+      font-size: 0.9rem;
+      font-weight: 850;
+      text-align: right;
+    }
+
+    .milestone-bar {
+      height: 7px;
+      margin: 10px 0 7px;
+      background: #303038;
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .milestone-bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--gold);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.55);
+      transition: width 500ms ease;
+    }
+
+    .milestone-progress-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
     .metrics {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -279,6 +330,7 @@
     }
 
     .step {
+      position: relative;
       display: grid;
       grid-template-columns: 65px minmax(0, 1fr) auto;
       gap: 18px;
@@ -3010,4 +3062,16 @@ body.rare-glitch .logo{animation:logoFlicker .5s steps(2,end)}
   .hero-goal-glow{width:360px;height:360px}
   .hero .share-strip{margin-top:22px}
   .hero-disclaimer{margin-top:18px;text-align:left}
+}
+
+@media (max-width: 640px) {
+  .milestone-progress-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .milestone-progress-head strong {
+    text-align: left;
+  }
 }
