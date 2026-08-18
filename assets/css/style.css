@@ -3130,3 +3130,72 @@ body.rare-glitch .logo{animation:logoFlicker .5s steps(2,end)}
     text-align: left;
   }
 }
+
+    .owner-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .owner-login-link {
+      color: var(--muted);
+      font-size: .78rem;
+      text-decoration: none;
+    }
+    .owner-login-link:hover { color: var(--text); }
+    .owner-status {
+      color: var(--gold);
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .owner-reply-hint {
+      margin: 10px 0 0;
+      color: var(--gold);
+    }
+    .predict-comment-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+    .owner-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border: 1px solid rgba(217,164,65,.45);
+      border-radius: 999px;
+      color: var(--gold);
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+    .predict-reply {
+      margin: 14px 0 0 18px;
+      padding: 12px 14px;
+      border-left: 2px solid var(--gold);
+      background: rgba(255,255,255,.025);
+      border-radius: 0 10px 10px 0;
+    }
+    .predict-reply p {
+      margin: 0;
+      line-height: 1.55;
+    }
+    .owner-reply {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .owner-reply textarea {
+      width: 100%;
+      min-height: 72px;
+      box-sizing: border-box;
+      background: #101014;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--text);
+      font: inherit;
+      font-size: .9rem;
+      padding: 10px 12px;
+      resize: vertical;
+    }

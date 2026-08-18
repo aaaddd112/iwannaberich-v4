@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="assets/css/style.css">
+<title>Owner Login — IWANNABERICH</title>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="wrap nav">
+  <a class="logo" href="index.html">I<i>WANNA</i>BERICH</a>
+  <nav class="links" aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="support.html">Predictions</a>
+  </nav>
+</header>
+<main id="main-content">
+<section class="wrap page-hero">
+  <p class="eyebrow">Private area</p>
+  <h1 class="title">Owner login</h1>
+  <p class="muted page-intro">Sign in with the IWANNABERICH owner account.</p>
+</section>
+<section class="wrap content-section">
+  <div class="card content-card owner-login-card">
+    <form id="ownerLoginForm">
+      <label class="label" for="ownerEmail">Email</label>
+      <input id="ownerEmail" type="email" autocomplete="username" required
+        style="width:100%;margin-top:10px;background:#101014;border:1px solid var(--line);border-radius:10px;color:var(--text);font:inherit;padding:12px 14px">
+      <label class="label" for="ownerPassword" style="display:block;margin-top:18px">Password</label>
+      <input id="ownerPassword" type="password" autocomplete="current-password" required
+        style="width:100%;margin-top:10px;background:#101014;border:1px solid var(--line);border-radius:10px;color:var(--text);font:inherit;padding:12px 14px">
+      <button class="btn primary" type="submit" id="ownerLoginBtn" style="margin-top:18px">Log in</button>
+      <p class="donation-error" id="ownerLoginError" aria-live="polite"></p>
+    </form>
+    <div id="ownerLoggedIn" hidden>
+      <p><strong>You're logged in.</strong></p>
+      <p class="muted" id="ownerEmailDisplay"></p>
+      <a class="btn primary" href="support.html" style="display:inline-block;margin-top:12px">Open predictions</a>
+      <button class="btn" type="button" id="ownerLogoutBtn" style="margin-top:12px">Log out</button>
+    </div>
+  </div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  "use strict";
+  const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const form = document.getElementById("ownerLoginForm");
+  const email = document.getElementById("ownerEmail");
+  const password = document.getElementById("ownerPassword");
+  const btn = document.getElementById("ownerLoginBtn");
+  const error = document.getElementById("ownerLoginError");
+  const logged = document.getElementById("ownerLoggedIn");
+  const display = document.getElementById("ownerEmailDisplay");
+  const logout = document.getElementById("ownerLogoutBtn");
+
+  async function refresh() {
+    const { data } = await client.auth.getUser();
+    const user = data?.user;
+    if (user) {
+      form.hidden = true;
+      logged.hidden = false;
+      display.textContent = user.email || "";
+    } else {
+      form.hidden = false;
+      logged.hidden = true;
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    error.textContent = "";
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
+    const { error: loginError } = await client.auth.signInWithPassword({
+      email: email.value.trim(),
+      password: password.value
+    });
+    btn.disabled = false;
+    btn.textContent = "Log in";
+    if (loginError) {
+      error.textContent = loginError.message || "Login failed.";
+      return;
+    }
+    await refresh();
+  });
+
+  logout.addEventListener("click", async () => {
+    await client.auth.signOut();
+    await refresh();
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>

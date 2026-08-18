@@ -11,13 +11,12 @@
 
   const $ = (id) => document.getElementById(id);
 
-  function init() {
-    if (!window.supabase) {
-      console.warn("Supabase library not available.");
-      return;
-    }
+  let client = null;
+  let currentUser = null;
 
-    let client;
+  function init() {
+    if (!window.supabase) return;
+
     try {
       client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     } catch (error) {
@@ -27,6 +26,12 @@
 
     initVoting(client);
     initComments(client);
+    refreshAuth();
+    client.auth.onAuthStateChange((_event, session) => {
+      currentUser = session?.user || null;
+      updateOwnerUI();
+      loadComments();
+    });
   }
 
   function initVoting(client) {
@@ -36,7 +41,6 @@
     const noPercentEl = $("noPercent");
     const fillEl = $("predictYesFill");
     const totalEl = $("predictTotal");
-
     if (!yesBtn || !noBtn || !yesPercentEl || !noPercentEl || !fillEl || !totalEl) return;
 
     let hasVoted = Boolean(localStorage.getItem(VOTE_STORAGE_KEY));
@@ -88,64 +92,190 @@
     loadCounts();
   }
 
+  async function refreshAuth() {
+    const { data } = await client.auth.getUser();
+    currentUser = data?.user || null;
+    updateOwnerUI();
+  }
+
+  function updateOwnerUI() {
+    const status = $("ownerStatus");
+    const loginLink = $("ownerLoginLink");
+    const logoutBtn = $("ownerLogoutBtn");
+    const replyHint = $("ownerReplyHint");
+
+    if (status) {
+      status.hidden = !currentUser;
+      status.textContent = currentUser ? `Logged in as ${currentUser.email || "owner"}` : "";
+    }
+    if (loginLink) loginLink.hidden = Boolean(currentUser);
+    if (logoutBtn) logoutBtn.hidden = !currentUser;
+    if (replyHint) {
+      replyHint.hidden = !currentUser;
+      replyHint.textContent = currentUser ? "Owner mode enabled — you can reply below." : "";
+    }
+  }
+
+  async function submitOwnerReply(parentId, value, button, errorEl) {
+    if (!currentUser) {
+      errorEl.textContent = "Log in as the owner first.";
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Replying...";
+    errorEl.textContent = "";
+
+    try {
+      const { data: sessionData } = await client.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error("No active session.");
+
+      const response = await fetch(PREDICTION_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ comment: value, parent_id: parentId })
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        errorEl.textContent = result.error || "Couldn't post reply.";
+        return;
+      }
+
+      await loadComments();
+    } catch (error) {
+      console.error("Owner reply error:", error);
+      errorEl.textContent = "Couldn't reach the prediction system.";
+    } finally {
+      button.disabled = false;
+      button.textContent = "Reply";
+    }
+  }
+
+  function renderComments(comments) {
+    const listEl = $("predictionComments");
+    if (!listEl) return;
+    listEl.innerHTML = "";
+
+    if (!comments.length) {
+      const empty = document.createElement("p");
+      empty.className = "muted";
+      empty.textContent = "No comments yet. Be the first.";
+      listEl.appendChild(empty);
+      return;
+    }
+
+    const replies = new Map();
+    comments.filter(c => c.parent_id).forEach(c => {
+      if (!replies.has(c.parent_id)) replies.set(c.parent_id, []);
+      replies.get(c.parent_id).push(c);
+    });
+
+    comments.filter(c => !c.parent_id).forEach(item => {
+      const row = document.createElement("div");
+      row.className = "predict-comment";
+
+      const p = document.createElement("p");
+      p.textContent = `"${item.comment}"`;
+      row.appendChild(p);
+
+      const meta = document.createElement("div");
+      meta.className = "predict-comment-meta";
+      if (item.author_type === "owner") {
+        meta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
+      } else {
+        meta.textContent = "Anonymous";
+      }
+      row.appendChild(meta);
+
+      const childReplies = replies.get(item.id) || [];
+      childReplies.forEach(reply => {
+        const replyBox = document.createElement("div");
+        replyBox.className = "predict-reply";
+        const replyText = document.createElement("p");
+        replyText.textContent = reply.comment;
+        replyBox.appendChild(replyText);
+        const replyMeta = document.createElement("div");
+        replyMeta.className = "predict-comment-meta";
+        if (reply.author_type === "owner") {
+          replyMeta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
+        } else {
+          replyMeta.textContent = "Anonymous";
+        }
+        replyBox.appendChild(replyMeta);
+        row.appendChild(replyBox);
+      });
+
+      if (currentUser) {
+        const replyWrap = document.createElement("div");
+        replyWrap.className = "owner-reply";
+        const input = document.createElement("textarea");
+        input.maxLength = COMMENT_MAX_LENGTH;
+        input.placeholder = "Reply as the owner...";
+        const actions = document.createElement("div");
+        actions.className = "predict-comment-actions";
+        const error = document.createElement("p");
+        error.className = "donation-error";
+        error.style.margin = "0";
+        const btn = document.createElement("button");
+        btn.className = "btn primary";
+        btn.type = "button";
+        btn.textContent = "Reply";
+        btn.addEventListener("click", () => {
+          const value = input.value.trim();
+          if (!value) {
+            error.textContent = "Write a reply first.";
+            return;
+          }
+          submitOwnerReply(item.id, value, btn, error);
+        });
+        actions.appendChild(btn);
+        replyWrap.appendChild(input);
+        replyWrap.appendChild(actions);
+        replyWrap.appendChild(error);
+        row.appendChild(replyWrap);
+      }
+
+      listEl.appendChild(row);
+    });
+  }
+
+  async function loadComments() {
+    if (!client) return;
+    const listEl = $("predictionComments");
+    if (!listEl) return;
+
+    const { data, error } = await client
+      .from("predictions_comments")
+      .select("id, comment, created_at, parent_id, author_type")
+      .order("created_at", { ascending: true })
+      .limit(100);
+
+    if (error) {
+      console.error("Load comments error:", error);
+      listEl.innerHTML = '<p class="muted">Comments unavailable right now.</p>';
+      return;
+    }
+
+    renderComments(data || []);
+  }
+
   function initComments(client) {
     const input = $("predictionCommentInput");
     const honeypot = $("predictionWebsite");
     const charCount = $("predictionCharCount");
     const submitBtn = $("submitPredictionComment");
     const errorEl = $("predictionError");
-    const listEl = $("predictionComments");
-    const emptyEl = $("predictionCommentsEmpty");
+    if (!input || !charCount || !submitBtn || !errorEl) return;
 
-    if (!input || !charCount || !submitBtn || !errorEl || !listEl || !emptyEl) return;
-
-    function setError(message) {
-      errorEl.textContent = message || "";
-    }
+    function setError(message) { errorEl.textContent = message || ""; }
 
     function updateCharCount() {
-      const remaining = COMMENT_MAX_LENGTH - input.value.length;
-      charCount.textContent = `${remaining} characters left`;
-    }
-
-    function renderComments(comments) {
-      listEl.innerHTML = "";
-      if (!comments.length) {
-        const empty = document.createElement("p");
-        empty.className = "muted";
-        empty.id = "predictionCommentsEmpty";
-        empty.textContent = "No comments yet. Be the first.";
-        listEl.appendChild(empty);
-        return;
-      }
-
-      comments.forEach((item) => {
-        const row = document.createElement("div");
-        row.className = "predict-comment";
-        const p = document.createElement("p");
-        p.textContent = `"${item.comment}"`;
-        row.appendChild(p);
-        listEl.appendChild(row);
-      });
-    }
-
-    async function loadComments() {
-      const { data, error } = await client
-        .from("predictions_comments")
-        .select("comment, created_at")
-        .order("created_at", { ascending: false })
-        .limit(50);
-
-      if (error) {
-        console.error("Load comments error:", error);
-        listEl.innerHTML = "";
-        const failed = document.createElement("p");
-        failed.className = "muted";
-        failed.textContent = "Comments unavailable right now.";
-        listEl.appendChild(failed);
-        return;
-      }
-      renderComments(data || []);
+      charCount.textContent = `${COMMENT_MAX_LENGTH - input.value.length} characters left`;
     }
 
     async function submitComment() {
@@ -163,13 +293,11 @@
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             comment: value,
-            website: honeypot?.value || "",
-          }),
+            website: honeypot?.value || ""
+          })
         });
 
-        let result = {};
-        try { result = await response.json(); } catch (_) {}
-
+        const result = await response.json().catch(() => ({}));
         if (!response.ok) {
           setError(result.error || "Couldn't post your prediction. Try again.");
           return;
@@ -192,6 +320,5 @@
     input.addEventListener("input", updateCharCount);
     submitBtn.addEventListener("click", submitComment);
     updateCharCount();
-    loadComments();
   }
 })();
