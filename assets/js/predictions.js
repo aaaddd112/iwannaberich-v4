@@ -99,17 +99,7 @@
   }
 
   function updateOwnerUI() {
-    const status = $("ownerStatus");
-    const loginLink = $("ownerLoginLink");
-    const logoutBtn = $("ownerLogoutBtn");
     const replyHint = $("ownerReplyHint");
-
-    if (status) {
-      status.hidden = !currentUser;
-      status.textContent = currentUser ? `Logged in as ${currentUser.email || "owner"}` : "";
-    }
-    if (loginLink) loginLink.hidden = Boolean(currentUser);
-    if (logoutBtn) logoutBtn.hidden = !currentUser;
     if (replyHint) {
       replyHint.hidden = !currentUser;
       replyHint.textContent = currentUser ? "Owner mode enabled — you can reply below." : "";
