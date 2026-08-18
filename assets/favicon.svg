@@ -1,4 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#6366f1"/>
-  <path d="M9 21L16 9L23 21H9Z" fill="white" opacity="0.95"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#211044"/>
+      <stop offset="55%" stop-color="#0d071c"/>
+      <stop offset="100%" stop-color="#05040b"/>
+    </radialGradient>
+    <linearGradient id="purple" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7c2cff"/>
+      <stop offset="55%" stop-color="#b86cff"/>
+      <stop offset="100%" stop-color="#eee6ff"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
+
+  <!-- I -->
+  <rect x="154" y="128" width="42" height="230" rx="2" fill="url(#purple)"/>
+
+  <!-- R / upward arrow monogram -->
+  <path fill="url(#purple)" d="
+    M222 128h94c54 0 88 31 88 78 0 35-20 60-52 70l61 82h-53l-54-76h-38v76h-46V128zm46 40v76h44c27 0 45-13 45-38
+    0-25-18-38-45-38h-44z"/>
+  <path fill="url(#purple)" d="M235 358v-94h-31l52-65 52 65h-31v94z"/>
+
+  <!-- subtle wordmark -->
+  <text x="256" y="413" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="29" letter-spacing="9" font-weight="500"
+        fill="#f5f2ff">IWANNA<tspan fill="#a85cff">BERICH</tspan></text>
 </svg>
