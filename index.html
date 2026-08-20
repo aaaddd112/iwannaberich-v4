@@ -93,14 +93,7 @@
 <label class="language-switcher"><span class="sr-only" data-i18n="nav.language">Language</span><select aria-label="Language" class="language-select"><option value="en">🇬🇧 English</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="pt">🇵🇹 Português</option><option value="zh">🇨🇳 中文</option><option value="ja">🇯🇵 日本語</option><option value="ar">🇸🇦 العربية</option></select></label></nav>
 </header>
 <main id="main-content">
-<section aria-labelledby="membershipTitle" class="membership-teaser">
-<div class="membership-teaser-copy">
-<span class="eyebrow" data-i18n-phrase="Coming soon">Coming soon</span>
-<h2 data-i18n-phrase="Membership is on the way." id="membershipTitle">Membership is on the way.</h2>
-<p data-i18n-phrase="Want to support the experiment on a recurring basis? Memberships are planned for a future milestone.">Want to support the experiment on a recurring basis? Memberships are planned for a future milestone.</p>
-</div>
-<div aria-hidden="true" class="membership-teaser-badge" data-i18n-phrase="SOON">SOON</div>
-</section>
+
 <section aria-labelledby="hero-title" class="wrap hero reveal">
 <div class="hero-intro">
 <p class="eyebrow" data-i18n-phrase="A public experiment in unreasonable ambition">A public experiment in unreasonable ambition</p>
@@ -123,6 +116,7 @@
 <div aria-hidden="true" class="hero-goal-track"><span></span></div>
 <p class="hero-goal-note" data-i18n-phrase="One billion euros. Still the plan.">One billion euros. Still the plan.</p>
 </div>
+</div>
 <div aria-label="Share IWANNABERICH" class="share-strip">
 <span class="share-label" data-i18n-phrase="Share the delusion">Share the delusion</span>
 <a aria-label="Share on X" class="share-button" href="https://twitter.com/intent/tweet?text=I%27m%20watching%20someone%20try%20to%20become%20a%20billionaire%20in%20public.%20IWANNABERICH&amp;url=https%3A%2F%2Fiwannaberich.xyz%2F" id="shareX" rel="noopener noreferrer" target="_blank">X</a>
@@ -134,6 +128,63 @@
 <a aria-label="Open Instagram" class="share-button" href="https://www.instagram.com/" id="shareInstagram" rel="noopener noreferrer" target="_blank">Instagram</a>
 </div>
 <p class="hero-disclaimer" data-i18n-phrase="No equity. No returns. No pitch deck hidden behind a PDF.">No equity. No returns. No pitch deck hidden behind a PDF.</p>
+</section>
+<section aria-labelledby="mission-title" class="wrap reveal mission-focus" id="mission">
+  <div class="mission-focus-intro">
+    <p class="eyebrow" data-i18n-phrase="THE FIRST €100">THE FIRST €100</p>
+    <h2 class="title" id="mission-title"><span data-i18n-phrase="Can the internet get me to">Can the internet get me to</span><br/><span class="plan-accent">€100?</span></h2>
+    <p class="lead" data-i18n-phrase="€1B is the ridiculous long-term target. Right now, the experiment is simply trying to make its first €100 from €0.">€1B is the ridiculous long-term target. Right now, the experiment is simply trying to make its first €100 from €0.</p>
+  </div>
+  <div class="mission-focus-card card">
+    <div class="mission-score">
+      <div class="mission-score-main">
+        <p class="label" data-i18n-phrase="CURRENT WEALTH">CURRENT WEALTH</p>
+        <div aria-live="polite" class="mission-wealth" id="missionWealthValue">—</div>
+        <p class="mission-since" id="missionSinceLaunch" data-i18n-phrase="Loading verified support...">Loading verified support...</p>
+      </div>
+      <div class="mission-score-target">
+        <span class="label" data-i18n-phrase="CURRENT MISSION">CURRENT MISSION</span>
+        <strong>€100</strong>
+      </div>
+    </div>
+    <div aria-hidden="true" class="mission-progress"><span id="missionProgressFill"></span></div>
+    <div class="mission-progress-meta">
+      <strong id="missionRemaining" data-i18n-phrase="Loading...">Loading...</strong>
+      <span data-i18n-phrase="to the first €100">to the first €100</span>
+    </div>
+    <div class="mission-actions">
+      <a class="btn primary" data-i18n-phrase="Make your prediction" href="support.html">Make your prediction</a>
+      <a class="btn" data-i18n-phrase="Suggest an idea" href="#join">Suggest an idea</a>
+    </div>
+  </div>
+  <div class="mission-loop card">
+    <div>
+      <p class="label" data-i18n-phrase="HOW IT WORKS">HOW IT WORKS</p>
+      <h3 data-i18n-phrase="Suggest → Vote → Try → Result">Suggest → Vote → Try → Result</h3>
+      <p class="muted" data-i18n-phrase="You suggest an idea, people vote, I try it, and the result becomes part of the public record.">You suggest an idea, people vote, I try it, and the result becomes part of the public record.</p>
+    </div>
+    <div class="mission-loop-step"><span>01</span><b data-i18n-phrase="Suggest">Suggest</b></div>
+    <div class="mission-loop-step"><span>02</span><b data-i18n-phrase="Vote">Vote</b></div>
+    <div class="mission-loop-step"><span>03</span><b data-i18n-phrase="Try">Try</b></div>
+    <div class="mission-loop-step"><span>04</span><b data-i18n-phrase="See the result">See the result</b></div>
+  </div>
+</section>
+<section aria-labelledby="journal-title" class="wrap reveal mission-journal" id="journal">
+  <div class="mission-journal-head">
+    <div>
+      <p class="eyebrow" data-i18n-phrase="LATEST UPDATE">LATEST UPDATE</p>
+      <h2 class="title" id="journal-title"><span data-i18n-phrase="The experiment">The experiment</span><br/><span class="plan-accent" data-i18n-phrase="so far.">so far.</span></h2>
+    </div>
+    <a class="btn" data-i18n-phrase="Read the full log" href="#log">Read the full log</a>
+  </div>
+  <article class="mission-journal-entry card">
+    <div class="mission-journal-index">07</div>
+    <div>
+      <p class="log-label" data-i18n-phrase="NEXT">NEXT</p>
+      <h3 data-i18n-phrase="Make the first €100 from €0.">Make the first €100 from €0.</h3>
+      <p class="muted" data-i18n-phrase="The next phase is simple: find out what actually moves the number, document it, and keep going.">The next phase is simple: find out what actually moves the number, document it, and keep going.</p>
+    </div>
+  </article>
 </section>
 <section aria-labelledby="why-title" class="wrap reveal" id="why">
 <p class="eyebrow" data-i18n-phrase="Why does this exist?">Why does this exist?</p>
@@ -162,25 +213,6 @@
 <h2 class="title" data-i18n-phrase="I WANNA BE RICH." id="numbers-title">I WANNA BE RICH.</h2>
 <p class="section-intro"><span data-i18n-phrase="The goal is simple:">The goal is simple:</span><strong>€1,000,000,000.</strong><br/><span data-i18n-phrase="The plan is... not so much.">The plan is... not so much.</span></p>
 <div class="dashboard">
-<article class="card wealth-card">
-<p class="label" data-i18n-phrase="Current wealth">Current wealth</p>
-<div aria-live="polite" class="wealth" id="wealthValue">—</div>
-<p class="wealth-note" data-i18n-phrase="Loading verified support..." id="wealthNote">Loading verified support...</p>
-<div aria-hidden="true" class="bar"><span id="progressFill"></span></div>
-<p class="muted" data-i18n-phrase="Loading..." id="progressText">Loading...</p>
-<div aria-live="polite" class="milestone-progress" id="milestoneProgress">
-<div class="milestone-progress-head">
-<span class="label" data-i18n-phrase="Current milestone">Current milestone</span>
-<strong id="milestoneProgressAmount">—</strong>
-</div>
-<div aria-hidden="true" class="milestone-bar"><span id="milestoneProgressFill"></span></div>
-<p class="milestone-progress-text" data-i18n-phrase="Loading..." id="milestoneProgressText">Loading...</p>
-</div>
-<div aria-live="polite" class="global-value" id="globalValue">
-<div class="global-value-label" data-i18n-phrase="🌍 GLOBAL VALUE">🌍 GLOBAL VALUE</div>
-<div class="global-value-amount" data-i18n-phrase="Loading..." id="globalValueAmount">Loading...</div>
-<div class="global-value-note" data-i18n-phrase="Still €1 billion. 💀" id="globalValueNote">Still €1 billion. 💀</div>
-</div><p class="next-milestone" data-i18n-phrase="Loading..." id="nextMilestone">Loading...</p> </article>
 <div class="metrics">
 <article class="card"><p class="label" data-i18n-phrase="Target">Target</p><p class="metric">€1 billion</p></article>
 <article class="card funny-tooltip" data-tooltip="Scientifically measured using vibes."><p class="label" data-i18n-phrase="Confidence">Confidence</p><p class="metric metric-green" data-i18n-phrase="Unreasonable" id="confidenceMetric">Unreasonable</p></article>
@@ -188,6 +220,14 @@
 <article class="card"><p class="label" data-i18n-phrase="Financial status">Financial status</p><p class="metric" data-i18n-phrase="Aggressively optimistic" id="financialStatusMetric">Aggressively optimistic</p></article>
 <article class="card funny-tooltip" data-tooltip="Risk assessment performed by a guy with a website."><p class="label" data-i18n-phrase="Risk profile">Risk profile</p><p class="metric" data-i18n-phrase="Your call" id="riskProfileMetric">Your call</p></article>
 </div>
+</div>
+<div class="public-record-compact card">
+  <div>
+    <p class="label" data-i18n-phrase="PUBLIC MONEY RECORD">PUBLIC MONEY RECORD</p>
+    <h3 data-i18n-phrase="Every euro is accounted for.">Every euro is accounted for.</h3>
+    <p class="muted" data-i18n-phrase="The public counter is calculated from verified support. Individual payment details stay private.">The public counter is calculated from verified support. Individual payment details stay private.</p>
+  </div>
+  <strong id="publicLedgerTotal">—</strong>
 </div>
 </section>
 <section aria-labelledby="plan-title" class="wrap reveal" id="plan">
@@ -288,7 +328,8 @@
 </div>
 <div class="join-side card">
 <p class="label" data-i18n-phrase="CURRENT MISSION">CURRENT MISSION</p>
-<p class="metric">€0 <span class="join-arrow">→</span> €100</p>
+<p class="metric"><span id="joinMissionCurrent">—</span> <span class="join-arrow">→</span> €100</p>
+<p class="muted join-mission-remaining" id="joinMissionRemaining" data-i18n-phrase="Loading...">Loading...</p>
 <p class="muted" data-i18n-phrase="The billion is the ridiculous long-term target. Right now, we need to figure out how to make the first hundred euros.">The billion is the ridiculous long-term target. Right now, we need to figure out how to make the first hundred euros.</p>
 <div class="join-list">
 <div><b>01</b><span data-i18n-phrase="Suggest an idea">Suggest an idea</span></div>
@@ -326,15 +367,15 @@
 <a class="btn primary" data-i18n-phrase="Make your call" href="support.html">Make your call</a>
 </div>
 </section>
-<section aria-labelledby="milestones-title" class="wrap reveal">
-<p class="eyebrow" data-i18n-phrase="Milestones, generously defined">Milestones, generously defined</p>
-<h2 class="title" id="milestones-title">Every euro has<br/>a job.</h2>
+<section aria-labelledby="milestones-title" class="wrap reveal" id="milestones">
+<p class="eyebrow" data-i18n-phrase="The first hundred">The first hundred</p>
+<h2 class="title" id="milestones-title"><span data-i18n-phrase="Small numbers first.">Small numbers first.</span><br/><span class="plan-accent" data-i18n-phrase="The billion can wait.">The billion can wait.</span></h2>
 <div class="grid milestone-grid">
-<article class="card milestone"><p class="amount">€5</p><p class="name" data-i18n-phrase="Coffee, for stamina">Coffee, for stamina</p></article>
-<article class="card milestone"><p class="amount">€50</p><p class="name" data-i18n-phrase="Stop comparing Lidl prices">Stop comparing Lidl prices</p></article>
-<article class="card milestone"><p class="amount">€500</p><p class="name" data-i18n-phrase="Say “entrepreneur” once">Say “entrepreneur” once</p></article>
-<article class="card milestone"><p class="amount">€5,000</p><p class="name" data-i18n-phrase="Consider a LinkedIn post">Consider a LinkedIn post</p></article>
-<article class="card milestone"><p class="amount">€1B</p><p class="name" data-i18n-phrase="Reveal identity. Breathe.">Reveal identity. Breathe.</p></article>
+<article class="card milestone"><p class="amount">€5</p><p class="name" data-i18n-phrase="First coffee paid for by the experiment">First coffee paid for by the experiment</p></article>
+<article class="card milestone"><p class="amount">€10</p><p class="name" data-i18n-phrase="Okay, this is actually moving">Okay, this is actually moving</p></article>
+<article class="card milestone"><p class="amount">€25</p><p class="name" data-i18n-phrase="A stranger is genuinely involved">A stranger is genuinely involved</p></article>
+<article class="card milestone"><p class="amount">€50</p><p class="name" data-i18n-phrase="Halfway to the first real target">Halfway to the first real target</p></article>
+<article class="card milestone"><p class="amount">€100</p><p class="name" data-i18n-phrase="First milestone. Then we figure out €1,000.">First milestone. Then we figure out €1,000.</p></article>
 <article class="card milestone"><p class="amount" data-i18n-phrase="Today">Today</p><p class="name" data-i18n-phrase="Still wildly optimistic">Still wildly optimistic</p></article>
 </div>
 </section>
@@ -407,6 +448,7 @@
 <div class="ad-swap-container">
 <iframe loading="lazy" sandbox="allow-scripts allow-popups" src="https://ad-swap.web.app/frame.html?site=tEfOhNRjhLOxGQtM5aP8" title="Ad"></iframe>
 </div>
+<script src="assets/js/mobile-sections.js?v=1.0.0"></script>
 <script src="assets/js/i18n.js?v=1.0.0"></script>
 </body>
 </html>

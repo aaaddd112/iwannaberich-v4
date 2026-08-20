@@ -134,6 +134,53 @@ const PAYMENT_LINKS = {
     if (text) text.textContent = window.IWBRI18N?.format?.("script.milestoneProgress", {pct: progress.toFixed(0)}) || `${progress.toFixed(0)}% of the way to the current milestone.`;
   }
 
+  function renderLiveMission(total) {
+    const firstTarget = 100;
+    const remaining = Math.max(firstTarget - total, 0);
+    const missionPct = Math.min((total / firstTarget) * 100, 100);
+    const formatted = formatEuro(total);
+    const remainingFormatted = formatEuro(remaining);
+
+    const missionWealth = $("missionWealthValue");
+    const missionSince = $("missionSinceLaunch");
+    const missionFill = $("missionProgressFill");
+    const missionRemaining = $("missionRemaining");
+    const joinCurrent = $("joinMissionCurrent");
+    const joinRemaining = $("joinMissionRemaining");
+    const ledgerTotal = $("publicLedgerTotal");
+
+    if (missionWealth) missionWealth.textContent = formatted;
+    if (missionSince) missionSince.textContent = window.IWBRI18N?.format?.("script.sinceLaunch", { amount: formatted }) || `+${formatted} since launch.`;
+    if (missionFill) missionFill.style.width = `${Math.max(missionPct, total > 0 ? 1 : 0)}%`;
+    if (missionRemaining) missionRemaining.textContent = remaining > 0
+      ? window.IWBRI18N?.format?.("script.toGo", { amount: remainingFormatted }) || `${remainingFormatted} to go.`
+      : window.IWBRI18N?.format?.("script.firstMilestoneComplete") || "First €100 reached.";
+    if (joinCurrent) joinCurrent.textContent = formatted;
+    if (joinRemaining) joinRemaining.textContent = remaining > 0
+      ? window.IWBRI18N?.format?.("script.toGo", { amount: remainingFormatted }) || `${remainingFormatted} to go.`
+      : window.IWBRI18N?.format?.("script.firstMilestoneComplete") || "First €100 reached.";
+    if (ledgerTotal) ledgerTotal.textContent = formatted;
+  }
+
+  function clearLiveMission() {
+    const missionWealth = $("missionWealthValue");
+    const missionSince = $("missionSinceLaunch");
+    const missionFill = $("missionProgressFill");
+    const missionRemaining = $("missionRemaining");
+    const joinCurrent = $("joinMissionCurrent");
+    const joinRemaining = $("joinMissionRemaining");
+    const ledgerTotal = $("publicLedgerTotal");
+    const unavailable = window.IWBRI18N?.format?.("script.unavailable") || "Verified support is temporarily unavailable.";
+
+    if (missionWealth) missionWealth.textContent = "—";
+    if (missionSince) missionSince.textContent = unavailable;
+    if (missionFill) missionFill.style.width = "0%";
+    if (missionRemaining) missionRemaining.textContent = "—";
+    if (joinCurrent) joinCurrent.textContent = "—";
+    if (joinRemaining) joinRemaining.textContent = "—";
+    if (ledgerTotal) ledgerTotal.textContent = "—";
+  }
+
   async function loadDonations() {
     const wealthValue = $("wealthValue");
     const wealthNote = $("wealthNote");
@@ -162,6 +209,7 @@ const PAYMENT_LINKS = {
 
       if (!Number.isFinite(total)) throw new Error("Unexpected wealth response");
 
+      renderLiveMission(total);
       if (wealthValue) wealthValue.textContent = formatEuro(total);
       if (wealthNote) wealthNote.textContent = window.IWBRI18N?.format?.("script.updated") || "Updated from publicly recorded support.";
       updateProgress(total);
@@ -181,6 +229,7 @@ const PAYMENT_LINKS = {
     } catch (error) {
       console.error("Could not load verified wealth:", error);
       if (wealthNote) wealthNote.textContent = window.IWBRI18N?.format?.("script.unavailable") || "Verified support is temporarily unavailable.";
+      clearLiveMission();
       updateProgress(0);
       updateMilestones(0);
       updateMilestoneProgress(0);
