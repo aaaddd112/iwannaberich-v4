@@ -155,6 +155,7 @@
     <div class="mission-actions">
       <a class="btn primary" data-i18n-phrase="Make your prediction" href="support.html">Make your prediction</a>
       <a class="btn" data-i18n-phrase="Suggest an idea" href="#join">Suggest an idea</a>
+      <button class="btn" id="shareMomentButton" type="button" data-i18n-phrase="Share this moment">Share this moment</button>
     </div>
   </div>
   <div class="mission-loop card">
@@ -169,6 +170,22 @@
     <div class="mission-loop-step"><span>04</span><b data-i18n-phrase="See the result">See the result</b></div>
   </div>
 </section>
+<section aria-labelledby="experiment-title" class="wrap reveal current-experiment" id="current-experiment">
+  <div class="current-experiment-head">
+    <div>
+      <p class="eyebrow" data-i18n-phrase="CURRENT EXPERIMENT">CURRENT EXPERIMENT</p>
+      <h2 class="title" id="experiment-title"><span data-i18n-phrase="How should I make the next €20?">How should I make the next €20?</span></h2>
+      <p class="lead" data-i18n-phrase="You decide what I try next. Vote now, then come back to see what actually happened.">You decide what I try next. Vote now, then come back to see what actually happened.</p>
+    </div>
+    <span class="experiment-status mono" data-i18n-phrase="VOTING OPEN">VOTING OPEN</span>
+  </div>
+  <div class="experiment-options card" id="experimentOptions">
+    <button class="experiment-option" data-option="sell" type="button"><span class="experiment-option-text" data-i18n-phrase="Sell something online">Sell something online</span><span class="experiment-option-result"><strong>—</strong><small>—</small></span></button>
+    <button class="experiment-option" data-option="digital" type="button"><span class="experiment-option-text" data-i18n-phrase="Build a tiny digital product">Build a tiny digital product</span><span class="experiment-option-result"><strong>—</strong><small>—</small></span></button>
+    <button class="experiment-option" data-option="hustle" type="button"><span class="experiment-option-text" data-i18n-phrase="Try a ridiculous internet hustle">Try a ridiculous internet hustle</span><span class="experiment-option-result"><strong>—</strong><small>—</small></span></button>
+    <div class="experiment-footer"><span id="experimentVoteTotal" data-i18n-phrase="Loading votes...">Loading votes...</span><span data-i18n-phrase="One vote per browser.">One vote per browser.</span></div>
+  </div>
+</section>
 <section aria-labelledby="journal-title" class="wrap reveal mission-journal" id="journal">
   <div class="mission-journal-head">
     <div>
@@ -180,9 +197,9 @@
   <article class="mission-journal-entry card">
     <div class="mission-journal-index">07</div>
     <div>
-      <p class="log-label" data-i18n-phrase="NEXT">NEXT</p>
-      <h3 data-i18n-phrase="Make the first €100 from €0.">Make the first €100 from €0.</h3>
-      <p class="muted" data-i18n-phrase="The next phase is simple: find out what actually moves the number, document it, and keep going.">The next phase is simple: find out what actually moves the number, document it, and keep going.</p>
+      <p class="log-label" data-i18n-phrase="NOW">NOW</p>
+      <h3 data-i18n-phrase="€13 is real. The first €100 is the next test.">€13 is real. The first €100 is the next test.</h3>
+      <p class="muted" data-i18n-phrase="Product Hunt is live, the site is now multilingual, and the next phase is simple: find out what actually moves the number, document it, and keep going.">Product Hunt is live, the site is now multilingual, and the next phase is simple: find out what actually moves the number, document it, and keep going.</p>
     </div>
   </article>
 </section>
@@ -229,6 +246,17 @@
   </div>
   <strong id="publicLedgerTotal">—</strong>
 </div>
+  <div class="public-ledger card" id="public-ledger">
+    <div class="public-ledger-head">
+      <div>
+        <p class="label" data-i18n-phrase="WHERE THE MONEY CAME FROM">WHERE THE MONEY CAME FROM</p>
+        <h3 data-i18n-phrase="Every verified euro, in public.">Every verified euro, in public.</h3>
+      </div>
+      <span class="public-ledger-total" id="publicLedgerCount">—</span>
+    </div>
+    <div class="public-ledger-list" id="publicLedgerList"><p class="muted" data-i18n-phrase="Loading the public record...">Loading the public record...</p></div>
+    <p class="public-ledger-note" data-i18n-phrase="Individual payment details remain private. Only amount and date are shown.">Individual payment details remain private. Only amount and date are shown.</p>
+  </div>
 </section>
 <section aria-labelledby="plan-title" class="wrap reveal" id="plan">
 <p class="eyebrow" data-i18n-phrase="The plan, unfortunately">The plan, unfortunately</p>

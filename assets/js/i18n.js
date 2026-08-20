@@ -50,7 +50,29 @@
     "support.loadingPredictions": "Loading predictions...",
     "support.firstVote": "Be the first to vote.",
     "support.votesSoFar": "{count} vote{plural} so far",
-    "support.owner": "IWANNABERICH · OWNER"
+    "support.owner": "IWANNABERICH · OWNER",
+    "script.progress": "{pct}% of the way there. Technically.",
+    "script.progressEmpty": "The bar is ready. The money is taking its time.",
+    "script.milestoneProgress": "{pct}% of the way to the current milestone.",
+    "script.sinceLaunch": "+{amount} since launch.",
+    "script.toGo": "{amount} to go.",
+    "script.firstMilestoneComplete": "First €100 reached.",
+    "script.unavailable": "Verified support is temporarily unavailable.",
+    "script.updated": "Updated from publicly recorded support.",
+    "script.next": "Next milestone: {milestone} — {remaining} to go.",
+    "script.allMilestones": "All listed milestones cleared. The billion remains.",
+    "script.unlocked": "UNLOCKED",
+    "script.starting": "STARTING",
+    "script.unknown": "???",
+    "script.locked": "LOCKED",
+    "script.noLedger": "No verified contributions yet.",
+    "script.supportLabel": "Support",
+    "script.ledgerUnavailable": "Public ledger temporarily unavailable.",
+    "script.votes": "votes",
+    "script.votesShort": "votes",
+    "script.firstExperimentVote": "Be the first to vote.",
+    "script.copied": "Copied",
+    "script.shareMoment": "Share this moment"
   },
   "es": {
     "nav.explore": "Explorar",
@@ -2910,6 +2932,12 @@
     "ja": "読み込み中…",
     "ar": "جارٍ التحميل..."
   }
+  ,"NOW":{"es":"AHORA","fr":"MAINTENANT","de":"JETZT","pt":"AGORA","zh":"现在","ja":"現在","ar":"الآن"}
+  ,"€13 is real. The first €100 is the next test.":{"es":"Los 13 € son reales. Los primeros 100 € son la próxima prueba.","fr":"Les 13 € sont réels. Les 100 premiers € sont le prochain test.","de":"Die 13 € sind echt. Die ersten 100 € sind der nächste Test.","pt":"Os 13 € são reais. Os primeiros 100 € são o próximo teste.","zh":"13欧元是真实的。下一个测试是达到100欧元。","ja":"13ユーロは現実です。次のテストは最初の100ユーロ。","ar":"الـ13 يورو حقيقية. والاختبار التالي هو الوصول إلى أول 100 يورو."}
+  ,"Product Hunt is live, the site is now multilingual, and the next phase is simple: find out what actually moves the number, document it, and keep going.":{"es":"Product Hunt ya está activo, el sitio ahora es multilingüe y la siguiente fase es simple: descubrir qué mueve realmente la cifra, documentarlo y seguir adelante.","fr":"Product Hunt est lancé, le site est désormais multilingue et la prochaine phase est simple : découvrir ce qui fait vraiment bouger le chiffre, le documenter et continuer.","de":"Product Hunt ist live, die Website ist jetzt mehrsprachig und die nächste Phase ist einfach: herausfinden, was die Zahl wirklich bewegt, es dokumentieren und weitermachen.","pt":"O Product Hunt está no ar, o site agora é multilíngue e a próxima fase é simples: descobrir o que realmente move o número, documentar e continuar.","zh":"Product Hunt 已上线，网站现在支持多种语言。下一阶段很简单：找出真正能推动数字的方法，记录下来，然后继续。","ja":"Product Hunt は公開中で、サイトも多言語対応になりました。次の段階はシンプルです。数字を本当に動かすものを見つけ、記録し、続けます。","ar":"تم إطلاق Product Hunt، وأصبح الموقع متعدد اللغات. المرحلة التالية بسيطة: معرفة ما الذي يحرّك الرقم فعلًا، وتوثيقه، ثم الاستمرار."}
+  ,"The first €100 became the mission.":{"es":"Los primeros 100 € se convirtieron en la misión.","fr":"Les premiers 100 € sont devenus la mission.","de":"Die ersten 100 € wurden zur Mission.","pt":"Os primeiros 100 € viraram a missão.","zh":"第一个100欧元成为了当前任务。","ja":"最初の100ユーロが現在のミッションになりました。","ar":"أصبح أول 100 يورو هو المهمة الحالية."}
+  ,"The site now focuses the story on €13 → €100, community voting, public money records, and short experiment updates. The €1B goal stays in the background as the ridiculous long-term target.":{"es":"El sitio ahora centra la historia en 13 € → 100 €, las votaciones de la comunidad, los registros públicos del dinero y actualizaciones breves. El objetivo de 1.000 millones sigue al fondo como la meta absurda a largo plazo.","fr":"Le site se concentre désormais sur 13 € → 100 €, les votes de la communauté, les registres publics de l’argent et de courtes mises à jour. L’objectif de 1 Md€ reste en arrière-plan comme cible absurde à long terme.","de":"Die Website konzentriert sich jetzt auf 13 € → 100 €, Community-Abstimmungen, öffentliche Geldaufzeichnungen und kurze Experiment-Updates. Das 1-Mrd.-€-Ziel bleibt als absurdes langfristiges Ziel im Hintergrund.","pt":"O site agora foca a história em 13 € → 100 €, votação da comunidade, registros públicos do dinheiro e atualizações curtas. A meta de 1 bilhão de euros fica ao fundo como objetivo absurdo de longo prazo.","zh":"网站现在把故事重点放在13欧元→100欧元、社区投票、公开资金记录和简短实验更新上。10亿欧元目标仍作为荒谬的长期目标留在背景中。","ja":"サイトでは今、13ユーロ→100ユーロ、コミュニティ投票、公開マネー記録、短い実験アップデートに焦点を当てています。10億ユーロの目標は、ばかげた長期目標として背景に残ります。","ar":"يركز الموقع الآن على 13 يورو ← 100 يورو، وتصويت المجتمع، والسجل العام للأموال، وتحديثات التجارب القصيرة. ويبقى هدف المليار يورو في الخلفية كهدف طويل الأمد عبثي."}
+
 };
 
   function detectLanguage() {
@@ -3005,6 +3033,14 @@
     "script.suggestCopy": "Suggest an idea → vote → watch me try it → see the result.",
   },
   "es": {
+    "script.noLedger": "Aún no hay contribuciones verificadas.",
+    "script.ledgerUnavailable": "El registro público no está disponible temporalmente.",
+    "script.supportLabel": "Apoyo",
+    "script.votes": "votos",
+    "script.votesShort": "votos",
+    "script.firstExperimentVote": "Sé la primera persona en votar.",
+    "script.copied": "Copiado",
+    "script.shareMoment": "Comparte este momento",
     "support.unavailable": "Los votos no están disponibles ahora mismo.",
     "support.ownerMode": "Modo propietario activado — puedes responder abajo.",
     "support.loginOwner": "Inicia sesión como propietario primero.",
@@ -3040,6 +3076,14 @@
     "script.suggestCopy": "Sugiere una idea → vota → mira cómo la pruebo → descubre el resultado.",
   },
   "fr": {
+    "script.noLedger": "Aucune contribution vérifiée pour le moment.",
+    "script.ledgerUnavailable": "Le registre public est temporairement indisponible.",
+    "script.supportLabel": "Soutien",
+    "script.votes": "votes",
+    "script.votesShort": "votes",
+    "script.firstExperimentVote": "Soyez le premier à voter.",
+    "script.copied": "Copié",
+    "script.shareMoment": "Partager ce moment",
     "support.unavailable": "Les votes sont indisponibles pour le moment.",
     "support.ownerMode": "Mode propriétaire activé — vous pouvez répondre ci-dessous.",
     "support.loginOwner": "Connectez-vous d’abord en tant que propriétaire.",
@@ -3075,6 +3119,14 @@
     "script.suggestCopy": "Propose une idée → vote → regarde-moi l’essayer → vois le résultat.",
   },
   "de": {
+    "script.noLedger": "Noch keine verifizierten Beiträge.",
+    "script.ledgerUnavailable": "Das öffentliche Protokoll ist vorübergehend nicht verfügbar.",
+    "script.supportLabel": "Unterstützung",
+    "script.votes": "Stimmen",
+    "script.votesShort": "Stimmen",
+    "script.firstExperimentVote": "Sei die erste Person, die abstimmt.",
+    "script.copied": "Kopiert",
+    "script.shareMoment": "Diesen Moment teilen",
     "support.unavailable": "Stimmen sind derzeit nicht verfügbar.",
     "support.ownerMode": "Eigentümermodus aktiviert — du kannst unten antworten.",
     "support.loginOwner": "Melde dich zuerst als Eigentümer an.",
@@ -3110,6 +3162,14 @@
     "script.suggestCopy": "Idee vorschlagen → abstimmen → zuschauen, wie ich es ausprobiere → Ergebnis sehen.",
   },
   "pt": {
+    "script.noLedger": "Ainda não há contribuições verificadas.",
+    "script.ledgerUnavailable": "O registro público está temporariamente indisponível.",
+    "script.supportLabel": "Apoio",
+    "script.votes": "votos",
+    "script.votesShort": "votos",
+    "script.firstExperimentVote": "Seja a primeira pessoa a votar.",
+    "script.copied": "Copiado",
+    "script.shareMoment": "Compartilhar este momento",
     "support.unavailable": "Os votos não estão disponíveis no momento.",
     "support.ownerMode": "Modo proprietário ativado — você pode responder abaixo.",
     "support.loginOwner": "Entre primeiro como proprietário.",
@@ -3145,6 +3205,14 @@
     "script.suggestCopy": "Sugira uma ideia → vote → veja-me tentar → veja o resultado.",
   },
   "zh": {
+    "script.noLedger": "目前还没有经过验证的支持。",
+    "script.ledgerUnavailable": "公开记录暂时不可用。",
+    "script.supportLabel": "支持",
+    "script.votes": "票",
+    "script.votesShort": "票",
+    "script.firstExperimentVote": "成为第一个投票的人。",
+    "script.copied": "已复制",
+    "script.shareMoment": "分享这一刻",
     "support.unavailable": "投票暂时不可用。",
     "support.ownerMode": "所有者模式已启用——你可以在下方回复。",
     "support.loginOwner": "请先以所有者身份登录。",
@@ -3180,6 +3248,14 @@
     "script.suggestCopy": "提出想法 → 投票 → 看我尝试 → 查看结果。",
   },
   "ja": {
+    "script.noLedger": "確認済みの支援はまだありません。",
+    "script.ledgerUnavailable": "公開記録は一時的に利用できません。",
+    "script.supportLabel": "支援",
+    "script.votes": "票",
+    "script.votesShort": "票",
+    "script.firstExperimentVote": "最初の一票を入れてください。",
+    "script.copied": "コピーしました",
+    "script.shareMoment": "この瞬間を共有",
     "support.unavailable": "現在、投票を利用できません。",
     "support.ownerMode": "オーナーモードが有効です — 下から返信できます。",
     "support.loginOwner": "まずオーナーとしてログインしてください。",
@@ -3215,6 +3291,14 @@
     "script.suggestCopy": "アイデアを提案 → 投票 → 私が試す → 結果を見る。",
   },
   "ar": {
+    "script.noLedger": "لا توجد مساهمات موثقة بعد.",
+    "script.ledgerUnavailable": "السجل العام غير متاح مؤقتًا.",
+    "script.supportLabel": "دعم",
+    "script.votes": "تصويتات",
+    "script.votesShort": "تصويتات",
+    "script.firstExperimentVote": "كن أول من يصوّت.",
+    "script.copied": "تم النسخ",
+    "script.shareMoment": "شارك هذه اللحظة",
     "support.unavailable": "التصويت غير متاح حاليًا.",
     "support.ownerMode": "وضع المالك مفعّل — يمكنك الرد أدناه.",
     "support.loginOwner": "سجّل الدخول أولًا بصفتك المالك.",

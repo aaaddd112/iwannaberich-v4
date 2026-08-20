@@ -77,3 +77,7 @@ Then deploy the Edge Function. It adds:
 The function uses Supabase's server-side service role automatically. No service-role key belongs in the website.
 
 If abuse becomes significant, Cloudflare Turnstile can be added as a second anti-bot layer without changing the public comments table.
+
+## Live community experiment + public ledger
+
+Run `migrations/202608200001_live_experiment.sql` after the existing Stripe contribution migration. It adds the public-safe contribution ledger RPC and the anonymous next-experiment voting RPC used by the homepage.

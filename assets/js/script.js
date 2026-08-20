@@ -20,6 +20,8 @@ const PAYMENT_LINKS = {
     initShare();
     initMicroInteractions();
     initPersonalityLayer();
+    initCommunityExperiment();
+    initShareMoment();
     loadDonations();
     initGlobalCurrencyCounter();
     window.addEventListener("iwbr:languagechange", () => { loadDonations(); });
@@ -215,6 +217,7 @@ const PAYMENT_LINKS = {
       updateProgress(total);
       updateMilestones(total);
       updateMilestoneProgress(total);
+      loadPublicLedger();
 
       const targets = [...document.querySelectorAll("[data-milestone]")]
         .map((item) => Number(item.dataset.milestone))
@@ -233,6 +236,7 @@ const PAYMENT_LINKS = {
       updateProgress(0);
       updateMilestones(0);
       updateMilestoneProgress(0);
+      loadPublicLedger();
     }
   }
 
@@ -508,6 +512,123 @@ const PAYMENT_LINKS = {
       setTimeout(maybeGlitch, 28000+Math.random()*22000);
     };
     setTimeout(maybeGlitch, 18000);
+  }
+
+
+  async function loadPublicLedger() {
+    const list = $("publicLedgerList");
+    const count = $("publicLedgerCount");
+    if (!list) return;
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_public_ledger`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: "{}"
+      });
+      if (!response.ok) throw new Error(`Ledger returned ${response.status}`);
+      const rows = await response.json();
+      if (!Array.isArray(rows)) throw new Error("Unexpected ledger response");
+      if (count) count.textContent = `${rows.length}`;
+      if (!rows.length) {
+        list.innerHTML = `<p class="muted">${window.IWBRI18N?.format?.("script.noLedger") || "No verified contributions yet."}</p>`;
+        return;
+      }
+      list.innerHTML = rows.map((row) => {
+        const amount = Number(row.amount_eur || 0);
+        const date = row.paid_at ? new Date(row.paid_at) : null;
+        const dateText = date && !Number.isNaN(date.getTime())
+          ? new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(date)
+          : "—";
+        return `<div class="ledger-row"><time datetime="${row.paid_at || ""}">${dateText}</time><strong>+${formatEuro(amount)}</strong><span>${window.IWBRI18N?.format?.("script.supportLabel") || "Support"}</span></div>`;
+      }).join("");
+    } catch (error) {
+      console.warn("Could not load public ledger:", error);
+      list.innerHTML = `<p class="muted">${window.IWBRI18N?.format?.("script.ledgerUnavailable") || "Public ledger temporarily unavailable."}</p>`;
+      if (count) count.textContent = "—";
+    }
+  }
+
+  function initCommunityExperiment() {
+    const root = $("experimentOptions");
+    if (!root) return;
+    const STORAGE_KEY = "iwbr_next_experiment_vote";
+    const buttons = [...root.querySelectorAll(".experiment-option")];
+
+    const render = (rows) => {
+      const total = rows.reduce((sum, row) => sum + Number(row.vote_count || 0), 0);
+      const byOption = Object.fromEntries(rows.map((row) => [row.option_code, Number(row.vote_count || 0)]));
+      const totalEl = $("experimentVoteTotal");
+      if (totalEl) totalEl.textContent = total ? `${total.toLocaleString("en-US")} ${window.IWBRI18N?.format?.("script.votes") || "votes"}` : (window.IWBRI18N?.format?.("script.firstExperimentVote") || "Be the first to vote.");
+      buttons.forEach((button) => {
+        const count = byOption[button.dataset.option] || 0;
+        const pct = total ? Math.round((count / total) * 100) : 0;
+        const strong = button.querySelector(".experiment-option-result strong");
+        const small = button.querySelector(".experiment-option-result small");
+        if (strong) strong.textContent = `${pct}%`;
+        if (small) small.textContent = `${count} ${window.IWBRI18N?.format?.("script.votesShort") || "votes"}`;
+      });
+      const chosen = localStorage.getItem(STORAGE_KEY);
+      buttons.forEach((button) => button.classList.toggle("is-selected", button.dataset.option === chosen));
+      if (chosen) buttons.forEach((button) => { button.disabled = true; });
+    };
+
+    const load = async () => {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_next_experiment_votes`, {
+          method: "POST",
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+          body: "{}"
+        });
+        if (!response.ok) throw new Error(`Experiment votes returned ${response.status}`);
+        render(await response.json());
+      } catch (error) {
+        console.warn("Could not load community experiment:", error);
+      }
+    };
+
+    buttons.forEach((button) => button.addEventListener("click", async () => {
+      if (localStorage.getItem(STORAGE_KEY)) return;
+      const option = button.dataset.option;
+      buttons.forEach((item) => item.disabled = true);
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/vote_next_experiment`, {
+          method: "POST",
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ option_code: option })
+        });
+        if (!response.ok) throw new Error(`Vote returned ${response.status}`);
+        localStorage.setItem(STORAGE_KEY, option);
+        await load();
+      } catch (error) {
+        console.error("Experiment vote failed:", error);
+        buttons.forEach((item) => item.disabled = false);
+      }
+    }));
+    load();
+  }
+
+  function initShareMoment() {
+    const button = $("shareMomentButton");
+    if (!button) return;
+    button.addEventListener("click", async () => {
+      const amount = $("missionWealthValue")?.textContent || "—";
+      const text = `IWANNABERICH is at ${amount} and trying to reach €100. Follow the experiment: https://iwannaberich.xyz/`;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: "IWANNABERICH", text, url: "https://iwannaberich.xyz/" });
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(text);
+          button.textContent = window.IWBRI18N?.format?.("script.copied") || "Copied";
+          setTimeout(() => { button.textContent = window.IWBRI18N?.format?.("script.shareMoment") || "Share this moment"; }, 1800);
+        }
+      } catch (error) {
+        if (error?.name !== "AbortError") console.warn("Share failed:", error);
+      }
+    });
   }
 
 })();
