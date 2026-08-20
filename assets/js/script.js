@@ -22,6 +22,7 @@ const PAYMENT_LINKS = {
     initPersonalityLayer();
     loadDonations();
     initGlobalCurrencyCounter();
+    window.addEventListener("iwbr:languagechange", () => { loadDonations(); });
   });
 
   function initMobileNav() {
@@ -110,7 +111,7 @@ const PAYMENT_LINKS = {
     const fill = $("progressFill");
     const text = $("progressText");
     if (fill) fill.style.width = `${Math.max(progress, 0.25)}%`;
-    if (text) text.textContent = total ? `${progress.toFixed(7)}% of the way there. Technically.` : "The bar is ready. The money is taking its time.";
+    if (text) text.textContent = total ? (window.IWBRI18N?.format?.("script.progress", {pct: progress.toFixed(7)}) || `${progress.toFixed(7)}% of the way there. Technically.`) : (window.IWBRI18N?.format?.("script.progressEmpty") || "The bar is ready. The money is taking its time.");
   }
 
   function updateMilestoneProgress(total) {
@@ -130,7 +131,7 @@ const PAYMENT_LINKS = {
 
     if (amount) amount.textContent = `${formatEuro(total)} / ${formatEuro(currentTarget)}`;
     if (fill) fill.style.width = `${Math.max(progress, total > 0 ? 0.5 : 0)}%`;
-    if (text) text.textContent = `${progress.toFixed(0)}% of the way to the current milestone.`;
+    if (text) text.textContent = window.IWBRI18N?.format?.("script.milestoneProgress", {pct: progress.toFixed(0)}) || `${progress.toFixed(0)}% of the way to the current milestone.`;
   }
 
   async function loadDonations() {
@@ -162,7 +163,7 @@ const PAYMENT_LINKS = {
       if (!Number.isFinite(total)) throw new Error("Unexpected wealth response");
 
       if (wealthValue) wealthValue.textContent = formatEuro(total);
-      if (wealthNote) wealthNote.textContent = "Updated from publicly recorded support.";
+      if (wealthNote) wealthNote.textContent = window.IWBRI18N?.format?.("script.updated") || "Updated from publicly recorded support.";
       updateProgress(total);
       updateMilestones(total);
       updateMilestoneProgress(total);
@@ -174,12 +175,12 @@ const PAYMENT_LINKS = {
       const next = targets.find((target) => total < target);
       if (nextMilestone) {
         nextMilestone.textContent = next
-          ? `Next milestone: ${formatEuro(next)} — ${formatEuro(Math.max(next - total, 0))} to go.`
-          : "All listed milestones cleared. The billion remains.";
+          ? window.IWBRI18N?.format?.("script.next", {milestone: formatEuro(next), remaining: formatEuro(Math.max(next - total, 0))}) || `Next milestone: ${formatEuro(next)} — ${formatEuro(Math.max(next - total, 0))} to go.`
+          : window.IWBRI18N?.format?.("script.allMilestones") || "All listed milestones cleared. The billion remains.";
       }
     } catch (error) {
       console.error("Could not load verified wealth:", error);
-      if (wealthNote) wealthNote.textContent = "Verified support is temporarily unavailable.";
+      if (wealthNote) wealthNote.textContent = window.IWBRI18N?.format?.("script.unavailable") || "Verified support is temporarily unavailable.";
       updateProgress(0);
       updateMilestones(0);
       updateMilestoneProgress(0);
@@ -204,13 +205,13 @@ const PAYMENT_LINKS = {
     milestone.classList.toggle("is-current", isCurrent);
 
     if (unlocked) {
-      status.textContent = "UNLOCKED";
+      status.textContent = window.IWBRI18N?.format?.("script.unlocked") || "UNLOCKED";
     } else if (isCurrent) {
-      status.textContent = "STARTING";
+      status.textContent = window.IWBRI18N?.format?.("script.starting") || "STARTING";
     } else if (index === milestones.length - 1) {
-      status.textContent = "???";
+      status.textContent = window.IWBRI18N?.format?.("script.unknown") || "???";
     } else {
-      status.textContent = "LOCKED";
+      status.textContent = window.IWBRI18N?.format?.("script.locked") || "LOCKED";
     }
 
     if (unlocked && !wasUnlocked) {

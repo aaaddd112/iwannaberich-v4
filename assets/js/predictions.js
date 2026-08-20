@@ -52,9 +52,10 @@
       yesPercentEl.textContent = total > 0 ? `${yesPct}%` : "–";
       noPercentEl.textContent = total > 0 ? `${noPct}%` : "–";
       fillEl.style.width = `${yesPct}%`;
-      totalEl.textContent = total > 0
-        ? `${total.toLocaleString("en-US")} vote${total === 1 ? "" : "s"} so far`
-        : "Be the first to vote.";
+      const lang = window.IWBRI18N?.getLanguage?.() || "en";
+      const dict = window.IWBRI18N?.translations?.[lang] || null;
+      const countText = window.IWBRI18N?.format?.("support.votesSoFar", { count: total.toLocaleString("en-US"), plural: total === 1 ? "" : "s" });
+      totalEl.textContent = total > 0 ? (countText || `${total.toLocaleString("en-US")} vote${total === 1 ? "" : "s"} so far`) : (window.IWBRI18N?.format?.("support.firstVote") || "Be the first to vote.");
     }
 
     function setVotedState() {
@@ -70,7 +71,7 @@
         .select("yes_count, no_count").eq("id", 1).single();
       if (error) {
         console.error("Load predictions error:", error);
-        totalEl.textContent = "Votes unavailable right now.";
+        totalEl.textContent = window.IWBRI18N?.format?.("support.unavailable") || "Votes unavailable right now.";
         return;
       }
       renderCounts(Number(data.yes_count) || 0, Number(data.no_count) || 0);
@@ -90,6 +91,7 @@
     noBtn.addEventListener("click", () => castVote("no"));
     if (hasVoted) setVotedState();
     loadCounts();
+    window.addEventListener("iwbr:languagechange", loadCounts);
   }
 
   async function refreshAuth() {
@@ -102,18 +104,18 @@
     const replyHint = $("ownerReplyHint");
     if (replyHint) {
       replyHint.hidden = !currentUser;
-      replyHint.textContent = currentUser ? "Owner mode enabled — you can reply below." : "";
+      replyHint.textContent = currentUser ? window.IWBRI18N?.format?.("support.ownerMode") || "Owner mode enabled — you can reply below." : "";
     }
   }
 
   async function submitOwnerReply(parentId, value, button, errorEl) {
     if (!currentUser) {
-      errorEl.textContent = "Log in as the owner first.";
+      errorEl.textContent = window.IWBRI18N?.format?.("support.loginOwner") || "Log in as the owner first.";
       return;
     }
 
     button.disabled = true;
-    button.textContent = "Replying...";
+    button.textContent = window.IWBRI18N?.format?.("support.replying") || "Replying...";
     errorEl.textContent = "";
 
     try {
@@ -132,17 +134,17 @@
 
       const result = await response.json().catch(() => ({}));
       if (!response.ok) {
-        errorEl.textContent = result.error || "Couldn't post reply.";
+        errorEl.textContent = result.error || window.IWBRI18N?.format?.("support.couldntPost") || "Couldn't post reply.";
         return;
       }
 
       await loadComments();
     } catch (error) {
       console.error("Owner reply error:", error);
-      errorEl.textContent = "Couldn't reach the prediction system.";
+      errorEl.textContent = window.IWBRI18N?.format?.("support.systemError") || "Couldn't reach the prediction system.";
     } finally {
       button.disabled = false;
-      button.textContent = "Reply";
+      button.textContent = window.IWBRI18N?.format?.("support.reply") || "Reply";
     }
   }
 
@@ -154,7 +156,7 @@
     if (!comments.length) {
       const empty = document.createElement("p");
       empty.className = "muted";
-      empty.textContent = "No comments yet. Be the first.";
+      empty.textContent = window.IWBRI18N?.format?.("support.noComments") || "No comments yet. Be the first.";
       listEl.appendChild(empty);
       return;
     }
@@ -178,7 +180,7 @@
       if (item.author_type === "owner") {
         meta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
       } else {
-        meta.textContent = "Anonymous";
+        meta.textContent = window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
       }
       row.appendChild(meta);
 
@@ -194,7 +196,7 @@
         if (reply.author_type === "owner") {
           replyMeta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
         } else {
-          replyMeta.textContent = "Anonymous";
+          replyMeta.textContent = window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
         }
         replyBox.appendChild(replyMeta);
         row.appendChild(replyBox);
@@ -205,7 +207,7 @@
         replyWrap.className = "owner-reply";
         const input = document.createElement("textarea");
         input.maxLength = COMMENT_MAX_LENGTH;
-        input.placeholder = "Reply as the owner...";
+        input.placeholder = window.IWBRI18N?.format?.("support.replyPlaceholder") || "Reply as the owner...";
         const actions = document.createElement("div");
         actions.className = "predict-comment-actions";
         const error = document.createElement("p");
@@ -214,11 +216,11 @@
         const btn = document.createElement("button");
         btn.className = "btn primary";
         btn.type = "button";
-        btn.textContent = "Reply";
+        btn.textContent = window.IWBRI18N?.format?.("support.reply") || "Reply";
         btn.addEventListener("click", () => {
           const value = input.value.trim();
           if (!value) {
-            error.textContent = "Write a reply first.";
+            error.textContent = window.IWBRI18N?.format?.("support.writeReply") || "Write a reply first.";
             return;
           }
           submitOwnerReply(item.id, value, btn, error);
