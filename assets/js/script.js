@@ -555,7 +555,7 @@ const PAYMENT_LINKS = {
   function initCommunityExperiment() {
     const root = $("experimentOptions");
     if (!root) return;
-    const STORAGE_KEY = "iwbr_next_experiment_vote";
+    const STORAGE_KEY = "iwbr_next_experiment_vote_v2";
     const buttons = [...root.querySelectorAll(".experiment-option")];
 
     const render = (rows) => {
