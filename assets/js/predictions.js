@@ -303,11 +303,12 @@ if (nickname.length < 3 || nickname.length > 24) {
         const response = await fetch(PREDICTION_ENDPOINT, {
           method: "POST",
           headers: { "content-type": "application/json" },
-    body: JSON.stringify({
+        body: JSON.stringify({
   comment: value,
   nickname: nickname,
   website: honeypot?.value || ""
 })
+        });
 
         const result = await response.json().catch(() => ({}));
         if (!response.ok) {
