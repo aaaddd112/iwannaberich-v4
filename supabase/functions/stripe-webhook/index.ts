@@ -1,5 +1,6 @@
 import Stripe from 'npm:stripe@^22'
 import { withSupabase } from 'npm:@supabase/server@^1'
+import { htmlText, sendOwnerNotification } from '../_shared/notify.ts'
 
 const stripe = new Stripe(Deno.env.get('STRIPE_API_KEY') as string)
 const cryptoProvider = Stripe.createSubtleCryptoProvider()
@@ -54,19 +55,54 @@ export default {
           return Response.json({ ok: true, ignored: true, reason: 'unsupported_amount_or_currency' })
         }
 
-        const { error } = await ctx.supabaseAdmin.rpc('record_stripe_contribution', {
-          p_checkout_session_id: session.id,
-          p_payment_intent_id: paymentIntent,
-          p_payment_link_id: session.payment_link,
-          p_event_id: event.id,
-          p_amount_cents: amount,
-          p_currency: currency,
-          p_paid_at: new Date((session.created ?? Math.floor(Date.now() / 1000)) * 1000).toISOString(),
-        })
+        // Stripe can retry the same event. Only send an owner notification when
+        // this checkout session has not already been recorded.
+        const { data: existingContribution, error: existingError } = await ctx.supabaseAdmin
+          .from('stripe_contributions')
+          .select('id')
+          .eq('stripe_checkout_session_id', session.id)
+          .maybeSingle()
 
-        if (error) {
-          console.error('Could not record Stripe contribution:', error)
-          return new Response('Database write failed', { status: 500 })
+        if (existingError) {
+          console.error('Could not check existing Stripe contribution:', existingError)
+          return new Response('Database read failed', { status: 500 })
+        }
+
+        if (!existingContribution) {
+          const paidAt = new Date((session.created ?? Math.floor(Date.now() / 1000)) * 1000).toISOString()
+          const { error } = await ctx.supabaseAdmin.rpc('record_stripe_contribution', {
+            p_checkout_session_id: session.id,
+            p_payment_intent_id: paymentIntent,
+            p_payment_link_id: session.payment_link,
+            p_event_id: event.id,
+            p_amount_cents: amount,
+            p_currency: currency,
+            p_paid_at: paidAt,
+          })
+
+          if (error) {
+            console.error('Could not record Stripe contribution:', error)
+            return new Response('Database write failed', { status: 500 })
+          }
+
+          const amountEur = (amount / 100).toFixed(2)
+          const subject = `IWANNABERICH — new contribution €${amountEur}`
+          const text = [
+            'A new Stripe contribution was received.',
+            '',
+            `Amount: €${amountEur}`,
+            `Paid at: ${paidAt}`,
+            `Checkout session: ${session.id}`,
+            `Payment intent: ${paymentIntent ?? 'n/a'}`,
+          ].join('\n')
+          const html = `
+            <h2>New contribution received</h2>
+            <p><strong>Amount:</strong> €${htmlText(amountEur)}</p>
+            <p><strong>Paid at:</strong> ${htmlText(paidAt)}</p>
+            <p><strong>Checkout session:</strong> ${htmlText(session.id)}</p>
+            <p><strong>Payment intent:</strong> ${htmlText(paymentIntent ?? 'n/a')}</p>
+          `
+          await sendOwnerNotification(subject, text, html)
         }
       }
 

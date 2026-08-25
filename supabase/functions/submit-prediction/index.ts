@@ -1,4 +1,5 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { htmlText, sendOwnerNotification } from "../_shared/notify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -148,6 +149,28 @@ Deno.serve(async (req) => {
       console.error("Prediction insert error:", insertError);
       return jsonResponse({ error: "Could not save prediction." }, 500);
     }
+
+    const createdAt = inserted.created_at ?? new Date().toISOString();
+    const subject = parentId
+      ? "IWANNABERICH — new prediction reply"
+      : "IWANNABERICH — new prediction";
+    const text = [
+      parentId ? "A visitor replied to a prediction." : "A visitor left a new prediction.",
+      "",
+      `Prediction: ${comment}`,
+      `Created: ${createdAt}`,
+      `Type: ${authorType}`,
+      `ID: ${inserted.id}`,
+    ].join("\n");
+    const html = `
+      <h2>${parentId ? "New prediction reply" : "New prediction"}</h2>
+      <p><strong>Prediction:</strong></p>
+      <blockquote>${htmlText(comment)}</blockquote>
+      <p><strong>Created:</strong> ${htmlText(createdAt)}</p>
+      <p><strong>Type:</strong> ${htmlText(authorType)}</p>
+      <p><strong>ID:</strong> ${htmlText(inserted.id)}</p>
+    `;
+    await sendOwnerNotification(subject, text, html);
 
     return jsonResponse({ success: true, prediction: inserted });
   } catch (error) {
