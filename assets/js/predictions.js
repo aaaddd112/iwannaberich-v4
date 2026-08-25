@@ -129,9 +129,12 @@
           "content-type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ comment: value, parent_id: parentId })
-      });
-
+body: JSON.stringify({
+  comment: value,
+  nickname: nickname,
+  parent_id: parentId
+})
+});
       const result = await response.json().catch(() => ({}));
       if (!response.ok) {
         errorEl.textContent = result.error || window.IWBRI18N?.format?.("support.couldntPost") || "Couldn't post reply.";
@@ -180,8 +183,8 @@
       if (item.author_type === "owner") {
         meta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
       } else {
-        meta.textContent = window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
-      }
+  meta.textContent = item.nickname || window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
+}
       row.appendChild(meta);
 
       const childReplies = replies.get(item.id) || [];
@@ -195,9 +198,9 @@
         replyMeta.className = "predict-comment-meta";
         if (reply.author_type === "owner") {
           replyMeta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
-        } else {
-          replyMeta.textContent = window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
-        }
+       } else {
+  replyMeta.textContent = reply.nickname || window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
+}
         replyBox.appendChild(replyMeta);
         row.appendChild(replyBox);
       });
@@ -219,6 +222,16 @@
         btn.textContent = window.IWBRI18N?.format?.("support.reply") || "Reply";
         btn.addEventListener("click", () => {
           const value = input.value.trim();
+          const nickname = nicknameInput.value.trim();
+          if (!nickname) {
+  setError("Please choose a nickname.");
+  return;
+}
+
+if (nickname.length < 3 || nickname.length > 24) {
+  setError("Nickname must be 3–24 characters.");
+  return;
+}
           if (!value) {
             error.textContent = window.IWBRI18N?.format?.("support.writeReply") || "Write a reply first.";
             return;
@@ -243,8 +256,8 @@
 
     const { data, error } = await client
       .from("predictions_comments")
-      .select("id, comment, created_at, parent_id, author_type")
-      .order("created_at", { ascending: true })
+.select("id, comment, nickname, created_at, parent_id, author_type")
+     .order("created_at", { ascending: true })
       .limit(100);
 
     if (error) {
@@ -258,6 +271,7 @@
 
   function initComments(client) {
     const input = $("predictionCommentInput");
+    const nicknameInput = $("predictionNicknameInput");
     const honeypot = $("predictionWebsite");
     const charCount = $("predictionCharCount");
     const submitBtn = $("submitPredictionComment");
@@ -272,6 +286,12 @@
 
     async function submitComment() {
       const value = input.value.trim();
+      const nickname = nicknameInput.value.trim();
+
+if (!nickname) return setError("Please choose a nickname.");
+if (nickname.length < 3 || nickname.length > 24) {
+  return setError("Nickname must be 3–24 characters.");
+}
       if (!value) return setError("Write something first.");
       if (value.length > COMMENT_MAX_LENGTH) return setError(`Keep it under ${COMMENT_MAX_LENGTH} characters.`);
 
@@ -295,9 +315,9 @@
           return;
         }
 
-        input.value = "";
-        if (honeypot) honeypot.value = "";
-        updateCharCount();
+input.value = "";
+nicknameInput.value = "";
+if (honeypot) honeypot.value = "";        updateCharCount();
         window.IWBRAnalytics?.trackEvent("prediction_submit");
         await loadComments();
       } catch (error) {
