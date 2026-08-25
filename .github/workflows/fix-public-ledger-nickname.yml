@@ -1,0 +1,38 @@
+name: Fix public ledger nickname
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'fix: display contribution nicknames in public ledger'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update ledger renderer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('assets/js/script.js')
+          s = p.read_text(encoding='utf-8')
+          old = '        return `<div class="ledger-row"><time datetime="${row.paid_at || ""}">${dateText}</time><strong>+${formatEuro(amount)}</strong><span>${window.IWBRI18N?.format?.("script.supportLabel") || "Support"}</span></div>`;'
+          new = '''        const rawNickname = String(row.nickname || "Anonymous").trim() || "Anonymous";
+          const nickname = rawNickname.replace(/[&<>"']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
+          return `<div class="ledger-row"><time datetime="${row.paid_at || ""}">${dateText}</time><strong>+${formatEuro(amount)}</strong><span>${nickname}</span></div>`;'''
+          if old not in s:
+              raise SystemExit('Expected public ledger renderer was not found')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit and clean up
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/js/script.js
+          git commit -m "fix: display contribution nicknames in public ledger"
+          git rm .github/workflows/fix-public-ledger-nickname.yml
+          git commit -m "chore: remove temporary nickname fix workflow"
+          git push
