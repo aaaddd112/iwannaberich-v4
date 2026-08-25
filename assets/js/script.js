@@ -543,7 +543,8 @@ const PAYMENT_LINKS = {
         const dateText = date && !Number.isNaN(date.getTime())
           ? new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(date)
           : "—";
-        return `<div class="ledger-row"><time datetime="${row.paid_at || ""}">${dateText}</time><strong>+${formatEuro(amount)}</strong><span>${window.IWBRI18N?.format?.("script.supportLabel") || "Support"}</span></div>`;
+        const nickname = String(row.nickname || "Anonymous").trim() || "Anonymous";
+        return `<div class="ledger-row"><time datetime="${row.paid_at || ""}">${dateText}</time><strong>+${formatEuro(amount)}</strong><span>${nickname}</span></div>`;
       }).join("");
     } catch (error) {
       console.warn("Could not load public ledger:", error);
