@@ -1,0 +1,1 @@
+Homepage refactor plan: keep the hero, first €100 mission, current experiment, latest update and support CTA on the homepage. Move Story, Numbers and Milestones to dedicated pages. Keep the risks content available under The Experiment.
