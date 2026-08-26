@@ -118,9 +118,6 @@
         return;
       }
 
-      // Stripe Payment Links accept client_reference_id in the URL and pass it
-      // through to checkout.session.completed. It must contain only letters,
-      // numbers, hyphens or underscores.
       const reference = nickname
         ? nickname.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9_-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 200)
         : "";
@@ -143,10 +140,50 @@
     }, true);
   }
 
+  function setupSuggestionCTA() {
+    const mission = document.getElementById("mission");
+    const loop = document.querySelector(".mission-loop");
+    const experiment = document.getElementById("current-experiment");
+    const journal = document.getElementById("journal");
+    if (!mission || !journal || mission.dataset.suggestionCtaReady === "true") return;
+
+    loop?.remove();
+    experiment?.remove();
+
+    const section = document.createElement("section");
+    section.className = "wrap reveal suggestion-cta";
+    section.setAttribute("aria-label", "Suggestions and proposals");
+    section.innerHTML = `
+      <div class="suggestion-cta-copy">
+        <p class="eyebrow">COMMUNITY</p>
+        <p class="suggestion-cta-text">Have a suggestion or a proposal? <a href="https://t.me/+gHnqpWw74CQyOTU0" target="_blank" rel="noopener">Send it to me on Telegram →</a></p>
+      </div>
+    `;
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .suggestion-cta{padding:64px 0 44px;border-top:1px solid rgba(255,255,255,.08)}
+      .suggestion-cta-copy{display:flex;align-items:baseline;justify-content:space-between;gap:32px}
+      .suggestion-cta .eyebrow{margin:0;flex:0 0 auto}
+      .suggestion-cta-text{margin:0;color:#a8abb5;font-size:1rem;line-height:1.6}
+      .suggestion-cta-text a{color:#f4f4f6;text-decoration:none;border-bottom:1px solid rgba(169,112,255,.55);padding-bottom:2px}
+      .suggestion-cta-text a:hover{color:#b89aff;border-color:#b89aff}
+      @media (max-width:620px){
+        .suggestion-cta{padding:42px 0 30px}
+        .suggestion-cta-copy{display:block}
+        .suggestion-cta-text{margin-top:12px;font-size:.95rem}
+      }
+    `;
+    document.head.appendChild(style);
+    journal.parentNode.insertBefore(section, journal);
+    mission.dataset.suggestionCtaReady = "true";
+  }
+
   function init() {
     setupMobileSections();
     openSectionFromHash();
     setupDonationCheckout();
+    setupSuggestionCTA();
     window.addEventListener("hashchange", openSectionFromHash);
   }
 
