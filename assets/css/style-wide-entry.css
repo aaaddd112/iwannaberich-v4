@@ -1,3 +1,0 @@
-/* Desktop-wide entrypoint. The original stylesheet is preserved separately. */
-@import url("style-base.css");
-@import url("desktop-wide.css");
