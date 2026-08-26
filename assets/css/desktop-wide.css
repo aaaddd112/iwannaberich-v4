@@ -3,8 +3,8 @@
 
 @media (min-width: 1100px) {
   :root {
-    --desktop-content-width: 1500px;
-    --desktop-gutter: 48px;
+    --desktop-content-width: 1700px;
+    --desktop-gutter: 32px;
   }
 
   .wrap,
@@ -15,34 +15,36 @@
 
   .hero {
     min-height: calc(100vh - 64px);
-    padding-top: clamp(72px, 7vw, 110px);
-    padding-bottom: 64px;
-    grid-template-columns: minmax(0, 1.08fr) minmax(500px, 0.92fr);
-    column-gap: clamp(72px, 7vw, 120px);
+    padding-top: clamp(68px, 6vw, 100px);
+    padding-bottom: 56px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(520px, 0.92fr);
+    column-gap: clamp(56px, 5vw, 88px);
   }
 
   .hero-intro {
-    max-width: 760px;
+    max-width: 820px;
   }
 
   .hero h1 {
     max-width: 900px;
     margin-left: 0;
     margin-right: 0;
-    font-size: clamp(5rem, 6.4vw, 7.4rem);
+    /* Slightly smaller than the previous desktop treatment. */
+    font-size: clamp(4.6rem, 5.7vw, 6.7rem);
   }
 
   .hero-copy {
-    max-width: 620px;
+    max-width: 660px;
     margin-left: 0;
     margin-right: 0;
-    font-size: 0.98rem;
+    font-size: 0.96rem;
   }
 
   .hero-punchline {
-    max-width: 620px;
+    max-width: 660px;
     margin-left: 0;
     margin-right: 0;
+    font-size: 0.92rem;
   }
 
   .hero .buttons {
@@ -50,25 +52,34 @@
   }
 
   .hero-goal {
-    padding: 44px 0 38px;
+    padding: 40px 0 34px;
   }
 
   .hero-goal-amount {
-    font-size: clamp(62px, 5.2vw, 88px);
+    /* Keep the goal dominant, but reduce the oversized previous version. */
+    font-size: clamp(58px, 4.7vw, 82px);
   }
 
   .hero-goal-meta,
   .hero-goal-track {
-    max-width: 620px;
+    max-width: 680px;
   }
 
   .hero-goal-glow {
-    width: 560px;
-    height: 560px;
+    width: 540px;
+    height: 540px;
   }
 
   .hero .share-strip {
-    margin-top: 48px;
+    margin-top: 42px;
+  }
+
+  /* The legal/disclaimer line was too small on large desktop screens. */
+  .hero-disclaimer {
+    font-size: 0.72rem;
+    line-height: 1.5;
+    letter-spacing: 0.035em;
+    opacity: 0.78;
   }
 
   main > .wrap:not(.hero) {
@@ -82,11 +93,11 @@
   main > .wrap:not(.hero) .steps,
   main > .wrap:not(.hero) .timeline,
   main > .wrap:not(.hero) .leaderboard {
-    max-width: 980px;
+    max-width: 1180px;
   }
 
   .dashboard {
-    grid-template-columns: minmax(0, 1.5fr) minmax(420px, 0.9fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(460px, 0.9fr);
     gap: 22px;
   }
 
