@@ -7,14 +7,25 @@
 <link href="assets/css/style.css" rel="stylesheet">
 <title>The numbers — IWANNABERICH</title>
 </head>
-<body>
-<header class="wrap nav"><a aria-label="IWANNABERICH home" class="logo" href="index.html">I<i>WANNA</i>BERICH</a><nav aria-label="Main navigation" class="links"><a href="index.html">Home</a><a href="numbers.html" aria-current="page">Numbers</a><a href="milestones.html">Milestones</a><a href="story.html">Story</a><a href="experiment.html">The experiment</a><a href="contributors.html">Contributors</a><a href="support.html">Predictions</a><a href="updates.html">Updates</a></nav></header>
+<body data-page="numbers">
+<header class="wrap nav">
+<a aria-label="IWANNABERICH home" class="logo" href="index.html">I<i>WANNA</i>BERICH</a>
+<nav aria-label="Main navigation" class="links">
+<a data-nav="home" href="index.html">Home</a><a data-nav="numbers" href="numbers.html" aria-current="page">Numbers</a><a data-nav="milestones" href="milestones.html">Milestones</a><a data-nav="story" href="story.html">Story</a><a data-nav="experiment" href="experiment.html">The experiment</a><a data-nav="contributors" href="contributors.html">Contributors</a><a data-nav="predictions" href="support.html">Predictions</a><a data-nav="updates" href="updates.html">Updates</a><a data-nav="about" href="about.html">About</a>
+<label class="language-switcher"><span class="sr-only" data-nav="language">Language</span><select aria-label="Language" class="language-select"><option value="en">🇬🇧 English</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="pt">🇵🇹 Português</option><option value="zh">🇨🇳 中文</option><option value="ja">🇯🇵 日本語</option><option value="ar">🇸🇦 العربية</option></select></label>
+</nav></header>
 <main>
-<section class="wrap hero reveal"><p class="eyebrow">STARTING FROM €0</p><h1>I WANNA<br><span class="accent">BE RICH.</span></h1><p class="hero-copy">The goal is simple: €1,000,000,000. The numbers are public so you can watch the experiment move.</p></section>
-<section class="wrap reveal"><div class="dashboard"><div class="metrics"><article class="card"><p class="label">TARGET</p><p class="metric">€1 billion</p></article><article class="card"><p class="label">CONFIDENCE</p><p class="metric metric-green">Unreasonable</p></article><article class="card"><p class="label">BUSINESS MODEL</p><p class="metric">Public optimism</p></article><article class="card"><p class="label">FINANCIAL STATUS</p><p class="metric">Aggressively optimistic</p></article><article class="card"><p class="label">RISK PROFILE</p><p class="metric">Your call</p></article></div></div></section>
-<section class="wrap reveal"><div class="public-record-compact card"><div><p class="label">PUBLIC MONEY RECORD</p><h3>Every euro is accounted for.</h3><p class="muted">The public counter is calculated from verified support. Individual payment details stay private.</p></div><strong id="publicLedgerTotal">—</strong></div><p class="muted" style="margin-top:1rem">For the full contributor list, visit <a href="contributors.html">Contributors ↗</a>.</p></section>
-<section class="wrap cta reveal"><p class="eyebrow">THE GOAL</p><h2 class="title">€0 → €1B</h2><p>Every number is part of the story.</p><a class="btn primary" href="index.html">Back to the experiment ↗</a></section>
+<section class="wrap hero reveal"><p class="eyebrow" data-fix="eyebrow">STARTING FROM €0</p><h1 data-fix="title">I WANNA<br>BE RICH.</h1><p class="hero-copy" data-fix="intro">The goal is simple: €1,000,000,000. The numbers are public so you can watch the experiment move.</p></section>
+<section class="wrap reveal"><div class="dashboard"><div class="metrics">
+<article class="card"><p class="label" data-fix="target">TARGET</p><p class="metric">€1 billion</p></article>
+<article class="card"><p class="label" data-fix="confidence">CONFIDENCE</p><p class="metric metric-green" data-fix="unreasonable">Unreasonable</p></article>
+<article class="card"><p class="label" data-fix="business">BUSINESS MODEL</p><p class="metric" data-fix="optimism">Public optimism</p></article>
+<article class="card"><p class="label" data-fix="status">FINANCIAL STATUS</p><p class="metric" data-fix="aggressive">Aggressively optimistic</p></article>
+<article class="card"><p class="label" data-fix="risk">RISK PROFILE</p><p class="metric" data-fix="yourcall">Your call</p></article>
+</div></div></section>
+<section class="wrap reveal"><div class="public-record-compact card"><div><p class="label" data-fix="record">PUBLIC MONEY RECORD</p><h3 data-fix="accounted">Every euro is accounted for.</h3><p class="muted" data-fix="recordText">The public counter is calculated from verified support. Individual payment details stay private.</p></div><strong id="publicLedgerTotal">—</strong></div><p class="muted" style="margin-top:1rem"><span data-fix="contributors">For the full contributor list, visit Contributors ↗</span></p></section>
+<section class="wrap cta reveal"><p class="eyebrow" data-fix="goal">THE GOAL</p><h2 class="title">€0 → €1B</h2><p data-fix="goalText">Every number is part of the story.</p><a class="btn primary" data-fix="back" href="index.html">Back to the experiment ↗</a></section>
 </main>
 <footer class="site-footer"><div class="wrap footer-grid"><div><a class="logo" href="index.html">I<i>WANNA</i>BERICH</a><p>Trying something absurd in public.</p></div><div class="footer-links"><a href="story.html">Story</a><a href="milestones.html">Milestones</a><a href="contributors.html">Contributors</a><a href="updates.html">Updates</a></div></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/script.js?v=2.8.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/script.js?v=2.8.1"></script><script src="assets/js/page-fix.js?v=1.0.0"></script>
 </body></html>
