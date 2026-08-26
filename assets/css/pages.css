@@ -1,15 +1,16 @@
-/* Shared layout fixes for standalone content pages. */
+/* Standalone content-page layout overrides. Keep these pages compact; homepage owns the full-screen hero. */
 body[data-page] main .reveal{
   opacity:1 !important;
   visibility:visible !important;
   transform:none !important;
 }
 
-body[data-page] main .hero{
-  min-height:0 !important;
+body[data-page] main > .hero,
+body[data-page] main section.hero{
+  min-height:unset !important;
   height:auto !important;
-  padding-top:clamp(72px,9vw,120px) !important;
-  padding-bottom:clamp(48px,7vw,88px) !important;
+  padding-top:64px !important;
+  padding-bottom:52px !important;
 }
 
 body[data-page] main > section:not(.hero){
@@ -18,8 +19,21 @@ body[data-page] main > section:not(.hero){
 }
 
 body[data-page] main .cta{
-  padding-top:clamp(72px,8vw,110px) !important;
-  padding-bottom:clamp(88px,10vw,140px) !important;
+  padding-top:64px !important;
+  padding-bottom:100px !important;
+}
+
+body[data-page="numbers"] main .hero h1{
+  margin-top:14px;
+  margin-bottom:16px;
+}
+
+body[data-page="numbers"] main .hero .hero-copy{
+  margin-bottom:0;
+}
+
+body[data-page="numbers"] main .dashboard{
+  margin-top:0;
 }
 
 body[data-page="milestones"] .milestone-grid{
@@ -31,8 +45,9 @@ body[data-page="milestones"] .milestone-grid .milestone{
 }
 
 @media (max-width:900px){
-  body[data-page] main .hero{
-    padding-top:52px !important;
+  body[data-page] main > .hero,
+  body[data-page] main section.hero{
+    padding-top:48px !important;
     padding-bottom:40px !important;
   }
 }
