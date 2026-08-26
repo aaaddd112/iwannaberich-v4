@@ -15,7 +15,8 @@
 
   .hero {
     min-height: calc(100vh - 64px);
-    padding-top: clamp(68px, 6vw, 100px);
+    /* Pull the hero slightly upward for a tighter first viewport. */
+    padding-top: clamp(34px, 4vw, 65px);
     padding-bottom: 56px;
     grid-template-columns: minmax(0, 1.08fr) minmax(520px, 0.92fr);
     column-gap: clamp(56px, 5vw, 88px);
@@ -29,7 +30,6 @@
     max-width: 900px;
     margin-left: 0;
     margin-right: 0;
-    /* Slightly smaller than the previous desktop treatment. */
     font-size: clamp(4.6rem, 5.7vw, 6.7rem);
   }
 
@@ -56,7 +56,6 @@
   }
 
   .hero-goal-amount {
-    /* Keep the goal dominant, but reduce the oversized previous version. */
     font-size: clamp(58px, 4.7vw, 82px);
   }
 
@@ -74,12 +73,12 @@
     margin-top: 42px;
   }
 
-  /* The legal/disclaimer line was too small on large desktop screens. */
+  /* Keep the disclaimer secondary, but comfortably readable. */
   .hero-disclaimer {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     line-height: 1.5;
     letter-spacing: 0.035em;
-    opacity: 0.78;
+    opacity: 0.9;
   }
 
   main > .wrap:not(.hero) {
