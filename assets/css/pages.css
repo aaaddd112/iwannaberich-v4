@@ -1,0 +1,38 @@
+/* Shared layout fixes for standalone content pages. */
+body[data-page] main .reveal{
+  opacity:1 !important;
+  visibility:visible !important;
+  transform:none !important;
+}
+
+body[data-page] main .hero{
+  min-height:0 !important;
+  height:auto !important;
+  padding-top:clamp(72px,9vw,120px) !important;
+  padding-bottom:clamp(48px,7vw,88px) !important;
+}
+
+body[data-page] main > section:not(.hero){
+  position:relative;
+  z-index:1;
+}
+
+body[data-page] main .cta{
+  padding-top:clamp(72px,8vw,110px) !important;
+  padding-bottom:clamp(88px,10vw,140px) !important;
+}
+
+body[data-page="milestones"] .milestone-grid{
+  align-items:stretch;
+}
+
+body[data-page="milestones"] .milestone-grid .milestone{
+  min-height:170px;
+}
+
+@media (max-width:900px){
+  body[data-page] main .hero{
+    padding-top:52px !important;
+    padding-bottom:40px !important;
+  }
+}
