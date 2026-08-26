@@ -11,32 +11,15 @@
     "support.html":"nav.predictions"
   };
 
-  const en = {
-    eyebrow: "A public experiment in unreasonable ambition",
-    titleLead: "I'm trying to become",
-    titleAccent: "ridiculously rich.",
-    copy: "No startup. No crypto. No AI. Just a very public attempt to reach €1 billion. The strategy is mostly consistency, curiosity, and seeing what the internet does with a terrible idea.",
-    punchline: "Will it work? Probably not. Is that a reason not to document it? Also probably not.",
-    prediction: "Make your prediction",
-    questionable: "MAKE A QUESTIONABLE DECISION",
-    goal: "The goal",
-    goalNote: "One billion euros. Still the plan.",
-    share: "Share the delusion",
-    disclaimer: "No equity. No returns. No pitch deck hidden behind a PDF."
-  };
-
-  const fr = {
-    eyebrow: "UNE EXPÉRIENCE PUBLIQUE D’AMBITION DÉRAISONNABLE",
-    titleLead: "J’essaie de devenir",
-    titleAccent: "ridiculement riche.",
-    copy: "Pas de startup. Pas de crypto. Pas d’IA. Juste une tentative très publique d’atteindre 1 milliard d’euros. La stratégie repose surtout sur la constance, la curiosité et l’observation de ce qu’Internet fait d’une idée terrible.",
-    punchline: "Est-ce que ça marchera ? Probablement pas. Est-ce une raison pour ne pas le documenter ? Probablement pas non plus.",
-    prediction: "Faites votre prédiction",
-    questionable: "PRENEZ UNE DÉCISION DOUTEUSE",
-    goal: "L’objectif",
-    goalNote: "Un milliard d’euros. Toujours le plan.",
-    share: "Partagez la folie",
-    disclaimer: "Pas de participation. Aucun rendement. Aucun pitch deck caché derrière un PDF."
+  const translations = {
+    en: { eyebrow:"A public experiment in unreasonable ambition", titleLead:"I'm trying to become", titleAccent:"ridiculously rich.", copy:"No startup. No crypto. No AI. Just a very public attempt to reach €1 billion. The strategy is mostly consistency, curiosity, and seeing what the internet does with a terrible idea.", punchline:"Will it work? Probably not. Is that a reason not to document it? Also probably not.", prediction:"Make your prediction", questionable:"MAKE A QUESTIONABLE DECISION", goal:"The goal", goalNote:"One billion euros. Still the plan.", share:"Share the delusion", disclaimer:"No equity. No returns. No pitch deck hidden behind a PDF." },
+    es: { eyebrow:"Un experimento público de ambición desmedida", titleLead:"Estoy intentando volverme", titleAccent:"ridículamente rico.", copy:"Sin startup. Sin criptomonedas. Sin IA. Solo un intento muy público de alcanzar 1.000 millones de euros. La estrategia consiste sobre todo en constancia, curiosidad y ver qué hace internet con una idea terrible.", punchline:"¿Funcionará? Probablemente no. ¿Es eso motivo para no documentarlo? Probablemente tampoco.", prediction:"Haz tu predicción", questionable:"TOMA UNA DECISIÓN CUESTIONABLE", goal:"El objetivo", goalNote:"Mil millones de euros. Ese sigue siendo el plan.", share:"Comparte la locura", disclaimer:"Sin participación. Sin rentabilidad. Sin pitch deck escondido en un PDF." },
+    fr: { eyebrow:"Une expérience publique d’ambition déraisonnable", titleLead:"J’essaie de devenir", titleAccent:"ridiculement riche.", copy:"Pas de startup. Pas de crypto. Pas d’IA. Juste une tentative très publique d’atteindre 1 milliard d’euros. La stratégie repose surtout sur la constance, la curiosité et l’observation de ce qu’Internet fait d’une idée terrible.", punchline:"Est-ce que ça marchera ? Probablement pas. Est-ce une raison pour ne pas le documenter ? Probablement pas non plus.", prediction:"Faites votre prédiction", questionable:"PRENEZ UNE DÉCISION DOUTEUSE", goal:"L’objectif", goalNote:"Un milliard d’euros. Toujours le plan.", share:"Partagez la folie", disclaimer:"Aucune participation. Aucun rendement. Aucun pitch deck caché derrière un PDF." },
+    de: { eyebrow:"Ein öffentliches Experiment mit maßloser Ambition", titleLead:"Ich versuche,", titleAccent:"absurd reich zu werden.", copy:"Kein Startup. Keine Krypto. Keine KI. Nur der sehr öffentliche Versuch, 1 Milliarde Euro zu erreichen. Die Strategie besteht vor allem aus Konsequenz, Neugier und der Frage, was das Internet mit einer schrecklichen Idee macht.", punchline:"Wird es funktionieren? Wahrscheinlich nicht. Ist das ein Grund, es nicht zu dokumentieren? Wahrscheinlich auch nicht.", prediction:"Gib deine Prognose ab", questionable:"TRIFF EINE FRAGWÜRDIGE ENTSCHEIDUNG", goal:"Das Ziel", goalNote:"Eine Milliarde Euro. Das ist weiterhin der Plan.", share:"Teile den Wahnsinn", disclaimer:"Keine Beteiligung. Keine Rendite. Kein Pitch Deck, das sich hinter einem PDF versteckt." },
+    pt: { eyebrow:"Um experimento público de ambição absurda", titleLead:"Estou tentando ficar", titleAccent:"ridiculamente rico.", copy:"Sem startup. Sem cripto. Sem IA. Apenas uma tentativa muito pública de chegar a 1 bilhão de euros. A estratégia é principalmente consistência, curiosidade e descobrir o que a internet faz com uma ideia terrível.", punchline:"Vai funcionar? Provavelmente não. Isso é motivo para não documentar? Provavelmente também não.", prediction:"Faça sua previsão", questionable:"TOME UMA DECISÃO QUESTIONÁVEL", goal:"O objetivo", goalNote:"Um bilhão de euros. Esse continua sendo o plano.", share:"Compartilhe a loucura", disclaimer:"Sem participação. Sem retorno. Sem pitch deck escondido atrás de um PDF." },
+    zh: { eyebrow:"一场公开的非理性野心实验", titleLead:"我正在尝试成为", titleAccent:"富得离谱的人。", copy:"没有创业公司。没有加密货币。没有 AI。只有一次公开尝试，目标是达到 10 亿欧元。策略主要是坚持、好奇，以及看看互联网会如何对待一个糟糕的想法。", punchline:"会成功吗？大概不会。不记录它就有理由了吗？大概也没有。", prediction:"做出你的预测", questionable:"做一个值得怀疑的决定", goal:"目标", goalNote:"10 亿欧元。计划依然如此。", share:"分享这场疯狂", disclaimer:"没有股权。没有回报。没有藏在 PDF 后面的融资演示。" },
+    ja: { eyebrow:"無謀な野心を公開で試す実験", titleLead:"私はなろうとしている", titleAccent:"とんでもなく金持ちに。", copy:"スタートアップなし。暗号資産なし。AIなし。1,000,000,000ユーロを目指す、あまりにも公開された挑戦です。戦略はほぼ、継続、好奇心、そしてインターネットがこのひどいアイデアをどう扱うかを見ること。", punchline:"うまくいく？たぶん無理。でも記録しない理由になる？それもたぶん違う。", prediction:"予測する", questionable:"怪しい決断をする", goal:"目標", goalNote:"10億ユーロ。それが今も計画です。", share:"この無謀さを共有する", disclaimer:"株式なし。リターンなし。PDFに隠されたピッチデックもありません。" },
+    ar: { eyebrow:"تجربة علنية لطموح غير منطقي", titleLead:"أحاول أن أصبح", titleAccent:"ثريًا بشكل مبالغ فيه.", copy:"لا شركة ناشئة. لا عملات مشفرة. لا ذكاء اصطناعي. مجرد محاولة علنية جدًا للوصول إلى مليار يورو. الاستراتيجية هي الاستمرار والفضول ورؤية ما سيفعله الإنترنت بفكرة سيئة.", punchline:"هل سينجح؟ على الأرجح لا. هل هذا سبب لعدم توثيقه؟ على الأرجح لا أيضًا.", prediction:"قدّم توقعك", questionable:"اتخذ قرارًا مشكوكًا فيه", goal:"الهدف", goalNote:"مليار يورو. ما زالت هذه هي الخطة.", share:"شارك هذه الفكرة المجنونة", disclaimer:"لا أسهم. لا عوائد. ولا عرض تقديمي مخبأ خلف ملف PDF." }
   };
 
   function setButtonLabel(button, text) {
@@ -48,8 +31,8 @@
 
   function setLanguagePatch() {
     const select = document.querySelector(".language-select");
-    const lang = select ? select.value : "en";
-    const t = lang === "fr" ? fr : en;
+    const lang = select && translations[select.value] ? select.value : "en";
+    const t = translations[lang];
 
     const introEyebrow = document.querySelector(".hero-intro .eyebrow");
     const hero = document.querySelector(".hero-intro h1");
