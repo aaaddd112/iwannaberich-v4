@@ -93,11 +93,6 @@
       params.utm_content ||
       params.utm_term;
 
-    /*
-     * First touch:
-     * We only set this once, so the original acquisition source
-     * survives future visits.
-     */
     if (!stored.first_touch) {
       let source = params.utm_source || "";
 
@@ -116,11 +111,6 @@
       };
     }
 
-    /*
-     * Last touch:
-     * If the current visit contains UTM parameters, update the
-     * current acquisition source.
-     */
     if (hasUtm) {
       stored.last_touch = {
         source: params.utm_source || "",
@@ -232,10 +222,39 @@
     getAttribution: getAttributionMetadata,
   };
 
+  function initContributorsUI() {
+    const path = window.location.pathname || "/";
+    const isHome = path === "/" || path.endsWith("/index.html");
+
+    const communityDropdown = [...document.querySelectorAll(".nav-dropdown")]
+      .find((dropdown) => dropdown.querySelector('[data-i18n="nav.community"]'));
+
+    const communityMenu = communityDropdown?.querySelector(".nav-drop-menu");
+    if (communityMenu && !communityMenu.querySelector('a[href="contributors.html"]')) {
+      const link = document.createElement("a");
+      link.href = "contributors.html";
+      link.innerHTML = '<strong data-i18n-phrase="Contributors">Contributors</strong><small data-i18n-phrase="See who joined the experiment">See who joined the experiment</small>';
+      communityMenu.appendChild(link);
+    }
+
+    if (!isHome) return;
+
+    const ledger = document.getElementById("public-ledger");
+    if (ledger) ledger.hidden = true;
+
+    const compact = document.querySelector(".public-record-compact");
+    if (compact && !compact.parentElement.querySelector("[data-contributors-link]")) {
+      const link = document.createElement("a");
+      link.href = "contributors.html";
+      link.dataset.contributorsLink = "true";
+      link.className = "btn";
+      link.style.marginTop = "14px";
+      link.textContent = "View contributors ↗";
+      compact.parentElement.insertBefore(link, compact.nextSibling);
+    }
+  }
+
   function initAnalytics() {
-    /*
-     * Establish attribution before the first page_view.
-     */
     getAttribution();
 
     trackEvent("page_view", {
@@ -294,13 +313,14 @@
     checkScroll();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      initAnalytics,
-      { once: true }
-    );
-  } else {
+  const boot = () => {
+    initContributorsUI();
     initAnalytics();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
   }
 })();
