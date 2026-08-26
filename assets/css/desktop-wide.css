@@ -1,0 +1,105 @@
+/* IWANNABERICH — wide desktop composition */
+/* Loaded only through the desktop-wide style layer. Mobile/tablet rules remain untouched. */
+
+@media (min-width: 1100px) {
+  :root {
+    --desktop-content-width: 1500px;
+    --desktop-gutter: 48px;
+  }
+
+  .wrap,
+  .hero {
+    width: min(calc(100% - (var(--desktop-gutter) * 2)), var(--desktop-content-width));
+    max-width: var(--desktop-content-width);
+  }
+
+  .hero {
+    min-height: calc(100vh - 64px);
+    padding-top: clamp(72px, 7vw, 110px);
+    padding-bottom: 64px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(500px, 0.92fr);
+    column-gap: clamp(72px, 7vw, 120px);
+  }
+
+  .hero-intro {
+    max-width: 760px;
+  }
+
+  .hero h1 {
+    max-width: 900px;
+    margin-left: 0;
+    margin-right: 0;
+    font-size: clamp(5rem, 6.4vw, 7.4rem);
+  }
+
+  .hero-copy {
+    max-width: 620px;
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 0.98rem;
+  }
+
+  .hero-punchline {
+    max-width: 620px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .hero .buttons {
+    justify-content: flex-start;
+  }
+
+  .hero-goal {
+    padding: 44px 0 38px;
+  }
+
+  .hero-goal-amount {
+    font-size: clamp(62px, 5.2vw, 88px);
+  }
+
+  .hero-goal-meta,
+  .hero-goal-track {
+    max-width: 620px;
+  }
+
+  .hero-goal-glow {
+    width: 560px;
+    height: 560px;
+  }
+
+  .hero .share-strip {
+    margin-top: 48px;
+  }
+
+  main > .wrap:not(.hero) {
+    width: min(calc(100% - (var(--desktop-gutter) * 2)), var(--desktop-content-width));
+    max-width: var(--desktop-content-width);
+  }
+
+  main > .wrap:not(.hero) .section-intro,
+  main > .wrap:not(.hero) .content-card,
+  main > .wrap:not(.hero) .rules-list,
+  main > .wrap:not(.hero) .steps,
+  main > .wrap:not(.hero) .timeline,
+  main > .wrap:not(.hero) .leaderboard {
+    max-width: 980px;
+  }
+
+  .dashboard {
+    grid-template-columns: minmax(0, 1.5fr) minmax(420px, 0.9fr);
+    gap: 22px;
+  }
+
+  .grid {
+    gap: 18px;
+  }
+
+  .reaction-grid,
+  .why-grid {
+    gap: 24px;
+  }
+
+  .site-footer .wrap {
+    max-width: var(--desktop-content-width);
+  }
+}
