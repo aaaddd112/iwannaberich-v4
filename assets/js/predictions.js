@@ -10,6 +10,7 @@
   const COMMENT_MAX_LENGTH = 280;
 
   const $ = (id) => document.getElementById(id);
+  const tr = (key, fallback, vars) => window.IWBRI18N?.format?.(key, vars) || fallback;
 
   let client = null;
   let currentUser = null;
@@ -52,10 +53,9 @@
       yesPercentEl.textContent = total > 0 ? `${yesPct}%` : "–";
       noPercentEl.textContent = total > 0 ? `${noPct}%` : "–";
       fillEl.style.width = `${yesPct}%`;
-      const lang = window.IWBRI18N?.getLanguage?.() || "en";
-      const dict = window.IWBRI18N?.translations?.[lang] || null;
-      const countText = window.IWBRI18N?.format?.("support.votesSoFar", { count: total.toLocaleString("en-US"), plural: total === 1 ? "" : "s" });
-      totalEl.textContent = total > 0 ? (countText || `${total.toLocaleString("en-US")} vote${total === 1 ? "" : "s"} so far`) : (window.IWBRI18N?.format?.("support.firstVote") || "Be the first to vote.");
+      totalEl.textContent = total > 0
+        ? tr("support.votesSoFar", `${total.toLocaleString("en-US")} vote${total === 1 ? "" : "s"} so far`, { count: total.toLocaleString("en-US"), plural: total === 1 ? "" : "s" })
+        : tr("support.firstVote", "Be the first to vote.");
     }
 
     function setVotedState() {
@@ -71,7 +71,7 @@
         .select("yes_count, no_count").eq("id", 1).single();
       if (error) {
         console.error("Load predictions error:", error);
-        totalEl.textContent = window.IWBRI18N?.format?.("support.unavailable") || "Votes unavailable right now.";
+        totalEl.textContent = tr("support.unavailable", "Votes unavailable right now.");
         return;
       }
       renderCounts(Number(data.yes_count) || 0, Number(data.no_count) || 0);
@@ -104,18 +104,18 @@
     const replyHint = $("ownerReplyHint");
     if (replyHint) {
       replyHint.hidden = !currentUser;
-      replyHint.textContent = currentUser ? window.IWBRI18N?.format?.("support.ownerMode") || "Owner mode enabled — you can reply below." : "";
+      replyHint.textContent = currentUser ? tr("support.ownerMode", "Owner mode enabled — you can reply below.") : "";
     }
   }
 
   async function submitOwnerReply(parentId, value, button, errorEl) {
     if (!currentUser) {
-      errorEl.textContent = window.IWBRI18N?.format?.("support.loginOwner") || "Log in as the owner first.";
+      errorEl.textContent = tr("support.loginOwner", "Log in as the owner first.");
       return;
     }
 
     button.disabled = true;
-    button.textContent = window.IWBRI18N?.format?.("support.replying") || "Replying...";
+    button.textContent = tr("support.replying", "Replying...");
     errorEl.textContent = "";
 
     try {
@@ -129,25 +129,25 @@
           "content-type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-body: JSON.stringify({
-  comment: value,
-  nickname: nickname,
-  parent_id: parentId
-})
-});
+        body: JSON.stringify({
+          comment: value,
+          nickname: "IWANNABERICH",
+          parent_id: parentId
+        })
+      });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) {
-        errorEl.textContent = result.error || window.IWBRI18N?.format?.("support.couldntPost") || "Couldn't post reply.";
+        errorEl.textContent = result.error || tr("support.couldntPost", "Couldn't post reply.");
         return;
       }
 
       await loadComments();
     } catch (error) {
       console.error("Owner reply error:", error);
-      errorEl.textContent = window.IWBRI18N?.format?.("support.systemError") || "Couldn't reach the prediction system.";
+      errorEl.textContent = tr("support.systemError", "Couldn't reach the prediction system.");
     } finally {
       button.disabled = false;
-      button.textContent = window.IWBRI18N?.format?.("support.reply") || "Reply";
+      button.textContent = tr("support.reply", "Reply");
     }
   }
 
@@ -159,7 +159,7 @@ body: JSON.stringify({
     if (!comments.length) {
       const empty = document.createElement("p");
       empty.className = "muted";
-      empty.textContent = window.IWBRI18N?.format?.("support.noComments") || "No comments yet. Be the first.";
+      empty.textContent = tr("support.noComments", "No comments yet. Be the first.");
       listEl.appendChild(empty);
       return;
     }
@@ -181,10 +181,10 @@ body: JSON.stringify({
       const meta = document.createElement("div");
       meta.className = "predict-comment-meta";
       if (item.author_type === "owner") {
-        meta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
+        meta.innerHTML = `<span class="owner-badge">${tr("support.ownerBadge", "IWANNABERICH · OWNER")}</span>`;
       } else {
-  meta.textContent = item.nickname || window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
-}
+        meta.textContent = item.nickname || tr("support.anonymous", "Anonymous");
+      }
       row.appendChild(meta);
 
       const childReplies = replies.get(item.id) || [];
@@ -197,10 +197,10 @@ body: JSON.stringify({
         const replyMeta = document.createElement("div");
         replyMeta.className = "predict-comment-meta";
         if (reply.author_type === "owner") {
-          replyMeta.innerHTML = '<span class="owner-badge">IWANNABERICH · OWNER</span>';
-       } else {
-  replyMeta.textContent = reply.nickname || window.IWBRI18N?.format?.("support.anonymous") || "Anonymous";
-}
+          replyMeta.innerHTML = `<span class="owner-badge">${tr("support.ownerBadge", "IWANNABERICH · OWNER")}</span>`;
+        } else {
+          replyMeta.textContent = reply.nickname || tr("support.anonymous", "Anonymous");
+        }
         replyBox.appendChild(replyMeta);
         row.appendChild(replyBox);
       });
@@ -210,7 +210,7 @@ body: JSON.stringify({
         replyWrap.className = "owner-reply";
         const input = document.createElement("textarea");
         input.maxLength = COMMENT_MAX_LENGTH;
-        input.placeholder = window.IWBRI18N?.format?.("support.replyPlaceholder") || "Reply as the owner...";
+        input.placeholder = tr("support.replyPlaceholder", "Reply as the owner...");
         const actions = document.createElement("div");
         actions.className = "predict-comment-actions";
         const error = document.createElement("p");
@@ -219,21 +219,11 @@ body: JSON.stringify({
         const btn = document.createElement("button");
         btn.className = "btn primary";
         btn.type = "button";
-        btn.textContent = window.IWBRI18N?.format?.("support.reply") || "Reply";
+        btn.textContent = tr("support.reply", "Reply");
         btn.addEventListener("click", () => {
           const value = input.value.trim();
-          const nickname = nicknameInput.value.trim();
-          if (!nickname) {
-  setError("Please choose a nickname.");
-  return;
-}
-
-if (nickname.length < 3 || nickname.length > 24) {
-  setError("Nickname must be 3–24 characters.");
-  return;
-}
           if (!value) {
-            error.textContent = window.IWBRI18N?.format?.("support.writeReply") || "Write a reply first.";
+            error.textContent = tr("support.writeReply", "Write a reply first.");
             return;
           }
           submitOwnerReply(item.id, value, btn, error);
@@ -256,13 +246,13 @@ if (nickname.length < 3 || nickname.length > 24) {
 
     const { data, error } = await client
       .from("predictions_comments")
-.select("id, comment, nickname, created_at, parent_id, author_type")
-     .order("created_at", { ascending: true })
+      .select("id, comment, nickname, created_at, parent_id, author_type")
+      .order("created_at", { ascending: true })
       .limit(100);
 
     if (error) {
       console.error("Load comments error:", error);
-      listEl.innerHTML = '<p class="muted">Comments unavailable right now.</p>';
+      listEl.innerHTML = `<p class="muted">${tr("support.commentsUnavailable", "Comments unavailable right now.")}</p>`;
       return;
     }
 
@@ -276,57 +266,58 @@ if (nickname.length < 3 || nickname.length > 24) {
     const charCount = $("predictionCharCount");
     const submitBtn = $("submitPredictionComment");
     const errorEl = $("predictionError");
-    if (!input || !charCount || !submitBtn || !errorEl) return;
+    if (!input || !nicknameInput || !charCount || !submitBtn || !errorEl) return;
 
     function setError(message) { errorEl.textContent = message || ""; }
 
     function updateCharCount() {
-      charCount.textContent = `${COMMENT_MAX_LENGTH - input.value.length} characters left`;
+      charCount.textContent = tr("support.chars", `${COMMENT_MAX_LENGTH - input.value.length} characters left`, { count: COMMENT_MAX_LENGTH - input.value.length });
     }
 
     async function submitComment() {
       const value = input.value.trim();
       const nickname = nicknameInput.value.trim();
 
-if (!nickname) return setError("Please choose a nickname.");
-if (nickname.length < 3 || nickname.length > 24) {
-  return setError("Nickname must be 3–24 characters.");
-}
-      if (!value) return setError("Write something first.");
-      if (value.length > COMMENT_MAX_LENGTH) return setError(`Keep it under ${COMMENT_MAX_LENGTH} characters.`);
+      if (!nickname) return setError(tr("support.chooseNickname", "Please choose a nickname."));
+      if (nickname.length < 3 || nickname.length > 24) {
+        return setError(tr("support.nicknameLength", "Nickname must be 3–24 characters."));
+      }
+      if (!value) return setError(tr("support.writeFirst", "Write something first."));
+      if (value.length > COMMENT_MAX_LENGTH) return setError(tr("support.commentLength", `Keep it under ${COMMENT_MAX_LENGTH} characters.`, { count: COMMENT_MAX_LENGTH }));
 
       setError("");
       submitBtn.disabled = true;
-      submitBtn.textContent = "Checking...";
+      submitBtn.textContent = tr("support.checking", "Checking...");
 
       try {
         const response = await fetch(PREDICTION_ENDPOINT, {
           method: "POST",
           headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-  comment: value,
-  nickname: nickname,
-  website: honeypot?.value || ""
-})
+          body: JSON.stringify({
+            comment: value,
+            nickname: nickname,
+            website: honeypot?.value || ""
+          })
         });
 
         const result = await response.json().catch(() => ({}));
         if (!response.ok) {
-          setError(result.error || "Couldn't post your prediction. Try again.");
+          setError(result.error || tr("support.couldntPost", "Couldn't post your prediction. Try again."));
           return;
         }
 
-input.value = "";
-nicknameInput.value = "";
-if (honeypot) honeypot.value = "";        updateCharCount();
+        input.value = "";
+        nicknameInput.value = "";
+        if (honeypot) honeypot.value = "";
+        updateCharCount();
         window.IWBRAnalytics?.trackEvent("prediction_submit");
         await loadComments();
       } catch (error) {
         console.error("Submit comment error:", error);
-        setError("Couldn't reach the prediction system. Try again.");
+        setError(tr("support.systemError", "Couldn't reach the prediction system. Try again."));
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Post prediction";
+        submitBtn.textContent = tr("support.post", "Post prediction");
       }
     }
 
