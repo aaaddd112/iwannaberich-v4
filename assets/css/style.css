@@ -56,3 +56,8 @@
     overflow-x: hidden;
   }
 }
+/* RTL brand protection — keep IWANNABERICH visually LTR */
+html[dir="rtl"] .logo {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
