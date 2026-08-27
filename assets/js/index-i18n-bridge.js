@@ -30,3 +30,6 @@
   }
   document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.links a').forEach(el=>{const href=(el.getAttribute('href')||'').split('#')[0];const key=navKeys[href];if(key&&!el.dataset.i18n)el.dataset.i18n=key});const langLabel=document.querySelector('.language-switcher .sr-only');if(langLabel&&!langLabel.dataset.i18n)langLabel.dataset.i18n='nav.language';const skip=document.querySelector('.skip-link');if(skip&&!skip.dataset.i18nPhrase)skip.dataset.i18nPhrase='Skip to content';const select=document.querySelector('.language-select');if(select)select.addEventListener('change',()=>setTimeout(setLanguagePatch,0));setTimeout(setLanguagePatch,0)});
 })();
+
+// Load the large-contribution selector after the base donation modal is initialized.
+(()=>{const load=()=>{if(document.querySelector('link[data-large-contributions-css]'))return;const css=document.createElement('link');css.rel='stylesheet';css.href='assets/css/large-contributions.css?v=1.0.0';css.dataset.largeContributionsCss='1';document.head.appendChild(css);const s=document.createElement('script');s.src='assets/js/large-contributions.js?v=1.0.0';s.defer=true;document.body.appendChild(s)};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load);else load()})();
