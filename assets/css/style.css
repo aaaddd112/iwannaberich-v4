@@ -56,8 +56,29 @@
     overflow-x: hidden;
   }
 }
+
 /* RTL brand protection — keep IWANNABERICH visually LTR */
 html[dir="rtl"] .logo {
   direction: ltr;
   unicode-bidi: isolate;
+}
+
+/* =========================================================
+   MOBILE DONATION MODAL — smooth iOS scrolling
+   Keeps the page locked while allowing the modal card to
+   receive vertical touch scrolling on mobile/tablet.
+   ========================================================= */
+@media (max-width: 1099px) {
+  .donation-modal {
+    touch-action: none;
+    overscroll-behavior: contain;
+  }
+
+  .donation-card {
+    max-height: calc(100dvh - 20px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
 }
