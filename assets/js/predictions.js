@@ -10,7 +10,23 @@
   const COMMENT_MAX_LENGTH = 280;
 
   const $ = (id) => document.getElementById(id);
-  const tr = (key, fallback, vars) => window.IWBRI18N?.format?.(key, vars) || fallback;
+  const OWNER_BADGE = {
+    en: "IWANNABERICH · OWNER",
+    es: "IWANNABERICH · PROPIETARIO",
+    fr: "IWANNABERICH · PROPRIÉTAIRE",
+    de: "IWANNABERICH · INHABER",
+    pt: "IWANNABERICH · DONO",
+    zh: "IWANNABERICH · 创建者",
+    ja: "IWANNABERICH · 作成者",
+    ar: "IWANNABERICH · المالك"
+  };
+  const tr = (key, fallback, vars) => {
+    if (key === "support.ownerBadge") {
+      const lang = localStorage.getItem("iwbr_language") || document.documentElement.lang || "en";
+      return OWNER_BADGE[lang] || OWNER_BADGE.en;
+    }
+    return window.IWBRI18N?.format?.(key, vars) || fallback;
+  };
 
   let client = null;
   let currentUser = null;
