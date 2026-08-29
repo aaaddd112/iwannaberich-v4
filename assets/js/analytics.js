@@ -16,6 +16,72 @@
   ]);
 
   const ATTRIBUTION_KEY = "iwbr_attribution";
+  const VISITOR_ID_KEY = "iwbr_visitor_id";
+  const SESSION_ID_KEY = "iwbr_session_id";
+
+  function getOrCreateId(storage, key) {
+    try {
+      let id = storage.getItem(key);
+      if (!id) {
+        id = crypto.randomUUID();
+        storage.setItem(key, id);
+      }
+      return id;
+    } catch {
+      return "";
+    }
+  }
+
+  function getVisitorId() {
+    return getOrCreateId(localStorage, VISITOR_ID_KEY);
+  }
+
+  function getSessionId() {
+    return getOrCreateId(sessionStorage, SESSION_ID_KEY);
+  }
+
+  function getDeviceType() {
+    const width = Math.min(window.innerWidth || 0, window.screen?.width || 0) || window.innerWidth || 0;
+    if (width < 768) return "mobile";
+    if (width < 1024) return "tablet";
+    return "desktop";
+  }
+
+  function getBrowser() {
+    const ua = navigator.userAgent || "";
+    if (/Edg\//i.test(ua)) return "Edge";
+    if (/OPR\//i.test(ua)) return "Opera";
+    if (/Chrome\//i.test(ua) && !/Edg\//i.test(ua)) return "Chrome";
+    if (/Firefox\//i.test(ua)) return "Firefox";
+    if (/Safari\//i.test(ua) && !/Chrome\//i.test(ua)) return "Safari";
+    return "Other";
+  }
+
+  function getOS() {
+    const ua = navigator.userAgent || "";
+    if (/Windows/i.test(ua)) return "Windows";
+    if (/Android/i.test(ua)) return "Android";
+    if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
+    if (/Mac OS X/i.test(ua)) return "macOS";
+    if (/Linux/i.test(ua)) return "Linux";
+    return "Other";
+  }
+
+  function getTechnicalMetadata() {
+    return {
+      visitor_id: getVisitorId(),
+      session_id: getSessionId(),
+      device_type: getDeviceType(),
+      browser: getBrowser(),
+      os: getOS(),
+      language: (navigator.language || "").slice(0, 20),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+      screen_width: Number(window.screen?.width || 0),
+      screen_height: Number(window.screen?.height || 0),
+      viewport_width: Number(window.innerWidth || 0),
+      viewport_height: Number(window.innerHeight || 0),
+    };
+  }
 
   function cleanMetadata(metadata) {
     if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
@@ -24,7 +90,7 @@
 
     const safe = {};
 
-    Object.entries(metadata).slice(0, 20).forEach(([key, value]) => {
+    Object.entries(metadata).slice(0, 40).forEach(([key, value]) => {
       const cleanKey = String(key).slice(0, 60);
 
       if (
@@ -195,11 +261,13 @@
     if (!ALLOWED_EVENTS.has(eventName)) return;
 
     const attributionMetadata = getAttributionMetadata();
+    const technicalMetadata = getTechnicalMetadata();
 
     const payload = {
       event_name: eventName,
       page: getCurrentPage(),
       metadata: cleanMetadata({
+        ...technicalMetadata,
         ...attributionMetadata,
         ...metadata,
       }),
