@@ -1,5 +1,23 @@
 (()=>{
   "use strict";
+
+  // Compatibility bridge: the main script still targets the legacy public
+  // vote RPC. Route only that write operation through the protected Edge
+  // Function before the DOMContentLoaded handlers run.
+  const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
+  const LEGACY_VOTE_URL = `${SUPABASE_URL}/rest/v1/rpc/vote_next_experiment`;
+  const PROTECTED_VOTE_URL = `${SUPABASE_URL}/functions/v1/next-experiment-vote`;
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = (input, init) => {
+    const url = typeof input === "string" ? input : input?.url;
+    if (url === LEGACY_VOTE_URL && (!init || (init.method || "GET").toUpperCase() === "POST")) {
+      if (typeof input === "string") return originalFetch(PROTECTED_VOTE_URL, init);
+      const request = new Request(PROTECTED_VOTE_URL, input);
+      return originalFetch(request, init);
+    }
+    return originalFetch(input, init);
+  };
+
   const navKeys={"numbers.html":"nav.numbers","milestones.html":"nav.milestones","story.html":"nav.why","experiment.html":"nav.experiment","updates.html":"nav.updates","about.html":"nav.about","support.html":"nav.predictions"};
   const translations={
     en:{eyebrow:"A public experiment in unreasonable ambition",titleLead:"I'm trying to become",titleAccent:"ridiculously rich.",copy:"No startup. No crypto. No AI. Just a very public attempt to reach €1 billion. The strategy is mostly consistency, curiosity, and seeing what the internet does with a terrible idea.",punchline:"Will it work? Probably not. Is that a reason not to document it? Also probably not.",prediction:"Make your prediction",questionable:"MAKE A QUESTIONABLE DECISION",goal:"The goal",goalNote:"One billion euros. Still the plan.",share:"Share the delusion",disclaimer:"No equity. No returns. No pitch deck hidden behind a PDF."},
