@@ -6,6 +6,7 @@
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
   const PREDICTION_ENDPOINT = `${SUPABASE_URL}/functions/v1/submit-prediction`;
+  const VOTE_ENDPOINT = `${SUPABASE_URL}/functions/v1/cast-prediction-vote`;
   const VOTE_STORAGE_KEY = "iwbr_prediction_vote";
   const COMMENT_MAX_LENGTH = 280;
 
@@ -98,9 +99,34 @@
       hasVoted = true;
       localStorage.setItem(VOTE_STORAGE_KEY, voteType);
       setVotedState();
-      const { error } = await client.rpc("increment_prediction_vote", { vote_type: voteType });
-      if (error) console.error("Vote error:", error);
-      await loadCounts();
+      try {
+        const response = await fetch(VOTE_ENDPOINT, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ prediction_id: 1, vote_type: voteType })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          if (response.status === 409) {
+            localStorage.setItem(VOTE_STORAGE_KEY, voteType);
+          } else {
+            hasVoted = false;
+            localStorage.removeItem(VOTE_STORAGE_KEY);
+            yesBtn.disabled = false;
+            noBtn.disabled = false;
+          }
+          totalEl.textContent = result.error || tr("support.voteError", "Couldn't record your vote.");
+          return;
+        }
+        await loadCounts();
+      } catch (error) {
+        console.error("Vote error:", error);
+        hasVoted = false;
+        localStorage.removeItem(VOTE_STORAGE_KEY);
+        yesBtn.disabled = false;
+        noBtn.disabled = false;
+        totalEl.textContent = tr("support.voteError", "Couldn't record your vote.");
+      }
     }
 
     yesBtn.addEventListener("click", () => castVote("yes"));
