@@ -1,5 +1,17 @@
 (()=>{
   "use strict";
+  const SUPABASE_URL="https://ofcdtwrgyxjrpoxuikxg.supabase.co";
+  const LEGACY_VOTE_URL=`${SUPABASE_URL}/rest/v1/rpc/vote_next_experiment`;
+  const PROTECTED_VOTE_URL=`${SUPABASE_URL}/functions/v1/next-experiment-vote`;
+  const originalFetch=window.fetch.bind(window);
+  window.fetch=(input,init)=>{
+    const url=typeof input==='string'?input:input?.url;
+    if(url===LEGACY_VOTE_URL&&(!init||(init.method||'GET').toUpperCase()==='POST')){
+      if(typeof input==='string')return originalFetch(PROTECTED_VOTE_URL,init);
+      return originalFetch(new Request(PROTECTED_VOTE_URL,input),init);
+    }
+    return originalFetch(input,init);
+  };
   const navKeys={"numbers.html":"nav.numbers","milestones.html":"nav.milestones","story.html":"nav.why","experiment.html":"nav.experiment","updates.html":"nav.updates","about.html":"nav.about","support.html":"nav.predictions"};
   const translations={
     en:{eyebrow:"A public experiment in unreasonable ambition",titleLead:"I'm trying to become",titleAccent:"ridiculously rich.",copy:"No startup. No crypto. No AI. Just a very public attempt to reach €1 billion. The strategy is mostly consistency, curiosity, and seeing what the internet does with a terrible idea.",punchline:"Will it work? Probably not. Is that a reason not to document it? Also probably not.",prediction:"Make your prediction",questionable:"MAKE A QUESTIONABLE DECISION",goal:"The goal",goalNote:"One billion euros. Still the plan.",share:"Share the delusion",disclaimer:"No equity. No returns. No pitch deck hidden behind a PDF."},
@@ -11,25 +23,8 @@
     ja:{eyebrow:"無謀な野心を公開で試す実験",titleLead:"私はなろうとしている",titleAccent:"とんでもなく金持ちに。",copy:"スタートアップなし。暗号資産なし。AIなし。1,000,000,000ユーロを目指す、あまりにも公開された挑戦です。戦略はほぼ、継続、好奇心、そしてインターネットがこのひどいアイデアをどう扱うかを見ること。",punchline:"うまくいく？たぶん無理。でも記録しない理由になる？それもたぶん違う。",prediction:"予測する",questionable:"怪しい決断をする",goal:"目標",goalNote:"10億ユーロ。それが今も計画です。",share:"この無謀さを共有する",disclaimer:"株式なし。リターンなし。PDFに隠されたピッチデックもありません。"},
     ar:{eyebrow:"تجربة علنية لطموح غير منطقي",titleLead:"أحاول أن أصبح",titleAccent:"ثريًا بشكل مبالغ فيه.",copy:"لا شركة ناشئة. لا عملات مشفرة. لا ذكاء اصطناعي. مجرد محاولة علنية جدًا للوصول إلى مليار يورو. الاستراتيجية هي الاستمرار والفضول ورؤية ما سيفعله الإنترنت بفكرة سيئة.",punchline:"هل سينجح؟ على الأرجح لا. هل هذا سبب لعدم توثيقه؟ على الأرجح لا أيضًا.",prediction:"قدّم توقعك",questionable:"اتخذ قرارًا مشكوكًا فيه",goal:"الهدف",goalNote:"مليار يورو. ما زالت هذه هي الخطة.",share:"شارك هذه الفكرة المجنونة",disclaimer:"لا أسهم. لا عوائد. ولا عرض تقديمي مخبأ خلف ملف PDF."}
   };
-  function setButtonLabel(button,text){
-    if(!button)return;
-    if(button.classList.contains('primary')){
-      const arrow=button.querySelector('span:last-child');
-      [...button.childNodes].forEach(n=>{if(n.nodeType===Node.TEXT_NODE)n.remove()});
-      button.insertBefore(document.createTextNode(text+' '),arrow||null);
-      return;
-    }
-    const span=button.querySelector('span:first-child');
-    if(span)span.textContent=text;else button.textContent=text+' ↗';
-  }
-  function setLanguagePatch(){
-    const select=document.querySelector('.language-select');const lang=select&&translations[select.value]?select.value:'en';const t=translations[lang];
-    const introEyebrow=document.querySelector('.hero-intro .eyebrow'),hero=document.querySelector('.hero-intro h1'),accent=hero&&hero.querySelector('.accent'),copy=document.querySelector('.hero-copy'),punchline=document.querySelector('.hero-punchline'),prediction=document.querySelector('.buttons .primary'),questionable=document.querySelector('.buttons .questionable-cta'),goal=document.querySelector('.hero-goal-label'),goalNote=document.querySelector('.hero-goal-note'),share=document.querySelector('.share-label'),disclaimer=document.querySelector('.hero-disclaimer');
-    if(introEyebrow)introEyebrow.textContent=t.eyebrow;if(copy)copy.textContent=t.copy;if(punchline)punchline.textContent=t.punchline;setButtonLabel(prediction,t.prediction);setButtonLabel(questionable,t.questionable);if(goal)goal.textContent=t.goal;if(goalNote)goalNote.textContent=t.goalNote;if(share)share.textContent=t.share;if(disclaimer)disclaimer.textContent=t.disclaimer;if(accent)accent.textContent=t.titleAccent;
-    if(hero){const lead=Array.from(hero.childNodes).find(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim());if(lead)lead.textContent=t.titleLead+'\n';}
-  }
+  function setButtonLabel(button,text){if(!button)return;if(button.classList.contains('primary')){const arrow=button.querySelector('span:last-child');[...button.childNodes].forEach(n=>{if(n.nodeType===Node.TEXT_NODE)n.remove()});button.insertBefore(document.createTextNode(text+' '),arrow||null);return}const span=button.querySelector('span:first-child');if(span)span.textContent=text;else button.textContent=text+' ↗'}
+  function setLanguagePatch(){const select=document.querySelector('.language-select');const lang=select&&translations[select.value]?select.value:'en';const t=translations[lang];const introEyebrow=document.querySelector('.hero-intro .eyebrow'),hero=document.querySelector('.hero-intro h1'),accent=hero&&hero.querySelector('.accent'),copy=document.querySelector('.hero-copy'),punchline=document.querySelector('.hero-punchline'),prediction=document.querySelector('.buttons .primary'),questionable=document.querySelector('.buttons .questionable-cta'),goal=document.querySelector('.hero-goal-label'),goalNote=document.querySelector('.hero-goal-note'),share=document.querySelector('.share-label'),disclaimer=document.querySelector('.hero-disclaimer');if(introEyebrow)introEyebrow.textContent=t.eyebrow;if(copy)copy.textContent=t.copy;if(punchline)punchline.textContent=t.punchline;setButtonLabel(prediction,t.prediction);setButtonLabel(questionable,t.questionable);if(goal)goal.textContent=t.goal;if(goalNote)goalNote.textContent=t.goalNote;if(share)share.textContent=t.share;if(disclaimer)disclaimer.textContent=t.disclaimer;if(accent)accent.textContent=t.titleAccent;if(hero){const lead=Array.from(hero.childNodes).find(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim());if(lead)lead.textContent=t.titleLead+'\n'}}
   document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.links a').forEach(el=>{const href=(el.getAttribute('href')||'').split('#')[0];const key=navKeys[href];if(key&&!el.dataset.i18n)el.dataset.i18n=key});const langLabel=document.querySelector('.language-switcher .sr-only');if(langLabel&&!langLabel.dataset.i18n)langLabel.dataset.i18n='nav.language';const skip=document.querySelector('.skip-link');if(skip&&!skip.dataset.i18nPhrase)skip.dataset.i18nPhrase='Skip to content';const select=document.querySelector('.language-select');if(select)select.addEventListener('change',()=>setTimeout(setLanguagePatch,0));setTimeout(setLanguagePatch,0)});
 })();
-
-// Load the large-contribution selector after the base donation modal is initialized.
 (()=>{const load=()=>{if(document.querySelector('link[data-large-contributions-css]'))return;const css=document.createElement('link');css.rel='stylesheet';css.href='assets/css/large-contributions.css?v=1.0.0';css.dataset.largeContributionsCss='1';document.head.appendChild(css);const s=document.createElement('script');s.src='assets/js/large-contributions.js?v=1.0.0';s.defer=true;document.body.appendChild(s)};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load);else load()})();
