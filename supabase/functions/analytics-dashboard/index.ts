@@ -93,6 +93,7 @@ Deno.serve(async (req) => {
     const eventFilter = url.searchParams.get("event")?.trim() || "";
     if (eventFilter && !ALLOWED_EVENTS.has(eventFilter)) return jsonResponse({error:"Invalid event filter."},400);
     const excludeVisitor = url.searchParams.get("exclude_visitor")?.trim().slice(0,100) || "";
+    const exportMode = url.searchParams.get("export") === "1";
 
     let query = supabase.from("analytics_events").select("event_name,page,metadata,created_at").gte("created_at",range.from.toISOString()).lt("created_at",range.to.toISOString()).order("created_at",{ascending:false}).limit(MAX_ROWS);
     if (eventFilter) query = query.eq("event_name",eventFilter);
@@ -144,7 +145,7 @@ Deno.serve(async (req) => {
       generated_at:new Date().toISOString(),
       range:{from:range.from.toISOString(),to:range.to.toISOString(),max_days:MAX_DAYS,truncated:events.length>=MAX_ROWS},
       summary:{events:events.length,page_views:pageViews.length,unique_visitors:visitors,unique_sessions:sessions,engaged_sessions:engagedSessions,bounce_like_sessions:Math.max(0,sessions-engagedSessions),engagement_rate:sessions?Math.round(engagedSessions/sessions*100):0},
-      funnel, audience, facets, daily:buildDaily(events,range.from,range.to), top_pages:rankPage(pageViews), event_counts:eventCounts(events), recent:events.slice(0,50),
+      funnel, audience, facets, daily:buildDaily(events,range.from,range.to), top_pages:rankPage(pageViews), event_counts:eventCounts(events), recent:exportMode?events:events.slice(0,50),
     });
   } catch (error) { console.error(error); return jsonResponse({error:"Unexpected dashboard error."},500); }
 });
