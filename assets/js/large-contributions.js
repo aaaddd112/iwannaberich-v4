@@ -12,7 +12,7 @@
   const I18N={
     en:{kicker:"A financially questionable decision",title:"Want to fund the experiment?",intro:"Choose any amount you want. Every contribution becomes part of the public experiment.",custom:"Choose your amount",customNote:"€0.50–€10,000 · enter any amount",customCta:"Continue with custom amount",big:"Go big",bigNote:"For contributions beyond €10,000.",close:"Close support options",foot:"Payments are processed securely by Stripe. Contributions are voluntary and are not investments or purchases of equity."},
     es:{kicker:"Una decisión financieramente cuestionable",title:"¿Quieres financiar el experimento?",intro:"Elige el importe que quieras. Cada contribución pasa a formar parte del experimento público.",custom:"Elige tu importe",customNote:"€0,50–€10.000 · introduce cualquier cantidad",customCta:"Continuar con importe personalizado",big:"Ve a lo grande",bigNote:"Para contribuciones superiores a €10.000.",close:"Cerrar opciones de apoyo",foot:"Los pagos se procesan de forma segura mediante Stripe. Las contribuciones son voluntarias y no son inversiones ni compras de participación."},
-    fr:{kicker:"Une décision financièrement douteuse",title:"Envie de financer l’expérience ?",intro:"Choisissez le montant de votre choix. Chaque contribution devient une partie de l’expérience publique.",custom:"Choisissez votre montant",customNote:"0,50 €–10 000 € · entrez le montant de votre choix",customCta:"Continuer avec un montant personnalisé",big:"Voyez grand",bigNote:"Pour les contributions supérieures à 10 000 €.",close:"Fermer les options de soutien",foot:"Les paiements sont traités en toute sécurité par Stripe. Les contributions sont volontaires et ne constituent ni un investissement ni un achat de participation."},
+    fr:{kicker:"Une décision financièrement douteuse",title:"Envie de financer l’expérience ?",intro:"Choisissez le montant de votre choix. Chaque contribution devient une partie de l’expérience publique.",custom:"Choisissez votre montant",customNote:"0,50 €–10 000 € · entrez le montant de votre choix",customCta:"Continuer avec un montant personnalisé",big:"Voyez grand",bigNote:"Pour les contributions supérieures à 10 000 €.",close:"Fermer les options de soutien",foot:"Les paiements sont traités en toute sécurité via Stripe. Les contributions sont volontaires et ne constituent ni un investissement ni un achat de participation."},
     de:{kicker:"Eine finanziell fragwürdige Entscheidung",title:"Willst du das Experiment finanzieren?",intro:"Wähle einen beliebigen Betrag. Jeder Beitrag wird Teil des öffentlichen Experiments.",custom:"Eigenen Betrag wählen",customNote:"0,50–10.000 € · beliebigen Betrag eingeben",customCta:"Mit eigenem Betrag fortfahren",big:"Geh aufs Ganze",bigNote:"Für Beiträge über 10.000 €.",close:"Unterstützungsoptionen schließen",foot:"Zahlungen werden sicher über Stripe verarbeitet. Beiträge sind freiwillig und keine Investitionen oder Beteiligungen."},
     pt:{kicker:"Uma decisão financeiramente questionável",title:"Quer financiar o experimento?",intro:"Escolha o valor que quiser. Cada contribuição passa a fazer parte do experimento público.",custom:"Escolha o seu valor",customNote:"€0,50–€10.000 · introduza qualquer valor",customCta:"Continuar com valor personalizado",big:"Vá além",bigNote:"Para contribuições acima de €10.000.",close:"Fechar opções de apoio",foot:"Os pagamentos são processados com segurança pelo Stripe. As contribuições são voluntárias e não são investimentos nem compras de participação."},
     zh:{kicker:"一个财务上值得怀疑的决定",title:"想为这个实验提供支持？",intro:"选择你想支持的金额。每一笔贡献都会成为公开实验的一部分。",custom:"自定义金额",customNote:"€0.50–€10,000 · 输入任意金额",customCta:"使用自定义金额继续",big:"来点大的",bigNote:"适用于超过 €10,000 的贡献",close:"关闭支持选项",foot:"付款由 Stripe 安全处理。贡献完全自愿，不代表投资或股权购买。"},
@@ -57,4 +57,62 @@
     window.addEventListener('iwbr:languagechange',translate);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+(()=>{
+  "use strict";
+  const messages=[
+    {title:"🚨 The billionaire plan has been reviewed.",amount:"It survived peer review. Barely."},
+    {title:"📈 Net worth update.",amount:"Still €13. But now it’s personal."},
+    {title:"👀 Someone is watching the experiment.",amount:"No idea who. Probably you."},
+    {title:"💸 €13 has been raised.",amount:"The billion is still taking the scenic route."},
+    {title:"🧠 A terrible idea is gaining traction.",amount:"Please don’t encourage it."},
+    {title:"📋 Business plan status.",amount:"Step 1: get rich. Step 2: figure out Step 1."},
+    {title:"🏦 The bank balance was checked.",amount:"The bank remains cautiously optimistic."},
+    {title:"🌐 The internet has been asked to help.",amount:"The internet has seen worse ideas."},
+    {title:"🎯 Current objective: €100.",amount:"€87 to go. No pressure."},
+    {title:"🫡 Another visitor has entered the experiment.",amount:"Welcome. There are no refunds on curiosity."},
+    {title:"⚠️ Billionaire status remains unconfirmed.",amount:"Authorities have been notified."},
+    {title:"📊 Financial strategy updated.",amount:"The strategy is still ‘see what happens’."}
+  ];
+  const oldToNew={
+    "🔔 €1.00 has entered the building.":messages[3],
+    "🔔 Your net worth was checked.":messages[1],
+    "🔔 The billionaire department called.":messages[10],
+    "🔔 Someone opened the business plan.":messages[5],
+    "🔔 A financial advisor has concerns.":messages[0],
+    "🔔 The internet has been notified.":messages[7],
+    "🔔 Forbes has not called.":messages[10],
+    "🔔 Your accountant is typing…":messages[6],
+    "🔔 Someone suggested getting a real job.":messages[4],
+    "🔔 Billionaire status detected.":messages[10]
+  };
+  function install(){
+    const notice=document.getElementById("financialCommentary");
+    const text=document.getElementById("commentaryText");
+    const amount=document.getElementById("commentaryAmount");
+    if(!notice||!text)return;
+    const style=document.createElement("style");
+    style.textContent=`
+      .notification{
+        bottom:92px !important;
+        z-index:2147483000 !important;
+      }
+      @media (max-width:1099px){
+        .notification{
+          bottom:max(86px,calc(env(safe-area-inset-bottom) + 72px)) !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    const replace=()=>{
+      const item=oldToNew[text.textContent.trim()];
+      if(!item)return;
+      text.textContent=item.title;
+      if(amount)amount.textContent=item.amount;
+    };
+    replace();
+    new MutationObserver(replace).observe(text,{childList:true,characterData:true,subtree:true});
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",install);else install();
 })();
