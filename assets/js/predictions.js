@@ -121,7 +121,7 @@
 
   async function loadComments() {
     if (!client) return; const listEl = $("predictionComments"); if (!listEl) return;
-    const { data, error } = await client.from("predictions_comments").select("id, comment, nickname, created_at, parent_id, author_type").order("created_at", { ascending: true }).limit(100);
+    const { data, error } = await client.from("predictions_comments").select("id, comment, nickname, created_at, parent_id, author_type").order("created_at", { ascending: false }).limit(100);
     if (error) { console.error("Load comments error:", error); listEl.innerHTML = `<p class="muted">${tr("support.commentsUnavailable", "Comments unavailable right now.")}</p>`; return; }
     renderComments(data || []);
   }
