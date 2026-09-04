@@ -1,7 +1,8 @@
--- Atomic profile creation for HELP ME GET RICH.
--- The authenticated user's identity comes from auth.uid(); the client cannot supply a user_id.
+-- HELP ME GET RICH — atomic profile creation.
+-- Identity is resolved by the authenticated Edge Function and passed explicitly.
 
 create or replace function public.create_my_profile(
+  p_user_id uuid,
   p_username text,
   p_display_name text default null
 )
@@ -11,12 +12,11 @@ security definer
 set search_path = public
 as $$
 declare
-  v_user_id uuid := auth.uid();
   v_username text;
   v_display_name text;
   v_profile public.profiles;
 begin
-  if v_user_id is null then
+  if p_user_id is null then
     raise exception using errcode = '42501', message = 'unauthorized';
   end if;
 
@@ -31,20 +31,15 @@ begin
     raise exception using errcode = '22023', message = 'display_name_too_long';
   end if;
 
-  if exists (
-    select 1
-    from public.reserved_usernames r
-    where r.username = v_username
-  ) then
+  if exists (select 1 from public.reserved_usernames r where r.username = v_username) then
     raise exception using errcode = '23514', message = 'username_reserved';
   end if;
 
   insert into public.profiles (id, username, display_name)
-  values (v_user_id, v_username, v_display_name)
+  values (p_user_id, v_username, v_display_name)
   returning * into v_profile;
 
-  insert into public.user_private (user_id)
-  values (v_user_id);
+  insert into public.user_private (user_id) values (p_user_id);
 
   return v_profile;
 exception
@@ -53,5 +48,6 @@ exception
 end;
 $$;
 
-revoke all on function public.create_my_profile(text, text) from public, anon;
-grant execute on function public.create_my_profile(text, text) to authenticated;
+revoke all on function public.create_my_profile(text, text) from public, anon, authenticated;
+revoke all on function public.create_my_profile(uuid, text, text) from public, anon, authenticated;
+grant execute on function public.create_my_profile(uuid, text, text) to service_role;
