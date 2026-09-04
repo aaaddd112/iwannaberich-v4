@@ -6,8 +6,6 @@
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
   const PREDICTION_ENDPOINT = `${SUPABASE_URL}/functions/v1/submit-prediction`;
-  const VOTE_ENDPOINT = `${SUPABASE_URL}/functions/v1/cast-prediction-vote`;
-  const VOTE_STORAGE_KEY = "iwbr_prediction_vote";
   const COMMENT_MAX_LENGTH = 280;
 
   const $ = (id) => document.getElementById(id);
@@ -42,7 +40,6 @@
       return;
     }
 
-    initVoting(client);
     initComments(client);
     refreshAuth();
     client.auth.onAuthStateChange((_event, session) => {
@@ -50,90 +47,6 @@
       updateOwnerUI();
       loadComments();
     });
-  }
-
-  function initVoting(client) {
-    const yesBtn = $("voteYes");
-    const noBtn = $("voteNo");
-    const yesPercentEl = $("yesPercent");
-    const noPercentEl = $("noPercent");
-    const fillEl = $("predictYesFill");
-    const totalEl = $("predictTotal");
-    if (!yesBtn || !noBtn || !yesPercentEl || !noPercentEl || !fillEl || !totalEl) return;
-
-    let hasVoted = Boolean(localStorage.getItem(VOTE_STORAGE_KEY));
-
-    function renderCounts(yesCount, noCount) {
-      const total = yesCount + noCount;
-      const yesPct = total > 0 ? Math.round((yesCount / total) * 100) : 0;
-      const noPct = total > 0 ? 100 - yesPct : 0;
-      yesPercentEl.textContent = total > 0 ? `${yesPct}%` : "–";
-      noPercentEl.textContent = total > 0 ? `${noPct}%` : "–";
-      fillEl.style.width = `${yesPct}%`;
-      totalEl.textContent = total > 0
-        ? tr("support.votesSoFar", `${total.toLocaleString("en-US")} vote${total === 1 ? "" : "s"} so far`, { count: total.toLocaleString("en-US"), plural: total === 1 ? "" : "s" })
-        : tr("support.firstVote", "Be the first to vote.");
-    }
-
-    function setVotedState() {
-      const chosen = localStorage.getItem(VOTE_STORAGE_KEY);
-      yesBtn.classList.toggle("selected", chosen === "yes");
-      noBtn.classList.toggle("selected", chosen === "no");
-      yesBtn.disabled = true;
-      noBtn.disabled = true;
-    }
-
-    async function loadCounts() {
-      const { data, error } = await client.from("predictions")
-        .select("yes_count, no_count").eq("id", 1).single();
-      if (error) {
-        console.error("Load predictions error:", error);
-        totalEl.textContent = tr("support.unavailable", "Votes unavailable right now.");
-        return;
-      }
-      renderCounts(Number(data.yes_count) || 0, Number(data.no_count) || 0);
-    }
-
-    async function castVote(voteType) {
-      if (hasVoted) return;
-      hasVoted = true;
-      localStorage.setItem(VOTE_STORAGE_KEY, voteType);
-      setVotedState();
-      try {
-        const response = await fetch(VOTE_ENDPOINT, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ prediction_id: 1, vote_type: voteType })
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok) {
-          if (response.status === 409) {
-            localStorage.setItem(VOTE_STORAGE_KEY, voteType);
-          } else {
-            hasVoted = false;
-            localStorage.removeItem(VOTE_STORAGE_KEY);
-            yesBtn.disabled = false;
-            noBtn.disabled = false;
-          }
-          totalEl.textContent = result.error || tr("support.voteError", "Couldn't record your vote.");
-          return;
-        }
-        await loadCounts();
-      } catch (error) {
-        console.error("Vote error:", error);
-        hasVoted = false;
-        localStorage.removeItem(VOTE_STORAGE_KEY);
-        yesBtn.disabled = false;
-        noBtn.disabled = false;
-        totalEl.textContent = tr("support.voteError", "Couldn't record your vote.");
-      }
-    }
-
-    yesBtn.addEventListener("click", () => castVote("yes"));
-    noBtn.addEventListener("click", () => castVote("no"));
-    if (hasVoted) setVotedState();
-    loadCounts();
-    window.addEventListener("iwbr:languagechange", loadCounts);
   }
 
   async function refreshAuth() {
@@ -180,7 +93,7 @@
     if (!listEl) return;
     listEl.innerHTML = "";
     if (!comments.length) {
-      const empty = document.createElement("p"); empty.className = "muted"; empty.textContent = tr("support.noComments", "No comments yet. Be the first."); listEl.appendChild(empty); return;
+      const empty = document.createElement("p"); empty.className = "muted"; empty.textContent = tr("support.noComments", "No predictions yet. Be the first."); listEl.appendChild(empty); return;
     }
     const replies = new Map();
     comments.filter(c => c.parent_id).forEach(c => { if (!replies.has(c.parent_id)) replies.set(c.parent_id, []); replies.get(c.parent_id).push(c); });
@@ -217,7 +130,7 @@
     if (!client) return;
     const listEl = $("predictionComments"); if (!listEl) return;
     const { data, error } = await client.from("predictions_comments").select("id, comment, nickname, created_at, parent_id, author_type").order("created_at", { ascending: true }).limit(100);
-    if (error) { console.error("Load comments error:", error); listEl.innerHTML = `<p class="muted">${tr("support.commentsUnavailable", "Comments unavailable right now.")}</p>`; return; }
+    if (error) { console.error("Load comments error:", error); listEl.innerHTML = `<p class="muted">${tr("support.commentsUnavailable", "Predictions unavailable right now.")}</p>`; return; }
     renderComments(data || []);
   }
 
