@@ -1,0 +1,6 @@
+(()=>{
+'use strict';
+const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=630;
+function render(p,wealth='13'){const c=canvas.getContext('2d');c.clearRect(0,0,1200,630);c.fillStyle='#09090b';c.fillRect(0,0,1200,630);c.strokeStyle='rgba(255,255,255,.12)';c.strokeRect(32,32,1136,566);c.fillStyle='#a1a1aa';c.font='600 22px Arial';c.letterSpacing='4px';c.fillText('IWANNABERICH',72,92);c.fillStyle='#fff';c.font='700 86px Arial';c.fillText(`CONTRIBUTOR #${p.contributor_number}`,72,215);c.font='700 52px Arial';c.fillText('I WAS HERE EARLY.',72,292);c.fillStyle='#a1a1aa';c.font='400 28px Arial';c.fillText(`${p.rank||'Curious'}  ·  ${Number(p.xp||0).toLocaleString()} Contribution Score`,72,352);c.fillStyle='#fff';c.font='700 34px Arial';c.fillText(`€${Number(wealth).toLocaleString()} → €1,000,000,000`,72,430);c.fillStyle='#71717a';c.font='400 22px Arial';c.fillText('See where this goes: iwannaberich.xyz',72,530);return canvas}
+window.IWBRShareCard={render,download(filename='iwannaberich-contributor.png'){canvas.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},'image/png')}};
+})();
