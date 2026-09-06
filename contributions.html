@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A public record of contributions that changed what happened next in the IWANNABERICH experiment.">
+<meta name="theme-color" content="#09090b">
+<link rel="icon" href="favicon.png?v=2">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/contributions.css?v=1.0.0">
+<title>Contributions — IWANNABERICH</title>
+</head>
+<body data-page="contributions">
+<header class="wrap nav">
+  <a aria-label="IWANNABERICH home" class="logo" href="index.html">I<i>WANNA</i>BERICH</a>
+  <button aria-controls="main-nav" aria-expanded="false" aria-label="Open navigation" class="nav-toggle" type="button"><span></span><span></span><span></span></button>
+  <nav aria-label="Main navigation" class="links" id="main-nav">
+    <a href="index.html">Experiment</a>
+    <a href="contributors.html">Contributors</a>
+    <a href="contributions.html" aria-current="page">Contributions</a>
+    <a href="account.html">Join</a>
+    <a href="support.html">Predictions</a>
+    <a href="updates.html">Updates</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main id="main-content">
+<section class="wrap contributions-page" aria-labelledby="contributions-title">
+  <div class="contributions-intro">
+    <p class="eyebrow">THE PUBLIC RECORD</p>
+    <h1 id="contributions-title">What happened next.</h1>
+    <p>Ideas are easy to submit. The interesting part is what happens when one actually moves the experiment.</p>
+  </div>
+
+  <div class="contributions-stats" aria-label="Contribution archive">
+    <div><span class="label">COMPLETED CONTRIBUTIONS</span><strong id="contributionCount">0</strong></div>
+    <div><span class="label">STATUS</span><strong>PUBLIC</strong></div>
+  </div>
+
+  <div id="contributionList" class="contribution-list" aria-live="polite">
+    <div class="card contribution-empty"><p class="muted">Loading the public record...</p></div>
+  </div>
+
+  <div class="contributions-footer">
+    <p class="muted">Only completed contributions appear here. Submitted and rejected ideas stay private.</p>
+    <a class="btn primary" href="account.html">Change what happens next ↗</a>
+  </div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/contributions.js?v=1.0.0"></script>
+</body>
+</html>
