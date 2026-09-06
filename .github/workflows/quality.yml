@@ -22,23 +22,84 @@ jobs:
           set -euo pipefail
           while IFS= read -r -d '' file; do
             node --check "$file"
-          done < <(find . -type f -name '*.js' -not -path './node_modules/*' -print0)
+          done < <(find . -type f -name '*.js' -not -path './node_modules/*' -not -path './.git/*' -print0)
 
-      - name: Validate HTML structure
+      - name: Validate inline JavaScript and HTML tag balance
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from html.parser import HTMLParser
           from pathlib import Path
+          import subprocess
+          import tempfile
+
+          VOID = {
+              'area','base','br','col','embed','hr','img','input','link','meta',
+              'param','source','track','wbr'
+          }
 
           class Parser(HTMLParser):
-              pass
+              def __init__(self, path):
+                  super().__init__(convert_charrefs=False)
+                  self.path = path
+                  self.stack = []
+                  self.scripts = []
+                  self._script = None
 
-          for path in Path('.').rglob('*.html'):
+              def handle_starttag(self, tag, attrs):
+                  tag = tag.lower()
+                  if tag == 'script':
+                      attrs_dict = dict(attrs)
+                      if 'src' not in attrs_dict:
+                          self._script = []
+                  if tag not in VOID:
+                      self.stack.append(tag)
+
+              def handle_startendtag(self, tag, attrs):
+                  pass
+
+              def handle_endtag(self, tag):
+                  tag = tag.lower()
+                  if tag == 'script' and self._script is not None:
+                      self.scripts.append(''.join(self._script))
+                      self._script = None
+                  if tag in VOID:
+                      return
+                  if not self.stack or self.stack[-1] != tag:
+                      raise ValueError(f'{self.path}: mismatched closing tag </{tag}>')
+                  self.stack.pop()
+
+              def handle_data(self, data):
+                  if self._script is not None:
+                      self._script.append(data)
+
+              def handle_entityref(self, name):
+                  if self._script is not None:
+                      self._script.append(f'&{name};')
+
+              def handle_charref(self, name):
+                  if self._script is not None:
+                      self._script.append(f'&#{name};')
+
+          for path in sorted(Path('.').rglob('*.html')):
               if any(part in {'.git', 'node_modules'} for part in path.parts):
                   continue
-              Parser().feed(path.read_text(encoding='utf-8'))
+              parser = Parser(path)
+              parser.feed(path.read_text(encoding='utf-8'))
+              parser.close()
+              if parser.stack:
+                  raise ValueError(f'{path}: unclosed tags: {parser.stack[-8:]}')
+              for index, script in enumerate(parser.scripts, 1):
+                  if not script.strip():
+                      continue
+                  with tempfile.NamedTemporaryFile('w', encoding='utf-8', suffix='.js', delete=False) as tmp:
+                      tmp.write(script)
+                      tmp_path = tmp.name
+                  result = subprocess.run(['node', '--check', tmp_path], text=True, capture_output=True)
+                  Path(tmp_path).unlink(missing_ok=True)
+                  if result.returncode:
+                      raise SystemExit(f'{path}: inline script #{index} failed syntax check:\n{result.stderr}')
               print(f'OK {path}')
           PY
 
@@ -46,7 +107,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -n -I -E '(service_role|SUPABASE_SERVICE_ROLE_KEY|sk_live_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+)' -- . ':!*.md'; then
+          if git grep -n -I -E '(service_role|SUPABASE_SERVICE_ROLE_KEY|sk_live_[A-Za-z0-9]+|rk_live_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----)' -- . ':!*.md'; then
             echo 'Potential secret material found in tracked source files.'
             exit 1
           fi
