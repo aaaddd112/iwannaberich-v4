@@ -1,12 +1,13 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
+
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const rateLimitSalt = Deno.env.get("PUBLIC_API_RATE_LIMIT_SALT") || "iwbr-rate-limit";
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const allowedOptions = new Set(["sell", "digital", "hustle"]);
-const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
+const cors = { "Access-Control-Allow-Origin": "https://iwannaberich.xyz", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 function response(body: Record<string, unknown>, status = 200) { return new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } }); }
-function ip(req: Request) { return req.headers.get("cf-connecting-ip")?.trim() || req.headers.get("x-real-ip")?.trim() || "unknown"; }
+function ip(req: Request) { return req.headers.get("cf-connecting-ip")?.trim() || req.headers.get("x-real-ip")?.trim() || req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"; }
 async function hash(value: string) { const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`next-experiment-v1:${rateLimitSalt}:${value}`)); return Array.from(new Uint8Array(d)).map(b => b.toString(16).padStart(2, "0")).join(""); }
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
