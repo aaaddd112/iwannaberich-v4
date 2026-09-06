@@ -1,83 +1,119 @@
 # IWANNABERICH — Supabase + Stripe
 
-The public site already reads `public.get_current_wealth()` from Supabase. This integration makes that number update automatically when the live Stripe Payment Link receives a successful EUR payment.
+The public site reads `public.get_current_wealth()` from Supabase. Stripe payments update that total through a server-side webhook.
+
+## Authentication and accounts
+
+The website uses Supabase Auth with email/password. The browser only contains the project's publishable key. User sessions are persisted and refreshed by `@supabase/supabase-js`.
+
+Account creation is split into two server boundaries:
+
+1. `auth.signUp()` creates the Supabase Auth user.
+2. The authenticated `create-profile` Edge Function resolves the caller from the session token and calls the service-role-only `public.create_my_profile(...)` RPC.
+
+The profile RPC is intentionally not executable by `anon` or `authenticated`. The Edge Function is the only public application path to it.
+
+Owner replies use the normal Supabase Auth session. The `submit-prediction` Edge Function verifies the Bearer token and compares the authenticated user's email with the server-side `OWNER_EMAIL` secret before allowing a reply.
+
+### Edge Function JWT policy
+
+Public browser endpoints that intentionally accept anonymous requests have `verify_jwt = false` and perform their own validation/rate limiting:
+
+- `submit-prediction`
+- `next-experiment-vote`
+- `analytics-events`
+- `analytics-dashboard`
+
+Authenticated account/admin endpoints keep `verify_jwt = true`:
+
+- `create-profile`
+- `admin-contributions`
+- `admin-growth-review`
+
+The Stripe webhook also remains public at the gateway and verifies the Stripe signature inside the function.
 
 ## 1. Run the SQL
 
-Open **Supabase → SQL Editor** and run:
+Open **Supabase → SQL Editor** and run the migrations in chronological order, including the current HMGR/account migrations. In particular, account creation requires:
 
-`migrations/202608140001_stripe_contributions.sql`
+- `migrations/202609040001_hmgr_account_foundation.sql`
+- `migrations/202609040002_hmgr_profile_creation_rpc.sql`
 
-This creates the contribution table and the public read-only RPC. The payment rows themselves are not readable/writable by the public client.
+The public comments and payment migrations remain required for their respective features.
 
-## 2. Deploy the Edge Function
+## 2. Deploy the Edge Functions
 
-Deploy:
+Deploy the functions under `supabase/functions/`. The root `supabase/config.toml` contains the intended JWT policy and must be deployed with the functions.
 
-`functions/stripe-webhook`
-
-The function is configured with `verify_jwt = false` because Stripe is an external webhook provider. It verifies the Stripe signature itself before processing the event.
+The `create-profile` function is required for `/account.html` username/profile setup.
 
 ## 3. Add Supabase Edge Function secrets
 
-Add these secrets in **Supabase → Edge Functions → Secrets**:
+Server-only credentials must stay in **Supabase → Edge Functions → Secrets**. Never put service-role/secret keys in frontend files or Git.
 
-- `STRIPE_API_KEY` = your **LIVE** Stripe secret key (`sk_live_...`)
-- `STRIPE_WEBHOOK_SIGNING_SECRET` = the webhook endpoint signing secret (`whsec_...`)
-- `STRIPE_PAYMENT_LINK_ID` = the `plink_...` ID of the IWANNABERICH live Payment Link (recommended)
+Owner setup requires:
 
-Do not put any of these secrets in the website or Git repository. Supabase documents secret keys as server-side only; never expose them in the browser.
+- `OWNER_EMAIL` = exact owner account email
 
-## 4. Create the Stripe webhook
+Prediction moderation uses:
 
-In the **LIVE** Stripe account, create a webhook endpoint pointing to:
+- `PREDICTION_RATE_LIMIT_SALT` = optional dedicated random salt; if absent, the function falls back to the service-role key
 
-`https://ofcdtwrgyxjrpoxuikxg.supabase.co/functions/v1/stripe-webhook`
+Owner notifications use:
 
-Subscribe to:
+- `RESEND_API_KEY`
+- `OWNER_NOTIFICATION_EMAIL`
+- `RESEND_FROM_EMAIL`
+
+Stripe uses:
+
+- `STRIPE_API_KEY`
+- `STRIPE_WEBHOOK_SIGNING_SECRET`
+- `STRIPE_PAYMENT_LINK_ID`
+
+## 4. Stripe webhook
+
+Deploy `functions/stripe-webhook` with `verify_jwt = false` because Stripe cannot provide a Supabase user JWT. The function verifies Stripe's webhook signature before processing events.
+
+Webhook events:
 
 - `checkout.session.completed`
 - `checkout.session.async_payment_succeeded`
 - `charge.refunded`
 
-Copy the endpoint's `whsec_...` secret into `STRIPE_WEBHOOK_SIGNING_SECRET`.
+## 5. Prediction anti-spam / moderation
 
-## 5. Test
+The public prediction form posts through `functions/submit-prediction`.
 
-Make a small real payment through the live Payment Link.
+It provides:
 
-Then verify:
-
-1. Stripe shows the successful payment.
-2. The webhook delivery is successful (HTTP 200).
-3. `stripe_contributions` contains the payment.
-4. `select public.get_current_wealth();` returns the new total.
-5. Refresh `https://iwannaberich.xyz` and the public counter shows the same amount.
-
-The counter is based on gross EUR contributions, minus recorded refunds. Stripe processing fees are not subtracted from the public experiment total.
-## 6. Prediction anti-spam / moderation
-
-The public prediction form now posts through:
-
-`functions/submit-prediction`
-
-Run the migration:
-
-`migrations/202608140002_prediction_moderation.sql`
-
-Then deploy the Edge Function. It adds:
-
-- server-side profanity filtering (including common obfuscations)
+- server-side profanity filtering
+- hidden honeypot handling
 - 3 posts per 10 minutes per network identifier
 - 10 posts per day per network identifier
+- stricter authenticated owner reply handling
 - duplicate prediction blocking for 24 hours
-- a hidden honeypot for simple bots
-- direct anonymous INSERT access to `predictions_comments` disabled
+- no direct anonymous INSERT permission on `predictions_comments`
 
-The function uses Supabase's server-side service role automatically. No service-role key belongs in the website.
+The function uses server-side privileged DB access for the controlled insert. The service-role credential never belongs in the website.
 
-If abuse becomes significant, Cloudflare Turnstile can be added as a second anti-bot layer without changing the public comments table.
+## 6. Live community experiment + public ledger
 
-## Live community experiment + public ledger
+`migrations/202608200001_live_experiment.sql` provides the public-safe contribution ledger and next-experiment voting RPCs. `functions/next-experiment-vote` adds server-side rate limiting and optional XP awarding for authenticated users.
 
-Run `migrations/202608200001_live_experiment.sql` after the existing Stripe contribution migration. It adds the public-safe contribution ledger RPC and the anonymous next-experiment voting RPC used by the homepage.
+## 7. Verification checklist after deployment
+
+1. Create a fresh test account on `/account.html`.
+2. Verify the email if confirmation is enabled.
+3. Claim a valid username and confirm `/profile.html` loads.
+4. Confirm a duplicate/reserved username is rejected without creating a second profile.
+5. Sign out and confirm `/profile.html` redirects to `/account.html`.
+6. Post an anonymous prediction and confirm it appears publicly.
+7. Repeat the same prediction within 24 hours and confirm it is rejected.
+8. Exercise the prediction rate limit and confirm HTTP 429 behavior.
+9. Log in as the configured owner and confirm owner reply controls appear.
+10. Confirm a non-owner authenticated account receives HTTP 403 when attempting an owner reply.
+11. Vote in the next-experiment flow anonymously and while authenticated, confirming the latter can award XP only once per option/action key.
+12. Confirm Stripe webhook requests work without a Supabase JWT and that invalid Stripe signatures are rejected.
+13. Confirm public clients cannot directly insert into protected payment, moderation, XP, admin, or participation tables.
+14. Confirm no service-role/secret key exists in tracked frontend files.
