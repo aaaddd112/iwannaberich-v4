@@ -1,2 +1,0 @@
-[functions.analytics-events]
-verify_jwt = false
