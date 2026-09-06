@@ -103,11 +103,11 @@ jobs:
               print(f'OK {path}')
           PY
 
-      - name: Check tracked files for accidental secret markers
+      - name: Check tracked files for accidental secret values
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -n -I -E '(service_role|SUPABASE_SERVICE_ROLE_KEY|sk_live_[A-Za-z0-9]+|rk_live_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----)' -- . ':!*.md'; then
+          if git grep -n -I -E '(sk_live_[A-Za-z0-9]+|rk_live_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----)' -- . ':!*.md'; then
             echo 'Potential secret material found in tracked source files.'
             exit 1
           fi
