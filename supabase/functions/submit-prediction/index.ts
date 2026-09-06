@@ -2,7 +2,7 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import { htmlText, sendOwnerNotification } from "../_shared/notify.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://iwannaberich.xyz",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
@@ -46,9 +46,11 @@ async function sha256(value: string): Promise<string> {
 }
 
 function getClientIp(req: Request): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0].trim()
+  // Prefer headers controlled by the actual proxy in front of the function.
+  // x-forwarded-for is last because arbitrary clients can spoof it.
+  return req.headers.get("cf-connecting-ip")?.trim()
     || req.headers.get("x-real-ip")?.trim()
-    || req.headers.get("cf-connecting-ip")?.trim()
+    || req.headers.get("x-forwarded-for")?.split(",")[0].trim()
     || "unknown";
 }
 
