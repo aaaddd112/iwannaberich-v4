@@ -11,6 +11,8 @@ function growthTarget(v){if(v<1)return[1,'First Signal'];if(v<5)return[5,'Networ
 async function load(){
  if(!sb||!list)return;
  const mineCard=document.getElementById('yourLeaderboardStatus');
+ const note=document.querySelector('.contributors-note');
+ if(note)note.textContent='Rankings are based on qualified participants attributed to contributor growth links. Contribution Score and achievements are shown as additional status.';
  const [{data,error},{data:{session}}]=await Promise.all([
   sb.rpc('get_public_leaderboard',{p_limit:1000}),
   sb.auth.getSession()
@@ -25,7 +27,11 @@ async function load(){
  const rows=hasRows?[...data].sort((a,b)=>Number(b.qualified_visitors||0)-Number(a.qualified_visitors||0)||Number(b.xp||0)-Number(a.xp||0)):[];
  let me=null,mePosition=0;
  if(session?.user){
-  const {data:mine}=await sb.rpc('get_my_participation');
+  const {data:mine,error:mineError}=await sb.rpc('get_my_participation');
+  if(mineError&&mineCard){
+   mineCard.innerHTML='<p class="muted">Your contributor status is unavailable right now. Please try again shortly.</p>';
+   return;
+  }
   if(mine?.length){me=mine[0];mePosition=rows.findIndex(p=>String(p.contributor_number)===String(me.contributor_number))+1}
  }
  const topRows=rows.slice(0,25);
@@ -33,16 +39,18 @@ async function load(){
   const visitors=Number(p.qualified_visitors||0),score=Number(p.xp||0),badge=Number(p.achievements||0),isMe=me&&String(p.contributor_number)===String(me.contributor_number);
   return `<article class="leaderboard-row${isMe?' is-you':''}><div class="leaderboard-position">${String(i+1).padStart(2,'0')}</div><div class="leaderboard-identity"><strong>#${esc(p.contributor_number)} ${esc(p.display_name||p.username)}</strong><span>@${esc(p.username)} · ${esc(p.rank||rank(score))}${isMe?' · YOU':''}</span></div><div class="leaderboard-growth"><strong>${fmt(visitors)}</strong><span>people brought</span></div><div class="leaderboard-score"><strong>${fmt(score)}</strong><span>score</span></div><div class="leaderboard-badges">${fmt(badge)} ${badge===1?'badge':'badges'}</div></article>`
  }).join('');
+ if(hasRows)list.querySelectorAll('.leaderboard-growth span').forEach(label=>label.textContent='qualified participants');
  if(mineCard&&me){
   const visitors=Number(me.qualified_visitors||0),[target,targetName]=growthTarget(visitors),remaining=Math.max(0,target-visitors);
   mineCard.innerHTML=`<div class="your-status-head"><div><p class="label">YOUR POSITION</p><h2>${mePosition>0?`#${mePosition}`:'Outside the top 25'}</h2></div><span class="your-contributor-id">CONTRIBUTOR #${esc(me.contributor_number)}</span></div><div class="your-status-stats"><div><strong>${fmt(visitors)}</strong><span>people brought</span></div><div><strong>${remaining?fmt(remaining):'✓'}</strong><span>${remaining?`to reach ${esc(targetName)}`:'next target unlocked'}</span></div></div><button class="btn" id="shareLeaderboardStatus" type="button">Share my position</button>`;
+  mineCard.querySelector('.your-status-stats span').textContent='qualified participants';
   document.getElementById('shareLeaderboardStatus')?.addEventListener('click',async()=>{
    const text=mePosition>0?`I’m #${mePosition} on the IWANNABERICH Growth Leaderboard. I’m Contributor #${me.contributor_number} and I’ve brought ${visitors} ${visitors===1?'person':'people'} into the experiment. ${location.origin}/contributors.html`:`I’m Contributor #${me.contributor_number} in the IWANNABERICH Growth Leaderboard. I’ve brought ${visitors} ${visitors===1?'person':'people'} into the experiment. ${location.origin}/contributors.html`;
    if(navigator.share){try{await navigator.share({title:'IWANNABERICH Growth Leaderboard',text});return}catch(e){}}
    try{await navigator.clipboard.writeText(text);document.getElementById('leaderboardShareMessage').textContent='Share text copied.'}catch(e){document.getElementById('leaderboardShareMessage').textContent='Could not copy. Try sharing the page directly.'}
   });
  }else if(mineCard){
-  mineCard.innerHTML='<p class="muted">Sign in to see your position and share your status.</p><a class="btn primary" href="account.html">Join the experiment</a>';
+  mineCard.innerHTML=session?.user?'<p class="muted">Finish your contributor profile to receive a position and referral link.</p><a class="btn primary" href="account.html">Finish my profile</a>':'<p class="muted">Sign in to see your position and share your status.</p><a class="btn primary" href="account.html">Join the experiment</a>';
  }
 }
 document.addEventListener('DOMContentLoaded',load);
