@@ -1,0 +1,52 @@
+name: Quality checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+          done < <(find . -type f -name '*.js' -not -path './node_modules/*' -print0)
+
+      - name: Validate HTML structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class Parser(HTMLParser):
+              pass
+
+          for path in Path('.').rglob('*.html'):
+              if any(part in {'.git', 'node_modules'} for part in path.parts):
+                  continue
+              Parser().feed(path.read_text(encoding='utf-8'))
+              print(f'OK {path}')
+          PY
+
+      - name: Check tracked files for accidental secret markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -n -I -E '(service_role|SUPABASE_SERVICE_ROLE_KEY|sk_live_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+)' -- . ':!*.md'; then
+            echo 'Potential secret material found in tracked source files.'
+            exit 1
+          fi
