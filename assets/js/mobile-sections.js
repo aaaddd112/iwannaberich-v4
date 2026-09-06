@@ -2,7 +2,6 @@
   "use strict";
 
   const COLLAPSIBLE_IDS = ["why", "numbers", "plan", "rules", "log", "internet", "milestones"];
-  const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/bJe5kDfSI9Zf5HEfgpaAw00";
 
   function setupMobileSections() {
     if (window.matchMedia("(min-width: 621px)").matches) return;
@@ -68,78 +67,6 @@
     setTimeout(() => section.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   }
 
-  function setupDonationCheckout() {
-    const modal = document.getElementById("donationModal");
-    const continueButton = document.getElementById("continueDonation");
-    const error = document.getElementById("donationError");
-    const amountNote = document.getElementById("amountNote");
-    if (!modal || !continueButton || continueButton.dataset.secureCheckoutReady === "true") return;
-
-    const form = document.createElement("div");
-    form.className = "donation-fields";
-    form.innerHTML = `
-      <label class="donation-field">
-        <span>Nickname <em>optional</em></span>
-        <input id="donationNickname" name="nickname" type="text" maxlength="40" placeholder="How should we list you?" autocomplete="nickname">
-      </label>
-      <p class="donation-field-note">Choose your contribution amount on the secure Stripe page. Your nickname appears publicly in Contributors. Leave it empty to stay anonymous.</p>
-    `;
-    amountNote?.replaceWith(form);
-
-    const nicknameInput = document.getElementById("donationNickname");
-    const style = document.createElement("style");
-    style.textContent = `
-      .donation-fields{display:grid;gap:12px;margin:18px 0}
-      .donation-field{display:grid;gap:7px;text-align:left}
-      .donation-field>span{font-size:.78rem;color:#a5a8b2;text-transform:uppercase;letter-spacing:.08em}
-      .donation-field>span em{font-style:normal;text-transform:none;letter-spacing:0;color:#777e8a}
-      .donation-field input{width:100%;border:1px solid #2a2a34;border-radius:10px;background:#111116;color:#f7f7f7;padding:13px 14px;outline:none}
-      .donation-field input:focus{border-color:#a970ff;box-shadow:0 0 0 3px rgba(169,112,255,.12)}
-      .donation-field-note{margin:-2px 0 0;color:#777e8a;font-size:.8rem;text-align:left;line-height:1.5}
-      .continue-button[aria-busy="true"]{opacity:.7;pointer-events:none}
-    `;
-    document.head.appendChild(style);
-
-    continueButton.dataset.secureCheckoutReady = "true";
-    continueButton.textContent = "Continue to secure Stripe checkout →";
-    if (amountNote) amountNote.textContent = "";
-
-    document.addEventListener("click", (event) => {
-      if (event.target !== continueButton && !continueButton.contains(event.target)) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      if (continueButton.getAttribute("aria-busy") === "true") return;
-      if (error) error.textContent = "";
-
-      const nickname = (nicknameInput?.value || "").trim();
-      if (nickname.length > 40) {
-        if (error) error.textContent = "Nickname must be 40 characters or fewer.";
-        nicknameInput?.focus();
-        return;
-      }
-
-      const reference = nickname
-        ? nickname.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9_-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 200)
-        : "";
-
-      if (nickname && !reference) {
-        if (error) error.textContent = "Please choose a nickname using letters or numbers.";
-        nicknameInput?.focus();
-        return;
-      }
-
-      continueButton.setAttribute("aria-busy", "true");
-      continueButton.textContent = "Opening secure checkout…";
-      window.IWBRAnalytics?.trackEvent("stripe_checkout", { has_nickname: Boolean(nickname) });
-
-      const checkoutUrl = reference
-        ? `${STRIPE_PAYMENT_LINK}?client_reference_id=${encodeURIComponent(reference)}`
-        : STRIPE_PAYMENT_LINK;
-
-      window.location.href = checkoutUrl;
-    }, true);
-  }
-
   function setupSuggestionCTA() {
     const mission = document.getElementById("mission");
     const loop = document.querySelector(".mission-loop");
@@ -182,7 +109,6 @@
   function init() {
     setupMobileSections();
     openSectionFromHash();
-    setupDonationCheckout();
     setupSuggestionCTA();
     window.addEventListener("hashchange", openSectionFromHash);
   }
