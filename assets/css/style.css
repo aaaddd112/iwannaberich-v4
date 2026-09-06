@@ -117,3 +117,15 @@ html[dir="rtl"] .logo {
     display: flex !important;
   }
 }
+
+/* =========================================================
+   DYNAMIC HOMEPAGE SECTIONS
+   These blocks are inserted after the initial reveal observer
+   has run, so they must not remain hidden by .reveal.
+   ========================================================= */
+.growth-feed-section.reveal,
+.homepage-contributions-section.reveal,
+.suggestion-cta.reveal {
+  opacity: 1;
+  transform: none;
+}
