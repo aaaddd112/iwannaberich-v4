@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Contribute an idea, experiment, challenge or opportunity to IWANNABERICH." />
+  <meta name="theme-color" content="#09090b" />
+  <link rel="icon" href="favicon.png?v=2" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/participation.css" />
+  <link rel="stylesheet" href="assets/css/contribute.css?v=1.0.0" />
+  <title>Contribute — IWANNABERICH</title>
+</head>
+<body>
+  <header class="wrap nav">
+    <a aria-label="IWANNABERICH home" class="logo" href="index.html">I<i>WANNA</i>BERICH</a>
+    <nav class="profile-nav" aria-label="Contribution navigation">
+      <a href="index.html">Experiment</a>
+      <a href="profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="wrap participation-page contribute-page">
+    <section class="contribute-hero">
+      <div>
+        <p class="eyebrow">CHANGE WHAT HAPPENS NEXT</p>
+        <h1>Don't just watch.<br /><span class="plan-accent">Contribute.</span></h1>
+        <p class="contribute-intro">Bring something worth trying into the experiment. An idea can become an experiment, an experiment can become a result, and the result becomes part of the public record.</p>
+      </div>
+      <div class="contribute-principles card">
+        <span>01</span><strong>Bring something real.</strong>
+        <span>02</span><strong>Make it actionable.</strong>
+        <span>03</span><strong>Let the result speak.</strong>
+      </div>
+    </section>
+
+    <section class="contribute-grid">
+      <article class="card contribute-form-card">
+        <p class="label">NEW CONTRIBUTION</p>
+        <h2>Put something on the table.</h2>
+        <p class="muted">Submissions are reviewed before they can influence the experiment. Submitting itself does not earn points.</p>
+
+        <form id="contributionForm" class="account-form">
+          <fieldset class="contribution-types">
+            <legend>What are you bringing?</legend>
+            <label class="contribution-type">
+              <input type="radio" name="type" value="idea" checked />
+              <span><strong>Idea</strong><small>Something IWANNABERICH should do, change or try.</small></span>
+            </label>
+            <label class="contribution-type">
+              <input type="radio" name="type" value="experiment" />
+              <span><strong>Experiment</strong><small>A concrete test with a way to judge the result.</small></span>
+            </label>
+            <label class="contribution-type">
+              <input type="radio" name="type" value="challenge" />
+              <span><strong>Challenge</strong><small>A challenge for the experiment or its community.</small></span>
+            </label>
+            <label class="contribution-type">
+              <input type="radio" name="type" value="opportunity" />
+              <span><strong>Opportunity</strong><small>A person, company, audience, contest or opportunity worth pursuing.</small></span>
+            </label>
+          </fieldset>
+
+          <label>Title
+            <input id="contributionTitle" maxlength="120" minlength="3" placeholder="Give it a name" required />
+          </label>
+
+          <label>Tell us more
+            <textarea id="contributionContent" maxlength="5000" minlength="10" rows="9" placeholder="What is it? Why is it worth trying? How could it work?" required></textarea>
+            <small><span id="contentCount">0</span>/5000</small>
+          </label>
+
+          <button class="btn primary" id="submitContribution" type="submit">Submit contribution →</button>
+          <p id="contributionMessage" class="account-message" aria-live="polite"></p>
+        </form>
+      </article>
+
+      <aside>
+        <section class="card contribution-status-card">
+          <p class="label">YOUR CONTRIBUTIONS</p>
+          <h2>What happened to your ideas?</h2>
+          <div id="contributionList" class="contribution-list">
+            <p class="muted">Loading your contributions...</p>
+          </div>
+        </section>
+
+        <section class="card contribution-flow-card">
+          <p class="label">THE PROCESS</p>
+          <div class="contribution-flow">
+            <div><span>01</span><strong>Submitted</strong><small>Your contribution enters the queue.</small></div>
+            <div><span>02</span><strong>Reviewed</strong><small>The team decides whether it should move forward.</small></div>
+            <div><span>03</span><strong>Tested</strong><small>Selected contributions can become real actions.</small></div>
+            <div><span>04</span><strong>Recorded</strong><small>Results and impact become part of the story.</small></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/contribute.js?v=1.0.0"></script>
+</body>
+</html>
