@@ -1,5 +1,24 @@
+# Edge Function JWT policy
+# Public endpoints must accept anonymous browser requests and perform any
+# privileged authorization inside the function itself.
 [functions.analytics-events]
 verify_jwt = false
 
 [functions.analytics-dashboard]
 verify_jwt = false
+
+[functions.submit-prediction]
+verify_jwt = false
+
+[functions.next-experiment-vote]
+verify_jwt = false
+
+# Authenticated/admin endpoints keep the Supabase gateway JWT check enabled.
+[functions.create-profile]
+verify_jwt = true
+
+[functions.admin-contributions]
+verify_jwt = true
+
+[functions.admin-growth-review]
+verify_jwt = true
