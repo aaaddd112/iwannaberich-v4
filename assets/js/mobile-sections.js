@@ -151,7 +151,7 @@
     experiment?.remove();
 
     const section = document.createElement("section");
-    section.className = "wrap reveal suggestion-cta";
+    section.className = "wrap suggestion-cta";
     section.setAttribute("aria-label", "Suggestions and proposals");
     section.innerHTML = `
       <div class="suggestion-cta-copy">
