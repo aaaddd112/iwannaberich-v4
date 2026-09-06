@@ -4,7 +4,8 @@
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
   const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   const $ = (id) => document.getElementById(id);
-  const ref = new URLSearchParams(location.search).get("ref");
+  const params = new URLSearchParams(location.search);
+  const ref = params.get("ref") || params.get("g");
   if (ref) localStorage.setItem("iwbr_referral", ref.trim().toLowerCase());
   function message(text, type = "") { const el = $("accountMessage"); if (!el) return; el.textContent = text; el.className = `account-message ${type}`; }
   function show(view) { document.querySelectorAll("[data-account-view]").forEach(el => el.hidden = el.dataset.accountView !== view); }
