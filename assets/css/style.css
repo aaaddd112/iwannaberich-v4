@@ -119,13 +119,30 @@ html[dir="rtl"] .logo {
 }
 
 /* =========================================================
-   DYNAMIC HOMEPAGE SECTIONS
-   These blocks are inserted after the initial reveal observer
-   has run, so they must not remain hidden by .reveal.
+   HOMEPAGE — dynamic sections
+   These sections are injected after the main reveal observer.
+   Keep them visible and compact instead of inheriting the
+   generic section spacing intended for full-page sections.
    ========================================================= */
-.growth-feed-section.reveal,
-.homepage-contributions-section.reveal,
-.suggestion-cta.reveal {
+.growth-feed-section {
   opacity: 1;
   transform: none;
+}
+
+.suggestion-cta,
+.homepage-contributions-section {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 1100px) {
+  .growth-feed-section {
+    padding-top: 28px !important;
+    padding-bottom: 34px !important;
+  }
+
+  .suggestion-cta {
+    padding-top: 42px !important;
+    padding-bottom: 28px !important;
+  }
 }
