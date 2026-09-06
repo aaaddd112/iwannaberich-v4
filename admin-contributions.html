@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="Private IWANNABERICH contribution review.">
+  <title>Contribution Review — IWANNABERICH</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/admin-contributions.css?v=1.0.0">
+</head>
+<body>
+  <header class="wrap nav admin-nav">
+    <a class="logo" href="index.html">I<i>WANNA</i>BERICH</a>
+    <a href="analytics.html">Analytics ↗</a>
+  </header>
+
+  <main class="admin-wrap">
+    <section class="admin-head">
+      <div>
+        <p class="eyebrow">PRIVATE ADMIN</p>
+        <h1>Contribution Review.</h1>
+        <p class="muted">Turn community contributions into decisions, actions and public results.</p>
+      </div>
+      <button class="btn secondary" id="signOut" type="button">Sign out</button>
+    </section>
+
+    <section id="login" class="card admin-login">
+      <p class="label">ADMIN ACCESS</p>
+      <form id="loginForm" class="account-form">
+        <label>Email<input id="email" type="email" autocomplete="email" required></label>
+        <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn primary" type="submit">Sign in →</button>
+      </form>
+      <p id="loginMessage" class="admin-message" aria-live="polite"></p>
+    </section>
+
+    <section id="panel" hidden>
+      <div class="admin-toolbar card">
+        <div>
+          <strong id="count">Loading...</strong>
+          <p id="panelMessage" class="admin-message" aria-live="polite"></p>
+        </div>
+        <div class="admin-filters">
+          <label>Status
+            <select id="statusFilter">
+              <option value="">Open queue</option>
+              <option value="submitted">Submitted</option>
+              <option value="under_review">Under review</option>
+              <option value="selected">Selected</option>
+              <option value="in_progress">In progress</option>
+              <option value="completed">Completed</option>
+              <option value="rejected">Rejected</option>
+              <option value="all">All</option>
+            </select>
+          </label>
+          <label>Type
+            <select id="typeFilter">
+              <option value="">All types</option>
+              <option value="idea">Ideas</option>
+              <option value="experiment">Experiments</option>
+              <option value="challenge">Challenges</option>
+              <option value="opportunity">Opportunities</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div id="reviewList" class="review-list"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/admin-contributions.js?v=1.0.0"></script>
+</body>
+</html>
