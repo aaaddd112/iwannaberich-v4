@@ -65,7 +65,7 @@
 }
 
 a[href="support.html"], a[href="./support.html"] { }
-.growth-feed-section, .suggestion-cta, .homepage-contributions-section { opacity: 1; transform: none; }
+.growth-feed-section, .suggestion-cta, .homepage-contributions-section, .current-experiment { opacity: 1 !important; transform: none !important; visibility: visible !important; }
 @media (min-width: 1100px) {
   .growth-feed-section { padding-top: 28px !important; padding-bottom: 34px !important; }
   .suggestion-cta { padding-top: 42px !important; padding-bottom: 28px !important; }
