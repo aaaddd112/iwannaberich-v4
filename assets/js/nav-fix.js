@@ -50,7 +50,7 @@
     document.body.classList.add("nav-menu-open");
   };
 
-  const enhanceDropdowns = (menu, toggle, close) => {
+  const enhanceDropdowns = (menu, close) => {
     const dropdowns = [...menu.querySelectorAll(".nav-dropdown")];
     dropdowns.forEach((dropdown) => {
       const trigger = dropdown.querySelector(".nav-drop-trigger");
@@ -59,7 +59,7 @@
       trigger.setAttribute("aria-haspopup", "true");
       trigger.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopPropagation();
+        event.stopImmediatePropagation();
         const next = !dropdown.classList.contains("is-open");
         dropdowns.forEach((item) => {
           item.classList.remove("is-open");
@@ -67,7 +67,7 @@
         });
         dropdown.classList.toggle("is-open", next);
         trigger.setAttribute("aria-expanded", String(next));
-      });
+      }, true);
       trigger.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           dropdown.classList.remove("is-open");
@@ -160,7 +160,7 @@
         toggle.dataset.navEnhanced = "true";
         toggle.addEventListener("click", (event) => {
           event.preventDefault();
-          event.stopPropagation();
+          event.stopImmediatePropagation();
           setOpen(!open);
         }, true);
       }
@@ -169,7 +169,7 @@
         if (event.target.closest("a")) close();
       }, true);
 
-      enhanceDropdowns(menu, toggle, close);
+      enhanceDropdowns(menu, close);
 
       document.addEventListener("click", (event) => {
         if (!header.contains(event.target)) close();
