@@ -72,9 +72,9 @@ Deno.serve(async (req) => {
     const active = await toggle.json();
 
     const countsResponse = await rpc("get_community_reaction_counts", { p_comment_ids: [commentId] });
-    if (!countsResponse.ok) return json({ active: Boolean(active), counts: [] });
+    if (!countsResponse.ok) return json({ active: Boolean(active), reaction_type: reactionType, counts: [] });
     const counts = await countsResponse.json();
-    return json({ active: Boolean(active), counts });
+    return json({ active: Boolean(active), reaction_type: reactionType, counts });
   } catch (error) {
     console.error("Community reaction error:", error);
     return json({ error: "Could not update reaction" }, 500);
