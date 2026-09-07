@@ -1,0 +1,22 @@
+(()=>{
+'use strict';
+const URL_BASE='https://ofcdtwrgyxjrpoxuikxg.supabase.co',KEY='sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA',sb=window.supabase?.createClient(URL_BASE,KEY);
+const $=id=>document.getElementById(id); const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const username=new URLSearchParams(location.search).get('u')?.trim()||'';
+const rank=x=>x>=500000?'Billionaire Material':x>=150000?'Mogul':x>=50000?'Investor':x>=15000?'Associate':x>=5000?'Agent':x>=1000?'Experimenter':x>=250?'Observer':'Curious';
+const timeAgo=v=>{const s=Math.max(1,Math.floor((Date.now()-new Date(v).getTime())/1000));if(s<60)return`${s}s ago`;const m=Math.floor(s/60);if(m<60)return`${m}m ago`;const h=Math.floor(m/60);if(h<24)return`${h}h ago`;const d=Math.floor(h/24);return`${d}d ago`};
+async function load(){
+ if(!sb||!username||!/^[a-z0-9_-]{3,24}$/i.test(username)){return missing()}
+ const {data,error}=await sb.rpc('get_public_member_profile',{p_username:username});
+ if(error||!data?.length)return missing();
+ const p=data[0]; $('memberName').textContent=p.display_name||p.username; $('memberHandle').textContent=`@${p.username}`; $('memberNumber').textContent=p.contributor_number??'—'; $('memberXp').textContent=Number(p.xp||0).toLocaleString(); $('memberRank').textContent=p.rank||rank(Number(p.xp||0)); $('memberAchievements').textContent=Number(p.achievements||0).toLocaleString(); $('memberBio').textContent=p.bio||'Building a place in the public record of the experiment.'; $('memberJoined').textContent=`Joined ${new Date(p.joined_at).toLocaleDateString(undefined,{month:'long',year:'numeric'})}`; document.title=`@${p.username} — IWANNABERICH`;
+ const rest=`${URL_BASE}/rest/v1/predictions_comments?select=id,comment,created_at,parent_id,author_type&author_id=eq.${encodeURIComponent(p.user_id||'')}&order=created_at.desc&limit=20`;
+ // The public profile RPC intentionally does not expose auth identifiers. Activity is therefore loaded by username nickname as a public, non-sensitive fallback.
+ const r=await fetch(`${URL_BASE}/rest/v1/predictions_comments?select=id,comment,created_at,parent_id,author_type&nickname=eq.${encodeURIComponent(p.username)}&order=created_at.desc&limit=20`,{headers:{apikey:KEY,Authorization:`Bearer ${KEY}`}});
+ const posts=r.ok?await r.json():[]; const box=$('memberPosts');
+ if(!posts.length){box.innerHTML='<p class="muted">No public community posts yet.</p>';return}
+ box.innerHTML=posts.map(x=>`<article class="member-post"><div><span class="member-post-type">${x.parent_id?'REPLY':'DISCUSSION'}</span><span class="muted">${timeAgo(x.created_at)}</span></div><p>${esc(x.comment)}</p></article>`).join('');
+}
+function missing(){$('memberHero').innerHTML='<p class="eyebrow">PUBLIC CONTRIBUTOR</p><h1>Contributor not found.</h1><p class="public-profile-bio">That public identity does not exist or is not available.</p><div class="public-profile-actions"><a class="btn" href="contributors.html">Back to leaderboard</a><a class="btn primary" href="account.html">Join the experiment →</a></div>'; $('memberStats').remove(); $('memberPosts').closest('section')?.remove()}
+document.addEventListener('DOMContentLoaded',load);
+})();
