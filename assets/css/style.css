@@ -1,6 +1,6 @@
 /* IWANNABERICH stylesheet entrypoint */
 @import url("https://cdn.jsdelivr.net/gh/aaaddd112/iwannaberich-v4@c720fe6d2bd93b099acd053fc25541a21c00fd1c/assets/css/style.css");
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import url("./desktop-wide.css");
 @import url("./home-interactive.css");
 
@@ -48,8 +48,8 @@
 }
 @media (min-width: 1100px) { .nav > .links { align-items: center; } .nav > .links > a, .nav-drop-trigger { min-height: 40px; display: inline-flex; align-items: center; } }
 a[href="support.html"], a[href="./support.html"] { }
-.growth-feed-section, .suggestion-cta, .homepage-contributions-section, .current-experiment { opacity: 1 !important; transform: none !important; visibility: visible !important; }
-.current-experiment { display: block !important; content-visibility: visible !important; }
+.growth-feed-section, .suggestion-cta, .homepage-contributions-section, .current-experiment, .decision-room { opacity: 1 !important; transform: none !important; visibility: visible !important; content-visibility: visible !important; }
+.current-experiment, .decision-room { display: block !important; }
 @media (min-width: 1100px) { .growth-feed-section { padding-top: 28px !important; padding-bottom: 34px !important; } .suggestion-cta { padding-top: 42px !important; padding-bottom: 28px !important; } }
 html[dir="rtl"] .logo { direction: ltr; unicode-bidi: isolate; }
 @media (hover: none) { .card:hover { transform: none; box-shadow: none; } .btn:hover, .continue-button:hover, .text-button:hover { transform: none; } }
