@@ -18,8 +18,7 @@
   }
 
   function renderVotes(data){
-    const yes=Number(data.yes_count)||0,no=Number(data.no_count)||0,total=yes+no;
-    const pct=total?Math.round(yes/total*100):0;
+    const yes=Number(data.yes_count)||0,no=Number(data.no_count)||0,total=yes+no,pct=total?Math.round(yes/total*100):0;
     $("communityYesPercent").textContent=total?`${pct}%`:"–";
     $("communityNoPercent").textContent=total?`${100-pct}%`:"–";
     $("communityVoteYesFill").style.width=`${pct}%`;
@@ -27,10 +26,8 @@
   }
 
   function setVoteState(){
-    const chosen=localStorage.getItem(VOTE_KEY);
-    const yes=$("communityVoteYes"),no=$("communityVoteNo"),status=$("communityVoteStatus");
-    yes.classList.toggle("is-selected",chosen==="yes");no.classList.toggle("is-selected",chosen==="no");
-    yes.disabled=Boolean(chosen);no.disabled=Boolean(chosen);
+    const chosen=localStorage.getItem(VOTE_KEY),yes=$("communityVoteYes"),no=$("communityVoteNo"),status=$("communityVoteStatus");
+    yes.classList.toggle("is-selected",chosen==="yes");no.classList.toggle("is-selected",chosen==="no");yes.disabled=Boolean(chosen);no.disabled=Boolean(chosen);
     if(chosen)status.textContent=`Your vote: ${chosen.toUpperCase()}`;
   }
 
@@ -45,8 +42,7 @@
         if(response.status===409){localStorage.setItem(VOTE_KEY,type);setVoteState();status.textContent="Your vote was already recorded.";return;}
         throw new Error(result.error||"Couldn't record your vote.");
       }
-      localStorage.setItem(VOTE_KEY,type);setVoteState();status.textContent=`Your vote: ${type.toUpperCase()}`;analytics("community_vote",{vote_type:type});
-      renderVotes(await fetchVotes());
+      localStorage.setItem(VOTE_KEY,type);setVoteState();analytics("community_vote",{vote_type:type});renderVotes(await fetchVotes());
     }catch(error){yes.disabled=false;no.disabled=false;status.textContent=error.message||"Couldn't record your vote. Try again.";}
   }
 
@@ -60,25 +56,21 @@
 
   function initComposer(){
     const form=$("communityPredictionForm");if(!form)return;
-    const nickname=$("communityNickname"),text=$("communityPrediction"),count=$("communityPredictionCount"),status=$("communityPredictionStatus"),button=$("communityPredictionSubmit");
-    const callButtons=[...document.querySelectorAll("[data-community-call]")];
+    const nickname=$("communityNickname"),text=$("communityPrediction"),status=$("communityPredictionStatus"),button=$("communityPredictionSubmit");
     const stored=localStorage.getItem(NICKNAME_KEY)||"";nickname.value=stored;
-    let selectedCall=null;
-    const updateCount=()=>{count.textContent=`${MAX-text.value.length} characters left`};
-    callButtons.forEach(btn=>btn.addEventListener("click",()=>{selectedCall=btn.dataset.communityCall;callButtons.forEach(x=>x.classList.toggle("is-selected",x===btn));}));
+    const updateCount=()=>{status.textContent=`${MAX-text.value.length} characters left`};
     form.addEventListener("submit",async event=>{
       event.preventDefault();
       const name=nickname.value.trim(),value=text.value.trim();
       if(!/^[a-z0-9 _-]{3,24}$/i.test(name)){status.className="community-composer-status is-error";status.textContent="Nickname must be 3–24 characters.";return}
-      if(!selectedCall){status.className="community-composer-status is-error";status.textContent="Choose YES or NO first.";return}
       if(!value||value.length>MAX){status.className="community-composer-status is-error";status.textContent=`Prediction must be 1–${MAX} characters.`;return}
       button.disabled=true;status.className="community-composer-status";status.textContent="Posting...";
       try{
-        const response=await fetch(POST_ENDPOINT,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({comment:`[${selectedCall.toUpperCase()}] ${value}`,nickname:name})});
+        const response=await fetch(POST_ENDPOINT,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({comment:value,nickname:name})});
         const result=await response.json().catch(()=>({}));
         if(!response.ok)throw new Error(result.error||"Couldn't post your prediction.");
-        localStorage.setItem(NICKNAME_KEY,name);text.value="";updateCount();status.className="community-composer-status is-success";status.textContent="Prediction posted. It is now part of the public record.";analytics("prediction_submit",{source:"community"});
-        document.dispatchEvent(new CustomEvent("iwbr:community-refresh"));
+        localStorage.setItem(NICKNAME_KEY,name);text.value="";status.className="community-composer-status is-success";status.textContent="Prediction posted. It is now part of the public record.";analytics("prediction_submit",{source:"community"});
+        window.setTimeout(()=>window.location.reload(),500);
       }catch(error){status.className="community-composer-status is-error";status.textContent=error.message||"Couldn't reach the prediction system. Try again."}
       finally{button.disabled=false}
     });
