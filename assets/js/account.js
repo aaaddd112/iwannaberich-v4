@@ -25,7 +25,7 @@
   }
   async function createProfile(session) {
     const username = $("username")?.value.trim().toLowerCase(); const displayName = $("displayName")?.value.trim() || null;
-    if (!/^[a-z0-9_-]{3,24}$/.test(username)) { message("Username must be 3–24 characters: letters, numbers, _ or -.", "error"); return false; }
+    if (!/^[a-z0-9_-]{3,24}$/.test(username)) { message("Username must be 3–24 characters. Use lowercase letters, with numbers, _ or - if you want.", "error"); return false; }
     const { error } = await sb.functions.invoke("create-profile", { body: { username, display_name: displayName } });
     if (error) { const status = error.context?.status; if (status === 409) message("That username is unavailable. Try another one.", "error"); else message("We couldn't create your profile. Please try again.", "error"); return false; }
     analytics("profile_complete",{method:"account"},{oncePerSession:true});
