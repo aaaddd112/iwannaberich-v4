@@ -3,28 +3,100 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Join the IWANNABERICH community, share your take, and challenge other contributors.">
+<meta name="description" content="Join the IWANNABERICH community, vote, share your prediction, and challenge other contributors.">
 <meta name="theme-color" content="#09090b">
 <link rel="icon" href="favicon.png?v=2">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/participation.css?v=1.1.0">
+<link rel="stylesheet" href="assets/css/community-core.css?v=1.0.0">
 <link rel="stylesheet" href="assets/css/community-moderation.css?v=1.0.0">
 <title>Community - IWANNABERICH</title>
 </head>
 <body data-page="community">
 <a class="skip-link" href="#main-content">Skip to content</a>
-<header class="wrap nav join-nav"><a aria-label="IWANNABERICH home" class="logo" href="index.html">I<i>WANNA</i>BERICH</a><nav class="join-nav-links" aria-label="Community navigation"><a href="index.html">The experiment</a><a href="community.html" aria-current="page">Community</a><a href="support.html">Predictions</a></nav><a class="account-nav-link" href="account.html">Account</a></header>
+<header class="wrap nav join-nav">
+  <a aria-label="IWANNABERICH home" class="logo" href="index.html">I<i>WANNA</i>BERICH</a>
+  <nav class="join-nav-links" aria-label="Community navigation">
+    <a href="index.html">The experiment</a>
+    <a href="community.html" aria-current="page">Community</a>
+  </nav>
+  <a class="account-nav-link" href="account.html">Account</a>
+</header>
+
 <main id="main-content" class="wrap participation-page participation-community-page">
-<section class="join-community-hero reveal"><div><p class="eyebrow">THE EXPERIMENT COMMUNITY</p><h1>Don't just watch.<br><span class="plan-accent">Get involved.</span></h1><p class="join-hero-copy">See what other people are thinking, make your call, and become part of the public record. The experiment is better when there are people arguing with it.</p></div><div class="join-live-status card"><div class="join-live-dot" aria-hidden="true"></div><div><span class="label">LIVE COMMUNITY</span><strong id="joinCommunityCount">Loading activity...</strong><p id="joinCommunityMeta">Latest public takes from the experiment.</p></div></div></section>
-<section class="join-community-layout reveal" aria-label="Experiment community"><div class="community-feed-column"><div class="community-section-head"><div><p class="eyebrow">COMMUNITY FEED</p><h2 class="title">What people are saying.</h2></div><a class="btn" href="support.html">View all predictions ↗</a></div><div class="community-feed card" id="joinCommunityFeed" aria-live="polite"><div class="community-loading" aria-hidden="true"><span></span><span></span><span></span></div><p class="muted">Loading the latest takes...</p></div></div>
-<aside class="join-sidebar">
-<div class="account-card card"><p class="label">YOUR PLACE IN THE COMMUNITY</p><h2>Want to join the conversation?</h2><p class="account-card-intro">Create your contributor identity once. Your account stays personal, while your public activity lives here in the community.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn primary" href="account.html">Go to account →</a><a class="btn" href="contributors.html">See contributors</a></div></div>
-<div class="join-value-card card"><p class="label">WHAT YOU UNLOCK</p><div class="join-value-list"><div><span>01</span><strong>Public identity</strong><p>A username people can recognize.</p></div><div><span>02</span><strong>Contribution Score</strong><p>Your activity starts to count.</p></div><div><span>03</span><strong>Achievements</strong><p>Milestones for showing up.</p></div><div><span>04</span><strong>Referral link</strong><p>Bring people into the experiment.</p></div></div></div></aside></section>
+  <section class="join-community-hero reveal">
+    <div>
+      <p class="eyebrow">THE EXPERIMENT COMMUNITY</p>
+      <h1>Don't just watch.<br><span class="plan-accent">Get involved.</span></h1>
+      <p class="join-hero-copy">See what other people are thinking, make your call, and become part of the public record. Vote, post your take, and challenge the room.</p>
+    </div>
+    <div class="join-live-status card">
+      <div class="join-live-dot" aria-hidden="true"></div>
+      <div><span class="label">LIVE COMMUNITY</span><strong id="joinCommunityCount">Loading activity...</strong><p id="joinCommunityMeta">Latest public takes from the experiment.</p></div>
+    </div>
+  </section>
+
+  <section class="community-core reveal" aria-label="Community participation">
+    <div class="community-vote-card card">
+      <div class="community-vote-head">
+        <div><p class="eyebrow">MAKE YOUR CALL</p><h2>Will it actually work?</h2></div>
+        <div class="community-vote-total" id="communityVoteTotal">Loading votes...</div>
+      </div>
+      <div class="community-vote-options">
+        <button class="community-vote-button" id="communityVoteYes" type="button"><span>YES, IT WILL</span><span class="community-vote-percent" id="communityYesPercent">–</span></button>
+        <button class="community-vote-button" id="communityVoteNo" type="button"><span>NO, IT WON'T</span><span class="community-vote-percent" id="communityNoPercent">–</span></button>
+      </div>
+      <div class="community-vote-bar" aria-label="Vote split"><span class="community-vote-yes-fill" id="communityVoteYesFill"></span></div>
+      <p class="community-vote-status" id="communityVoteStatus" aria-live="polite">You only get one vote.</p>
+    </div>
+
+    <div class="community-composer card" id="make-prediction">
+      <p class="eyebrow">JOIN THE PUBLIC RECORD</p>
+      <h2>Tell everyone why.</h2>
+      <p class="community-composer-copy">Leave a prediction, argument, doubt, or hot take. Your post appears in the community feed immediately after moderation checks.</p>
+      <form id="communityPredictionForm" novalidate>
+        <div class="community-composer-grid">
+          <div><label class="label" for="communityNickname">Nickname</label><input id="communityNickname" type="text" maxlength="24" placeholder="e.g. MillionaireMike" autocomplete="nickname"></div>
+          <div><label class="label" for="communityPrediction">Your prediction</label><textarea id="communityPrediction" maxlength="280" placeholder="I think this will work because..."></textarea></div>
+        </div>
+        <div class="community-composer-footer"><span class="community-composer-status" id="communityPredictionStatus" aria-live="polite">280 characters left</span><button id="communityPredictionSubmit" class="btn primary" type="submit">Post prediction →</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="join-community-layout reveal" aria-label="Community feed">
+    <div class="community-feed-column">
+      <div class="community-section-head">
+        <div><p class="eyebrow">COMMUNITY FEED</p><h2 class="title">What people are saying.</h2><p class="community-feed-header-note">Vote first. Then see how everyone else is thinking.</p></div>
+        <div class="community-sort" aria-label="Sort community posts"></div>
+      </div>
+      <div class="community-feed card" id="joinCommunityFeed" aria-live="polite"><div class="community-loading" aria-hidden="true"><span></span><span></span><span></span></div><p class="muted">Loading the latest takes...</p></div>
+    </div>
+    <aside class="join-sidebar">
+      <div class="account-card card">
+        <p class="label">YOUR PLACE IN THE COMMUNITY</p>
+        <h2>Want a public identity?</h2>
+        <p class="account-card-intro">Create your contributor identity once. Your account stays personal, while your public activity lives here in the community.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn primary" href="account.html">Go to account →</a><a class="btn" href="contributors.html">See contributors</a></div>
+      </div>
+      <div class="join-value-card card">
+        <p class="label">WHAT YOU UNLOCK</p>
+        <div class="join-value-list">
+          <div><span>01</span><strong>Public identity</strong><p>A username people can recognize.</p></div>
+          <div><span>02</span><strong>Contribution Score</strong><p>Your activity starts to count.</p></div>
+          <div><span>03</span><strong>Achievements</strong><p>Milestones for showing up.</p></div>
+          <div><span>04</span><strong>Referral link</strong><p>Bring people into the experiment.</p></div>
+        </div>
+      </div>
+    </aside>
+  </section>
 </main>
+
 <footer class="site-footer"><div class="wrap footer-grid"><div><a class="logo" href="index.html">I<i>WANNA</i>BERICH</a><p>Trying something absurd in public.</p></div><div class="footer-links"><a href="numbers.html">Numbers</a><a href="milestones.html">Milestones</a><a href="story.html">Story</a><a href="contributors.html">Contributors</a><a href="updates.html">Updates</a></div><div class="footer-legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><span>© 2026 IWANNABERICH</span></div></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/analytics.js?v=1.1.0"></script>
 <script src="assets/js/community-ui.js?v=1.0.0"></script>
+<script src="assets/js/community-interactions.js?v=1.0.0"></script>
 <script src="assets/js/account-community.js?v=1.1.0"></script>
 <script src="assets/js/community-moderation.js?v=1.0.0"></script>
 <script src="assets/js/community-retention.js?v=1.0.0"></script>
