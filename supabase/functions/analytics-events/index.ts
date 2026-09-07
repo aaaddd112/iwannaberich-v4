@@ -14,14 +14,37 @@ const ALLOWED_EVENTS = new Set([
 ]);
 const MAX_BODY_BYTES = 16384;
 const MAX_METADATA_KEYS = 40;
+const RATE_LIMIT_10M = 300;
+const RATE_LIMIT_DAY = 5000;
 function jsonResponse(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" } });
+}
+function clientIp(req: Request) {
+  return (req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown").trim().slice(0, 200);
+}
+async function rateLimited(req: Request) {
+  const salt = Deno.env.get("ANALYTICS_RATE_LIMIT_SALT") || "iwbr-analytics-v1";
+  const raw = `${salt}:${clientIp(req)}`;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
+  const ipHash = Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
+  const { data, error } = await supabase.rpc("consume_api_rate_limit", {
+    p_bucket: "analytics-events",
+    p_ip_hash: ipHash,
+    p_max_10m: RATE_LIMIT_10M,
+    p_max_day: RATE_LIMIT_DAY,
+  });
+  if (error) {
+    console.error("Analytics rate limit error:", error);
+    return true;
+  }
+  return data !== true;
 }
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders });
   if (req.method !== "POST") return jsonResponse({ error: "Method not allowed." }, 405);
   const contentLength = Number(req.headers.get("content-length") || 0);
   if (contentLength > MAX_BODY_BYTES) return jsonResponse({ error: "Request too large." }, 413);
+  if (await rateLimited(req)) return jsonResponse({ error: "Rate limit exceeded." }, 429);
   try {
     const raw = await req.text();
     if (new TextEncoder().encode(raw).byteLength > MAX_BODY_BYTES) return jsonResponse({ error: "Request too large." }, 413);
