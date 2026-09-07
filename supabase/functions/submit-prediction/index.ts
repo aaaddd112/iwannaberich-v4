@@ -31,11 +31,10 @@ Deno.serve(async (req) => {
     if (!comment) return jsonResponse({error:"Prediction cannot be empty."},400);
     if (comment.length>280) return jsonResponse({error:"Prediction is too long."},400);
     if (containsBlockedContent(comment)) return jsonResponse({error:"Let's keep it civil. The internet is already weird enough."},400);
-    if (!validNickname(nickname)) return jsonResponse({error:"Nickname must be 3–24 characters."},400);
 
     let authorType="visitor";
     let authorId:string|null=null;
-    let actorLabel=nickname;
+    let actorLabel="";
     const authHeader=req.headers.get("Authorization") ?? "";
     const token=authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
     let userId:string|null=null;
@@ -45,18 +44,21 @@ Deno.serve(async (req) => {
       if (userData.user) { userId=userData.user.id; userEmail=(userData.user.email ?? "").trim().toLowerCase(); }
     }
 
+    if (userId) {
+      const {data:profile,error:profileError}=await supabase.from("profiles").select("username,display_name").eq("id",userId).maybeSingle();
+      if (profileError || !profile) return jsonResponse({error:"Your account profile is not ready yet. Open your profile and try again."},403);
+      authorId=userId;
+      authorType=(ownerEmail && userEmail===ownerEmail) ? "owner" : "member";
+      actorLabel=(authorType==="owner" ? "IWANNABERICH" : (profile.display_name?.trim() || profile.username)).trim();
+      if (!actorLabel) return jsonResponse({error:"Your account profile needs a username before you can post."},403);
+    } else {
+      if (!validNickname(nickname)) return jsonResponse({error:"Nickname must be 3–24 characters."},400);
+      actorLabel=nickname;
+    }
+
     if (parentId) {
       const {data:parent,error:parentError}=await supabase.from("predictions_comments").select("id,parent_id").eq("id",parentId).single();
       if (parentError || !parent || parent.parent_id!==null) return jsonResponse({error:"Replies can only be attached to an original prediction."},400);
-      if (userId) {
-        authorId=userId;
-        if (ownerEmail && userEmail===ownerEmail) { authorType="owner"; actorLabel="IWANNABERICH"; }
-        else authorType="member";
-      }
-    } else if (userId) {
-      authorId=userId;
-      authorType=(ownerEmail && userEmail===ownerEmail) ? "owner" : "member";
-      if (authorType==="owner") actorLabel="IWANNABERICH";
     }
 
     const ip= getClientIp(req);
@@ -74,13 +76,13 @@ Deno.serve(async (req) => {
     if (duplicateError) return jsonResponse({error:"Could not verify prediction."},500);
     if (duplicate) return jsonResponse({error:"You've already posted that prediction."},409);
 
-    const {data:inserted,error:insertError}=await supabase.from("predictions_comments").insert({comment,normalized_hash:commentHash,parent_id:parentId,author_id:authorId,author_type:authorType,nickname:actorLabel}).select("id,comment,created_at,parent_id,author_type,nickname").single();
+    const {data:inserted,error:insertError}=await supabase.from("predictions_comments").insert({comment,normalized_hash:commentHash,parent_id:parentId,author_id:authorId,author_type:authorType,nickname:actorLabel}).select("id,comment,created_at,parent_id,author_id,author_type,nickname").single();
     if (insertError) { console.error("Prediction insert error:",insertError); return jsonResponse({error:"Could not save prediction."},500); }
 
     const createdAt=inserted.created_at ?? new Date().toISOString();
     const subject=isReply ? "IWANNABERICH — new community reply" : "IWANNABERICH — new prediction";
-    const text=[isReply?"A visitor replied to a community prediction.":"A visitor left a new prediction.","",`Prediction: ${comment}`,`Nickname: ${actorLabel}`,`Created: ${createdAt}`,`Type: ${authorType}`,`ID: ${inserted.id}`].join("\n");
-    const html=`<h2>${isReply?"New community reply":"New prediction"}</h2><p><strong>Prediction:</strong></p><blockquote>${htmlText(comment)}</blockquote><p><strong>Nickname:</strong> ${htmlText(actorLabel)}</p><p><strong>Created:</strong> ${htmlText(createdAt)}</p><p><strong>Type:</strong> ${htmlText(authorType)}</p><p><strong>ID:</strong> ${htmlText(inserted.id)}</p>`;
+    const text=[isReply?"A community member replied to a community prediction.":"A community member left a new prediction.","",`Prediction: ${comment}`,`Identity: ${actorLabel}`,`Created: ${createdAt}`,`Type: ${authorType}`,`ID: ${inserted.id}`].join("\n");
+    const html=`<h2>${isReply?"New community reply":"New prediction"}</h2><p><strong>Prediction:</strong></p><blockquote>${htmlText(comment)}</blockquote><p><strong>Identity:</strong> ${htmlText(actorLabel)}</p><p><strong>Created:</strong> ${htmlText(createdAt)}</p><p><strong>Type:</strong> ${htmlText(authorType)}</p><p><strong>ID:</strong> ${htmlText(inserted.id)}</p>`;
     await sendOwnerNotification(subject,text,html);
     return jsonResponse({success:true,prediction:inserted});
   } catch (error) { console.error("Prediction endpoint error:",error); return jsonResponse({error:"Invalid request."},400); }
