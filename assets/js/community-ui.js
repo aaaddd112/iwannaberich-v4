@@ -24,7 +24,7 @@
   const loadCommunityIdentityLinks = () => {
     if (document.querySelector('script[data-community-identity-links]')) return;
     const script = document.createElement("script");
-    script.src = "assets/js/community-identity-links.js?v=1.0.0";
+    script.src = "assets/js/community-identity-links.js?v=1.0.1";
     script.dataset.communityIdentityLinks = "true";
     document.head.appendChild(script);
   };
