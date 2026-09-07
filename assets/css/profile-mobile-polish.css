@@ -1,0 +1,169 @@
+/* Mobile profile polish: keep identity and achievement badges inside the viewport. */
+@media (max-width: 760px) {
+  .profile-identity-hero,
+  .profile-control-card,
+  .profile-settings-card,
+  .achievements-card,
+  .profile-share,
+  .owner-status-card {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .profile-identity-hero > div:first-child,
+  .profile-control-identity > div:last-child {
+    min-width: 0;
+  }
+
+  .profile-identity-hero h1,
+  .profile-control-name {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .profile-identity-hero h1 {
+    font-size: clamp(2.15rem, 9vw, 3.6rem);
+    line-height: .94;
+    max-width: 100%;
+  }
+
+  .profile-role-badge,
+  .profile-control-role,
+  .profile-control-status {
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+  }
+
+  .profile-role-badge {
+    width: fit-content;
+  }
+
+  .profile-identity-hero .profile-badge {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .achievement-list {
+    grid-template-columns: 1fr;
+  }
+
+  .achievement {
+    min-width: 0;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .achievement > div {
+    min-width: 0;
+  }
+
+  .achievement-icon,
+  .achievement .badge-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .achievement strong,
+  .achievement p,
+  .achievement small {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .profile-control-actions,
+  .profile-settings-actions,
+  .growth-actions-buttons {
+    min-width: 0;
+  }
+
+  .profile-settings-actions > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .profile-settings-actions .btn,
+  .profile-control-actions .btn {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .profile-identity-hero {
+    gap: 20px;
+    padding: 28px 18px;
+  }
+
+  .profile-identity-hero h1 {
+    font-size: clamp(1.95rem, 9.8vw, 2.8rem);
+    letter-spacing: -.045em;
+  }
+
+  .profile-role-badge {
+    margin-top: 10px;
+    padding: 6px 9px;
+    font-size: .6rem;
+  }
+
+  .profile-identity-hero .profile-badge {
+    align-self: stretch;
+    width: 100%;
+    text-align: left;
+    padding: 13px 14px;
+  }
+
+  .profile-identity-hero .profile-badge span,
+  .profile-identity-hero .profile-badge strong {
+    overflow-wrap: anywhere;
+  }
+
+  .profile-control-identity {
+    gap: 12px;
+  }
+
+  .profile-control-avatar {
+    width: 58px;
+    height: 58px;
+    flex-basis: 58px;
+  }
+
+  .profile-control-name {
+    font-size: 1.08rem;
+  }
+
+  .profile-control-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .owner-status-card {
+    padding: 19px 16px;
+  }
+
+  .owner-status-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .owner-status-meta div:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .profile-identity-hero h1 {
+    font-size: 1.85rem;
+  }
+
+  .profile-role-badge {
+    font-size: .56rem;
+    padding: 6px 8px;
+  }
+
+  .profile-identity-hero .profile-badge {
+    padding: 11px 12px;
+  }
+}
