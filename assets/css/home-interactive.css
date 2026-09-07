@@ -1,0 +1,138 @@
+/* IWANNABERICH interactive homepage layer */
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-intro, .hero-goal, .mission-focus-card, .mission-loop, .current-experiment, .mission-journal, .cta {
+    will-change: transform;
+  }
+
+  .hero-goal {
+    transform-style: preserve-3d;
+    transition: transform 180ms ease-out, box-shadow 300ms ease;
+  }
+
+  .hero-goal::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.13), transparent 28%);
+    opacity: .75;
+    transition: opacity .25s ease;
+  }
+
+  .hero-goal:hover::after { opacity: 1; }
+
+  .hero-goal-glow {
+    animation: iwbrGlow 5s ease-in-out infinite;
+  }
+
+  @keyframes iwbrGlow {
+    0%, 100% { opacity: .42; transform: scale(.96); }
+    50% { opacity: .75; transform: scale(1.05); }
+  }
+
+  .mission-loop-step {
+    transition: transform .25s ease, opacity .25s ease, border-color .25s ease, background .25s ease;
+    cursor: pointer;
+  }
+
+  .mission-loop-step.is-active {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,.07);
+  }
+
+  .mission-loop-step span {
+    transition: transform .25s ease;
+  }
+
+  .mission-loop-step.is-active span {
+    transform: scale(1.08);
+  }
+
+  .experiment-option {
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s ease, border-color .2s ease, background .2s ease;
+  }
+
+  .experiment-option::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.1), transparent 34%);
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+
+  .experiment-option:hover::before,
+  .experiment-option.is-selected::before { opacity: 1; }
+
+  .experiment-option.is-selected {
+    transform: translateX(5px);
+  }
+
+  .experiment-option.is-selected .experiment-option-result strong {
+    transform: scale(1.08);
+  }
+
+  .experiment-option-result strong {
+    display: inline-block;
+    transition: transform .2s ease;
+  }
+
+  .interactive-cursor {
+    position: fixed;
+    z-index: 2;
+    width: 360px;
+    height: 360px;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.045), transparent 68%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+
+  body.interactive-ready .interactive-cursor { opacity: 1; }
+
+  .mission-focus-card.is-pulsing {
+    animation: iwbrPulse .55s ease;
+  }
+
+  @keyframes iwbrPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    45% { box-shadow: 0 0 0 8px rgba(255,255,255,.06); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+  }
+}
+
+.home-interactive-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin-top: .8rem;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .58;
+}
+
+.home-interactive-hint::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 12px currentColor;
+}
+
+@media (max-width: 700px) {
+  .interactive-cursor { display: none; }
+  .home-interactive-hint { font-size: .65rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-goal-glow, .mission-focus-card.is-pulsing { animation: none !important; }
+}
