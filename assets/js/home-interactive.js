@@ -56,11 +56,24 @@
 
   function injectDecisionRoom() {
     if (document.getElementById('decision-room')) return;
+    var legacy = document.getElementById('current-experiment');
     var mission = document.querySelector('.mission-focus'), journal = document.querySelector('.mission-journal');
     if (!mission || !journal) return;
-    var section = document.createElement('section'); section.id = 'decision-room'; section.className = 'wrap reveal decision-room'; section.setAttribute('aria-labelledby', 'decision-room-title');
-    section.innerHTML = '<div class="decision-room-head"><div><p class="eyebrow">THE INTERNET GETS A SAY</p><h2 class="title" id="decision-room-title">What happens with the next €13?</h2><p class="lead">Pick the move. I will use the winning option for the next step and document what happens.</p></div><span class="decision-live"><i></i> LIVE DECISION</span></div><div class="decision-room-card card"><div class="decision-options" id="decisionOptions"><button class="decision-option" data-option="sell" type="button"><span><b>01</b> Flip something</span><strong>—</strong><small>—</small></button><button class="decision-option" data-option="digital" type="button"><span><b>02</b> Build a tiny digital product</span><strong>—</strong><small>—</small></button><button class="decision-option" data-option="hustle" type="button"><span><b>03</b> Try a ridiculous internet hustle</span><strong>—</strong><small>—</small></button></div><div class="decision-room-foot"><span id="decisionTotal">Loading the room...</span><span id="decisionStatus">One vote per browser.</span></div></div><div class="decision-after" id="decisionAfter" hidden><div class="decision-after-copy"><strong>You changed the experiment.</strong><span>Your vote is now part of the public record. Do one more thing so there is a reason to come back.</span></div><div class="decision-after-actions"><a class="btn primary" data-vote-followup="prediction" href="community.html#make-prediction">Explain your vote →</a><a class="btn" data-vote-followup="account" href="account.html">Create your identity</a><button class="btn" data-vote-followup="share" id="decisionShare" type="button">Challenge someone</button></div><p class="decision-return-hook">Next checkpoint: the winning move gets executed and documented publicly.</p></div>';
-    mission.parentNode.insertBefore(section, journal); addDecisionStyles(); bindDecisionRoom(section); patchReferralLinks();
+
+    var section = legacy || document.createElement('section');
+    if (!legacy) {
+      section.id = 'decision-room';
+      section.className = 'wrap reveal decision-room';
+      section.setAttribute('aria-labelledby', 'decision-room-title');
+      mission.parentNode.insertBefore(section, journal);
+    } else {
+      section.id = 'decision-room';
+      section.className = 'wrap reveal decision-room';
+      section.setAttribute('aria-labelledby', 'decision-room-title');
+    }
+
+    section.innerHTML = '<div class="decision-room-head"><div><p class="eyebrow">THE INTERNET GETS A SAY</p><h2 class="title" id="decision-room-title">What happens with the next €13?</h2><p class="lead">The community contributed €13 to the experiment. Now the community decides what happens to it.</p></div><span class="decision-live"><i></i> LIVE DECISION</span></div><div class="decision-room-card card"><div class="decision-options" id="decisionOptions"><button class="decision-option" data-option="sell" type="button"><span><b>01</b> Flip something</span><strong>—</strong><small>—</small></button><button class="decision-option" data-option="digital" type="button"><span><b>02</b> Build a tiny digital product</span><strong>—</strong><small>—</small></button><button class="decision-option" data-option="hustle" type="button"><span><b>03</b> Try a ridiculous internet hustle</span><strong>—</strong><small>—</small></button></div><div class="decision-room-foot"><span id="decisionTotal">Loading the room...</span><span id="decisionStatus">One vote per browser.</span></div></div><div class="decision-after" id="decisionAfter" hidden><div class="decision-after-copy"><strong>You changed the experiment.</strong><span>Your vote is now part of the public record. Do one more thing so there is a reason to come back.</span></div><div class="decision-after-actions"><a class="btn primary" data-vote-followup="prediction" href="community.html#make-prediction">Explain your vote →</a><a class="btn" data-vote-followup="account" href="account.html">Create your identity</a><button class="btn" data-vote-followup="share" id="decisionShare" type="button">Challenge someone</button></div><p class="decision-return-hook">Next checkpoint: the winning move gets executed and documented publicly.</p></div>';
+    addDecisionStyles(); bindDecisionRoom(section); patchReferralLinks();
   }
 
   function addDecisionStyles() {
