@@ -11,7 +11,6 @@
     style.textContent = `
       .home-v2-ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;opacity:.8}
       .home-v2-ambient:before{content:"";position:absolute;width:46vw;height:46vw;left:var(--hx,50%);top:var(--hy,20%);transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06),transparent 68%);filter:blur(14px);transition:left .7s ease,top .7s ease}
-      body>*:not(.home-v2-ambient){position:relative;z-index:1}
       .hero-goal{transform-style:preserve-3d}
       .home-v2-scroll-cue{display:flex;justify-content:center;align-items:center;gap:10px;margin:18px auto 0;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;opacity:.5}
       .home-v2-scroll-cue span{display:grid;place-items:center;width:24px;height:32px;border:1px solid currentColor;border-radius:999px;animation:homeV2Bob 1.8s ease-in-out infinite}
@@ -127,10 +126,10 @@
     const ratio = Math.min(Math.max(total / goal, 0), 1);
     const fill = document.querySelector(".home-v2-track-fill");
     if (fill) fill.style.width = `${Math.max(ratio * 100, total > 0 ? .5 : 0)}%`;
-    nodes.forEach((node) => {
+    nodes.forEach((node, index) => {
       const target = Number(node.dataset.v2Target);
       node.classList.toggle("passed", total >= target);
-      node.classList.toggle("active", total < target && (nodes.indexOf(node) === 0 || total >= Number(nodes[nodes.indexOf(node) - 1].dataset.v2Target)));
+      node.classList.toggle("active", total < target && (index === 0 || total >= Number(nodes[index - 1].dataset.v2Target)));
     });
   }
 
