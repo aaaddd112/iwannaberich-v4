@@ -1,6 +1,5 @@
--- Fix the 10-minute API limiter to evaluate the stored counter, not the
--- number of rows. There is normally one row per bucket/IP, so counting rows
--- made the 10-minute limit effectively non-functional.
+-- Fix the generic API limiter to use the actual production schema.
+-- The stored attempts_10m counter is the authoritative 10-minute window count.
 create or replace function public.consume_api_rate_limit(
   p_bucket text,
   p_ip_hash text,
@@ -12,11 +11,10 @@ security definer
 set search_path to 'public'
 as $$
 declare
+  current_row public.api_rate_limits%rowtype;
   now_ts timestamptz := now();
-  ten_min_start timestamptz := now_ts - interval '10 minutes';
-  day_start timestamptz := date_trunc('day', now_ts);
-  window_count integer;
-  day_count integer;
+  next_10m integer;
+  next_day integer;
 begin
   if coalesce(trim(p_bucket), '') = ''
      or coalesce(trim(p_ip_hash), '') = ''
@@ -25,32 +23,56 @@ begin
     raise exception 'invalid_rate_limit_parameters' using errcode = '22023';
   end if;
 
-  insert into public.api_rate_limits(bucket, ip_hash, window_start, count)
-  values (p_bucket, p_ip_hash, ten_min_start, 1)
-  on conflict (bucket, ip_hash) do update
-    set count = case
-      when public.api_rate_limits.window_start < ten_min_start then 1
-      else public.api_rate_limits.count + 1
-    end,
-    window_start = case
-      when public.api_rate_limits.window_start < ten_min_start then ten_min_start
-      else public.api_rate_limits.window_start
-    end;
+  insert into public.api_rate_limits(
+    bucket, ip_hash, window_started_at, attempts_10m,
+    day_started_at, attempts_day, updated_at
+  )
+  values (p_bucket, p_ip_hash, now_ts, 1, now_ts, 1, now_ts)
+  on conflict (bucket, ip_hash) do nothing;
 
-  select coalesce(sum(count), 0)
-    into window_count
+  select * into current_row
     from public.api_rate_limits
    where bucket = p_bucket
      and ip_hash = p_ip_hash
-     and window_start >= ten_min_start;
+   for update;
 
-  select coalesce(sum(count), 0)
-    into day_count
-    from public.api_rate_limits
+  if current_row.window_started_at <= now_ts - interval '10 minutes' then
+    next_10m := 1;
+  else
+    next_10m := current_row.attempts_10m + 1;
+  end if;
+
+  if current_row.day_started_at <= now_ts - interval '1 day' then
+    next_day := 1;
+  else
+    next_day := current_row.attempts_day + 1;
+  end if;
+
+  if next_10m > p_max_10m or next_day > p_max_day then
+    update public.api_rate_limits
+       set updated_at = now_ts
+     where bucket = p_bucket
+       and ip_hash = p_ip_hash;
+    return false;
+  end if;
+
+  update public.api_rate_limits
+     set window_started_at = case
+           when current_row.window_started_at <= now_ts - interval '10 minutes'
+           then now_ts
+           else current_row.window_started_at
+         end,
+         attempts_10m = next_10m,
+         day_started_at = case
+           when current_row.day_started_at <= now_ts - interval '1 day'
+           then now_ts
+           else current_row.day_started_at
+         end,
+         attempts_day = next_day,
+         updated_at = now_ts
    where bucket = p_bucket
-     and ip_hash = p_ip_hash
-     and window_start >= day_start;
+     and ip_hash = p_ip_hash;
 
-  return window_count <= p_max_10m and day_count <= p_max_day;
+  return true;
 end;
 $$;
