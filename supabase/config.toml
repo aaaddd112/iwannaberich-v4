@@ -19,6 +19,9 @@ verify_jwt = false
 [functions.submit-community-report]
 verify_jwt = false
 
+[functions.admin-community]
+verify_jwt = true
+
 # Authenticated/admin endpoints keep the Supabase gateway JWT check enabled.
 [functions.create-profile]
 verify_jwt = true
