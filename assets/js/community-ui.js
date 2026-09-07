@@ -21,9 +21,21 @@
     items.forEach((item) => observer.observe(item));
   };
 
+  const loadCommunityIdentityLinks = () => {
+    if (document.querySelector('script[data-community-identity-links]')) return;
+    const script = document.createElement("script");
+    script.src = "assets/js/community-identity-links.js?v=1.0.0";
+    script.dataset.communityIdentityLinks = "true";
+    document.head.appendChild(script);
+  };
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initScrollReveal, { once: true });
+    document.addEventListener("DOMContentLoaded", () => {
+      initScrollReveal();
+      loadCommunityIdentityLinks();
+    }, { once: true });
   } else {
     initScrollReveal();
+    loadCommunityIdentityLinks();
   }
 })();
