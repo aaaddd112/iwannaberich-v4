@@ -5,18 +5,22 @@
   .profile-settings-card,
   .achievements-card,
   .profile-share,
-  .owner-status-card {
+  .owner-status-card,
+  .public-profile-hero,
+  .profile-badges-section {
     min-width: 0;
     overflow: hidden;
   }
 
   .profile-identity-hero > div:first-child,
-  .profile-control-identity > div:last-child {
+  .profile-control-identity > div:last-child,
+  .member-title-block {
     min-width: 0;
   }
 
   .profile-identity-hero h1,
-  .profile-control-name {
+  .profile-control-name,
+  .public-profile-hero h1 {
     overflow-wrap: anywhere;
     word-break: break-word;
   }
@@ -43,6 +47,39 @@
     flex: 0 1 auto;
     min-width: 0;
     max-width: 100%;
+  }
+
+  /* Public-profile identity badges must wrap instead of pushing the title or card wider. */
+  .identity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .identity-chip {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+
+  .identity-chip .badge-icon {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .identity-chip.owner-chip {
+    gap: 5px;
   }
 
   .achievement-list {
@@ -122,6 +159,51 @@
     overflow-wrap: anywhere;
   }
 
+  .public-profile-hero {
+    padding: 23px 16px 24px;
+  }
+
+  .public-profile-topline {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .public-profile-topline .eyebrow {
+    max-width: 58%;
+  }
+
+  .member-identity {
+    min-width: 0;
+    gap: 12px;
+  }
+
+  .member-title-block {
+    flex: 1 1 auto;
+    width: 0;
+  }
+
+  .member-avatar {
+    flex: 0 0 68px;
+    width: 68px;
+    height: 68px;
+  }
+
+  .public-profile-hero h1 {
+    font-size: clamp(1.85rem, 8.8vw, 2.3rem);
+    line-height: .96;
+  }
+
+  .identity-meta {
+    gap: 5px;
+    margin-top: 10px;
+  }
+
+  .identity-chip {
+    padding: 5px 7px;
+    font-size: .52rem;
+    letter-spacing: .045em;
+  }
+
   .profile-control-identity {
     gap: 12px;
   }
@@ -154,8 +236,9 @@
 }
 
 @media (max-width: 380px) {
-  .profile-identity-hero h1 {
-    font-size: 1.85rem;
+  .profile-identity-hero h1,
+  .public-profile-hero h1 {
+    font-size: 1.8rem;
   }
 
   .profile-role-badge {
@@ -165,5 +248,9 @@
 
   .profile-identity-hero .profile-badge {
     padding: 11px 12px;
+  }
+
+  .identity-chip {
+    font-size: .5rem;
   }
 }
