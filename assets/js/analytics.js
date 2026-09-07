@@ -1,7 +1,7 @@
 (()=>{
   "use strict";
   const ENDPOINT="https://ofcdtwrgyxjrpoxuikxg.supabase.co/functions/v1/analytics-events";
-  const ALLOWED_EVENTS=new Set(["page_view","cta_click","contribution_open","stripe_checkout","prediction_submit","telegram_click","scroll_50","scroll_90","prediction_open","signup_start","signup_complete","login_success","profile_complete","community_reply","community_reaction","share_click","referral_visit"]);
+  const ALLOWED_EVENTS=new Set(["page_view","cta_click","contribution_open","stripe_checkout","prediction_submit","telegram_click","scroll_50","scroll_90","prediction_open","signup_start","signup_complete","login_success","profile_complete","community_reply","community_reaction","share_click","referral_visit","homepage_experiment_vote","homepage_vote_followup"]);
   const ATTRIBUTION_KEY="iwbr_attribution",VISITOR_ID_KEY="iwbr_visitor_id",SESSION_ID_KEY="iwbr_session_id",OPT_OUT_KEY="iwbr_analytics_opt_out",GROWTH_KEY="iwbr_growth_code",SESSION_EVENTS_KEY="iwbr_session_events";
   function isOptedOut(){try{return localStorage.getItem(OPT_OUT_KEY)==="1"}catch{return false}}
   function isLocalDevelopment(){const host=window.location.hostname||"";return window.location.protocol==="file:"||host==="localhost"||host==="127.0.0.1"||host==="::1"}
