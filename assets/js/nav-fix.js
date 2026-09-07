@@ -195,3 +195,17 @@
     enhance();
   }
 })();
+
+// Homepage-only interactive experience. Loaded here so the existing index.html stays stable.
+(() => {
+  const load = () => {
+    if (!document.querySelector('.hero') || document.querySelector('script[data-home-experience-v2]')) return;
+    const script = document.createElement('script');
+    script.src = 'assets/js/home-experience-v2.js?v=1.0.0';
+    script.defer = true;
+    script.dataset.homeExperienceV2 = '1';
+    document.body.appendChild(script);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load, { once: true });
+  else load();
+})();
