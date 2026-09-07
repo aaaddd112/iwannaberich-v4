@@ -13,7 +13,6 @@
 
   document.body.classList.add('interactive-ready');
 
-  // Preserve campaign/referral attribution from the first page someone visits.
   (function captureReferral() {
     try {
       var params = new URLSearchParams(window.location.search);
@@ -24,7 +23,6 @@
     } catch (e) {}
   }());
 
-  // Carry a stored referral into Account links so the attribution survives browsing.
   function patchReferralLinks() {
     var ref = null;
     try { ref = localStorage.getItem('iwbr_referral'); } catch (e) {}
@@ -38,7 +36,6 @@
     });
   }
 
-  // Subtle cursor spotlight on desktop.
   if (!reducedMotion && window.matchMedia && window.matchMedia('(hover: hover)').matches) {
     var cursor = document.createElement('div');
     cursor.className = 'interactive-cursor';
@@ -49,7 +46,6 @@
     }, { passive: true });
   }
 
-  // Gentle 3D response for the main goal card.
   var goal = document.querySelector('.hero-goal');
   if (goal && !reducedMotion && window.matchMedia && window.matchMedia('(hover: hover)').matches) {
     goal.addEventListener('pointermove', function (event) {
@@ -63,7 +59,6 @@
     goal.addEventListener('pointerleave', function () { goal.style.transform = ''; });
   }
 
-  // Turn the four-step loop into a small interactive story.
   var loopSteps = Array.prototype.slice.call(document.querySelectorAll('.mission-loop-step'));
   if (loopSteps.length) {
     loopSteps.forEach(function (step, index) {
@@ -90,7 +85,6 @@
     }
   }
 
-  // Animate the mission wealth number when the existing verified data layer updates it.
   var wealth = document.getElementById('missionWealthValue');
   if (wealth && !reducedMotion && typeof MutationObserver !== 'undefined') {
     var lastValue = wealth.textContent;
@@ -144,7 +138,7 @@
     var style = document.createElement('style');
     style.id = 'decision-room-styles';
     style.textContent = '' +
-      '.decision-room{padding-top:88px}.decision-room-head{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:26px}.decision-room-head .lead{max-width:700px;margin-bottom:0}.decision-live{display:inline-flex;align-items:center;gap:8px;font:700 .72rem/1 monospace;letter-spacing:.12em;color:#aeb2bc;white-space:nowrap}.decision-live i{width:7px;height:7px;border-radius:50%;background:#7f5cff;box-shadow:0 0 14px rgba(127,92,255,.8);animation:decisionPulse 1.8s infinite}.decision-room-card{overflow:hidden}.decision-options{display:grid;grid-template-columns:repeat(3,1fr)}.decision-option{position:relative;min-height:150px;padding:26px;border:0;border-right:1px solid rgba(255,255,255,.08);background:transparent;color:inherit;text-align:left;cursor:pointer;transition:background .2s ease,transform .2s ease}.decision-option:last-child{border-right:0}.decision-option:hover{background:rgba(255,255,255,.035);transform:translateY(-2px)}.decision-option:disabled{cursor:default}.decision-option.is-selected{background:rgba(127,92,255,.10);box-shadow:inset 0 0 0 1px rgba(127,92,255,.35)}.decision-option span{display:block;font-size:1.05rem;line-height:1.45}.decision-option b{display:block;margin-bottom:18px;color:#777b86;font:700 .72rem monospace;letter-spacing:.12em}.decision-option strong{display:block;margin-top:22px;font:700 2rem/1 'Playfair Display',Georgia,serif}.decision-option small{display:block;margin-top:7px;color:#777b86}.decision-room-foot{display:flex;justify-content:space-between;gap:16px;padding:15px 22px;border-top:1px solid rgba(255,255,255,.08);color:#858995;font-size:.78rem}.decision-after{display:flex;align-items:center;gap:16px;margin-top:14px;padding:18px 20px;border:1px solid rgba(127,92,255,.22);border-radius:12px;background:rgba(127,92,255,.05)}.decision-after strong{white-space:nowrap}.decision-after span{color:#a8abb5;flex:1}.decision-after .btn{white-space:nowrap}@keyframes decisionPulse{0%,100%{opacity:.45}50%{opacity:1}}@media(max-width:800px){.decision-room{padding-top:64px}.decision-room-head{display:block}.decision-live{margin-top:18px}.decision-options{grid-template-columns:1fr}.decision-option{min-height:auto;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}.decision-option:last-child{border-bottom:0}.decision-room-foot{display:block}.decision-room-foot span{display:block}.decision-room-foot span+span{margin-top:6px}.decision-after{display:block}.decision-after span{display:block;margin:8px 0 14px}}@media(prefers-reduced-motion:reduce){.decision-live i{animation:none}.decision-option{transition:none}}';
+      '.decision-room{padding-top:88px}.decision-room-head{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:26px}.decision-room-head .lead{max-width:700px;margin-bottom:0}.decision-live{display:inline-flex;align-items:center;gap:8px;font:700 .72rem/1 monospace;letter-spacing:.12em;color:#aeb2bc;white-space:nowrap}.decision-live i{width:7px;height:7px;border-radius:50%;background:#7f5cff;box-shadow:0 0 14px rgba(127,92,255,.8);animation:decisionPulse 1.8s infinite}.decision-room-card{overflow:hidden}.decision-options{display:grid;grid-template-columns:repeat(3,1fr)}.decision-option{position:relative;min-height:150px;padding:26px;border:0;border-right:1px solid rgba(255,255,255,.08);background:transparent;color:inherit;text-align:left;cursor:pointer;transition:background .2s ease,transform .2s ease}.decision-option:last-child{border-right:0}.decision-option:hover{background:rgba(255,255,255,.035);transform:translateY(-2px)}.decision-option:disabled{cursor:default}.decision-option.is-selected{background:rgba(127,92,255,.10);box-shadow:inset 0 0 0 1px rgba(127,92,255,.35)}.decision-option span{display:block;font-size:1.05rem;line-height:1.45}.decision-option b{display:block;margin-bottom:18px;color:#777b86;font:700 .72rem monospace;letter-spacing:.12em}.decision-option strong{display:block;margin-top:22px;font:700 2rem/1 Playfair Display,Georgia,serif}.decision-option small{display:block;margin-top:7px;color:#777b86}.decision-room-foot{display:flex;justify-content:space-between;gap:16px;padding:15px 22px;border-top:1px solid rgba(255,255,255,.08);color:#858995;font-size:.78rem}.decision-after{display:flex;align-items:center;gap:16px;margin-top:14px;padding:18px 20px;border:1px solid rgba(127,92,255,.22);border-radius:12px;background:rgba(127,92,255,.05)}.decision-after strong{white-space:nowrap}.decision-after span{color:#a8abb5;flex:1}.decision-after .btn{white-space:nowrap}@keyframes decisionPulse{0%,100%{opacity:.45}50%{opacity:1}}@media(max-width:800px){.decision-room{padding-top:64px}.decision-room-head{display:block}.decision-live{margin-top:18px}.decision-options{grid-template-columns:1fr}.decision-option{min-height:auto;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}.decision-option:last-child{border-bottom:0}.decision-room-foot{display:block}.decision-room-foot span{display:block}.decision-room-foot span+span{margin-top:6px}.decision-after{display:block}.decision-after span{display:block;margin:8px 0 14px}}@media(prefers-reduced-motion:reduce){.decision-live i{animation:none}.decision-option{transition:none}}';
     document.head.appendChild(style);
   }
 
@@ -212,7 +206,6 @@
     load();
   }
 
-  // Add the decision room after the bridge removes the legacy experiment block.
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       patchReferralLinks();
