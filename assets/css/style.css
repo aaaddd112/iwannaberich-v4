@@ -66,3 +66,5 @@ img, svg, video, canvas { max-width: 100%; }
 .donation-custom-amount:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 .donation-amount-option:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 @media (max-width: 420px) { .donation-amount-picker { gap: 6px; } }
+
+.checkout-return-status { max-width: 1120px; margin: 12px auto; padding: 14px 18px; border: 1px solid rgba(255,255,255,.18); border-radius: 14px; background: rgba(255,255,255,.06); line-height: 1.5; }
