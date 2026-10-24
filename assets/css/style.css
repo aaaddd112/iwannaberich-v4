@@ -68,3 +68,6 @@ img, svg, video, canvas { max-width: 100%; }
 @media (max-width: 420px) { .donation-amount-picker { gap: 6px; } }
 
 .checkout-return-status { max-width: 1120px; margin: 12px auto; padding: 14px 18px; border: 1px solid rgba(255,255,255,.18); border-radius: 14px; background: rgba(255,255,255,.06); line-height: 1.5; }
+
+/* Prioritize the project's primary conversion action on the homepage */
+.hero .buttons .questionable-cta { font-weight: 750; }
