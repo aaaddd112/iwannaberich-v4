@@ -59,6 +59,44 @@ export default {
           const html = `<h2>New contribution received</h2><p><strong>Amount:</strong> €${htmlText(amountEur)}</p><p><strong>Nickname:</strong> ${htmlText(nickname ?? 'Anonymous')}</p><p><strong>Paid at:</strong> ${htmlText(paidAt)}</p><p><strong>Checkout session:</strong> ${htmlText(session.id)}</p><p><strong>Payment intent:</strong> ${htmlText(paymentIntent ?? 'n/a')}</p>`
           await sendOwnerNotification(subject, text, html)
         }
+
+        // Record a confirmed conversion server-side, once per Checkout Session.
+        // This is separate from client-side checkout-start tracking and uses only
+        // attribution fields explicitly supplied to our own Checkout endpoint.
+        const { data: existingConversion, error: conversionReadError } = await ctx.supabaseAdmin
+          .from('analytics_events')
+          .select('id')
+          .eq('event_name', 'contribution_completed')
+          .contains('metadata', { checkout_session_id: session.id })
+          .limit(1)
+          .maybeSingle()
+        if (conversionReadError) return new Response('Analytics read failed', { status: 500 })
+        if (!existingConversion) {
+          const metadata = session.metadata ?? {}
+          const conversionMetadata: Record<string, string | number> = {
+            checkout_session_id: session.id,
+            amount_eur: (Number(session.amount_total ?? 0) / 100),
+            currency: (session.currency ?? '').toLowerCase(),
+            visitor_id: metadata.analytics_visitor_id ?? '',
+            session_id: metadata.analytics_session_id ?? '',
+            first_touch_source: metadata.analytics_first_touch_source ?? '',
+            first_touch_medium: metadata.analytics_first_touch_medium ?? '',
+            first_touch_campaign: metadata.analytics_first_touch_campaign ?? '',
+            first_touch_content: metadata.analytics_first_touch_content ?? '',
+            last_touch_source: metadata.analytics_last_touch_source ?? '',
+            last_touch_medium: metadata.analytics_last_touch_medium ?? '',
+            last_touch_campaign: metadata.analytics_last_touch_campaign ?? '',
+            last_touch_content: metadata.analytics_last_touch_content ?? '',
+            referrer_host: metadata.analytics_referrer_host ?? '',
+            landing_page: metadata.analytics_landing_page ?? '/',
+          }
+          const { error: conversionInsertError } = await ctx.supabaseAdmin.from('analytics_events').insert({
+            event_name: 'contribution_completed',
+            page: metadata.analytics_landing_page || '/',
+            metadata: conversionMetadata,
+          })
+          if (conversionInsertError) return new Response('Analytics write failed', { status: 500 })
+        }
       }
       if (event.type === 'charge.refunded') {
         const charge = event.data.object as Stripe.Charge
