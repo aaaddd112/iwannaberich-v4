@@ -12,6 +12,7 @@
     initMobileNav();
     initDropdownNav();
     initDonationModal();
+    initCheckoutReturnStatus();
     initScrollReveal();
     initFinancialCommentary();
     initShare();
@@ -270,6 +271,29 @@
     }
   });
 }
+
+  function initCheckoutReturnStatus() {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get("payment");
+    if (paymentStatus !== "success" && paymentStatus !== "cancelled") return;
+
+    const main = document.querySelector("main");
+    if (!main) return;
+
+    const notice = document.createElement("div");
+    notice.className = "checkout-return-status";
+    notice.setAttribute("role", "status");
+    notice.setAttribute("aria-live", "polite");
+    notice.textContent = paymentStatus === "success"
+      ? "Thanks for supporting the experiment. Your contribution will appear once Stripe confirms it."
+      : "Checkout cancelled. No contribution was recorded.";
+    main.prepend(notice);
+
+    params.delete("payment");
+    const query = params.toString();
+    const cleanUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+    window.history.replaceState({}, "", cleanUrl);
+  }
 
   function initDonationModal() {
     const modal = $("donationModal");
