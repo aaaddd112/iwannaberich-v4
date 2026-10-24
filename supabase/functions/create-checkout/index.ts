@@ -49,6 +49,31 @@ function normalizeNickname(value: unknown): string | null {
   return nickname
 }
 
+function getAnalyticsMetadata(value: unknown): Record<string, string> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  const input = value as Record<string, unknown>
+  const allowed: Record<string, string> = {
+    visitor_id: 'analytics_visitor_id',
+    session_id: 'analytics_session_id',
+    first_touch_source: 'analytics_first_touch_source',
+    first_touch_medium: 'analytics_first_touch_medium',
+    first_touch_campaign: 'analytics_first_touch_campaign',
+    first_touch_content: 'analytics_first_touch_content',
+    last_touch_source: 'analytics_last_touch_source',
+    last_touch_medium: 'analytics_last_touch_medium',
+    last_touch_campaign: 'analytics_last_touch_campaign',
+    last_touch_content: 'analytics_last_touch_content',
+    referrer_host: 'analytics_referrer_host',
+    landing_page: 'analytics_landing_page',
+  }
+  const result: Record<string, string> = {}
+  for (const [inputKey, stripeKey] of Object.entries(allowed)) {
+    const item = input[inputKey]
+    if (typeof item === 'string' && item.trim()) result[stripeKey] = item.trim().slice(0, 200)
+  }
+  return result
+}
+
 Deno.serve(async (req) => {
   const origin = req.headers.get('origin')
 
@@ -106,7 +131,7 @@ Deno.serve(async (req) => {
       success_url: 'https://iwannaberich.xyz/?payment=success',
       cancel_url: 'https://iwannaberich.xyz/?payment=cancelled',
       client_reference_id: nickname ?? undefined,
-      metadata: { nickname: nickname ?? '', source: 'iwannaberich-web' },
+      metadata: { nickname: nickname ?? '', source: 'iwannaberich-web', ...getAnalyticsMetadata(body?.analytics) },
     })
 
     return json({ url: session.url }, 200, origin)
