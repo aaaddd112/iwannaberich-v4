@@ -55,14 +55,13 @@ export default {
           if (error) return new Response('Database write failed', { status: 500 })
           const amountEur = (amount / 100).toFixed(2)
           const subject = `IWANNABERICH — new contribution €${amountEur}`
-          const text = ['A new Stripe contribution was received.', '', `Amount: €${amountEur}`, `Nickname: ${nickname ?? 'Anonymous'}`, `Paid at: ${paidAt}`, `Checkout session: ${session.id}`, `Payment intent: ${paymentIntent ?? 'n/a'}`].join('\n')
+          const text = ['A new Stripe contribution was received.', '', `Amount: €${amountEur}`, `Nickname: ${nickname ?? 'Anonymous'}`, `Paid at: ${paidAt}`, `Checkout session: ${session.id}`, `Payment intent: ${paymentIntent ?? 'n/a'}`].join('\\n')
           const html = `<h2>New contribution received</h2><p><strong>Amount:</strong> €${htmlText(amountEur)}</p><p><strong>Nickname:</strong> ${htmlText(nickname ?? 'Anonymous')}</p><p><strong>Paid at:</strong> ${htmlText(paidAt)}</p><p><strong>Checkout session:</strong> ${htmlText(session.id)}</p><p><strong>Payment intent:</strong> ${htmlText(paymentIntent ?? 'n/a')}</p>`
           await sendOwnerNotification(subject, text, html)
         }
 
-        // Record a confirmed conversion server-side, once per Checkout Session.
-        // This is separate from client-side checkout-start tracking and uses only
-        // attribution fields explicitly supplied to our own Checkout endpoint.
+        // The database's partial unique index is the concurrency-safe guard.
+        // The read below is only a fast path; correctness does not depend on it.
         const { data: existingConversion, error: conversionReadError } = await ctx.supabaseAdmin
           .from('analytics_events')
           .select('id')
@@ -75,8 +74,8 @@ export default {
           const metadata = session.metadata ?? {}
           const conversionMetadata: Record<string, string | number> = {
             checkout_session_id: session.id,
-            amount_eur: (Number(session.amount_total ?? 0) / 100),
-            currency: (session.currency ?? '').toLowerCase(),
+            amount_eur: amount / 100,
+            currency,
             visitor_id: metadata.analytics_visitor_id ?? '',
             session_id: metadata.analytics_session_id ?? '',
             first_touch_source: metadata.analytics_first_touch_source ?? '',
@@ -95,7 +94,19 @@ export default {
             page: metadata.analytics_landing_page || '/',
             metadata: conversionMetadata,
           })
-          if (conversionInsertError) return new Response('Analytics write failed', { status: 500 })
+          if (conversionInsertError) {
+            // Concurrent/retried delivery can hit the unique index. Treat it as
+            // success only after confirming that this exact session is recorded.
+            if (conversionInsertError.code !== '23505') return new Response('Analytics write failed', { status: 500 })
+            const { data: duplicateConversion, error: duplicateReadError } = await ctx.supabaseAdmin
+              .from('analytics_events')
+              .select('id')
+              .eq('event_name', 'contribution_completed')
+              .contains('metadata', { checkout_session_id: session.id })
+              .limit(1)
+              .maybeSingle()
+            if (duplicateReadError || !duplicateConversion) return new Response('Analytics write failed', { status: 500 })
+          }
         }
       }
       if (event.type === 'charge.refunded') {
