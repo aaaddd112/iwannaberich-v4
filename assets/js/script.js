@@ -3,9 +3,6 @@
 
   const GOAL = 1_000_000_000;
   
-const PAYMENT_LINKS = {
-  stripe: "https://buy.stripe.com/bJe5kDfSI9Zf5HEfgpaAw00",
-};
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
   const $ = (id) => document.getElementById(id);
@@ -280,10 +277,36 @@ const PAYMENT_LINKS = {
     const close = $("closeDonationModal");
     const continueButton = $("continueDonation");
     const error = $("donationError");
+    const amountInput = $("donationCustomAmount");
+    const amountButtons = [...modal.querySelectorAll("[data-donation-amount]")];
     let lastFocus = null;
+    let selectedAmount = 5;
+    const originalButtonText = continueButton?.textContent || "Continue to secure checkout →";
+
+    const setPresetAmount = (amount) => {
+      selectedAmount = amount;
+      if (amountInput) amountInput.value = "";
+      amountButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(Number(button.dataset.donationAmount) === amount));
+      });
+      if (error) error.textContent = "";
+    };
+
+    amountButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const amount = Number(button.dataset.donationAmount);
+        if (Number.isFinite(amount)) setPresetAmount(amount);
+      });
+    });
+
+    amountInput?.addEventListener("input", () => {
+      amountButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
+      if (error) error.textContent = "";
+    });
 
     const open = () => {
       lastFocus = document.activeElement;
+      if (error) error.textContent = "";
       window.IWBRAnalytics?.trackEvent("contribution_open");
       modal.classList.add("show");
       modal.setAttribute("aria-hidden", "false");
@@ -310,18 +333,49 @@ const PAYMENT_LINKS = {
       if (event.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
 
-    continueButton?.addEventListener("click", () => {
-      const link = PAYMENT_LINKS.stripe;
+    continueButton?.addEventListener("click", async () => {
+      if (continueButton.disabled) return;
+      const customValue = amountInput?.value.trim() || "";
+      const amount = customValue ? Number(customValue) : selectedAmount;
+      const amountCents = Math.round(amount * 100);
 
-      if (!link) {
-        if (error) error.textContent = "Stripe checkout is not available yet.";
+      if (!Number.isFinite(amount) || amountCents < 50 || amountCents > 1_000_000 || amount > 10_000) {
+        if (error) error.textContent = "Enter an amount between €0.50 and €10,000.";
+        amountInput?.focus();
         return;
       }
 
-      window.IWBRAnalytics?.trackEvent("stripe_checkout");
-      window.open(link, "_blank", "noopener,noreferrer");
-      closeModal();
+      continueButton.disabled = true;
+      continueButton.textContent = "Creating secure checkout…";
+      if (error) error.textContent = "";
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout`, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount: amountCents / 100 }),
+        });
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || typeof payload.url !== "string" || !payload.url.startsWith("https://checkout.stripe.com/")) {
+          throw new Error(typeof payload.error === "string" ? payload.error : "Secure checkout is temporarily unavailable. Please try again.");
+        }
+
+        window.IWBRAnalytics?.trackEvent("stripe_checkout", { amount_eur: amountCents / 100 });
+        window.location.assign(payload.url);
+      } catch (checkoutError) {
+        if (error) error.textContent = checkoutError instanceof Error
+          ? checkoutError.message
+          : "Secure checkout is temporarily unavailable. Please try again.";
+        continueButton.disabled = false;
+        continueButton.textContent = originalButtonText;
+      }
     });
+
+    setPresetAmount(selectedAmount);
   }
 
   function initScrollReveal() {
