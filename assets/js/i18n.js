@@ -424,6 +424,15 @@
     "ja": "この実験を支援する",
     "ar": "ادعم التجربة"
   },
+  "Voluntary support. No equity, no returns.": {
+    "es": "Apoyo voluntario. Sin participaciones ni rentabilidad.",
+    "fr": "Soutien volontaire. Aucune participation, aucun rendement.",
+    "de": "Freiwillige Unterstützung. Keine Anteile, keine Rendite.",
+    "pt": "Apoio voluntário. Sem participação societária, sem retorno.",
+    "zh": "自愿支持。不提供股权，也不承诺回报。",
+    "ja": "任意の支援です。持分もリターンもありません。",
+    "ar": "دعم طوعي. لا حصص ملكية ولا عوائد."
+  },
   "Read the terrible plan": {
     "es": "Lee el terrible plan",
     "fr": "Lire le plan terrible",
