@@ -36,19 +36,21 @@ export default {
       if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Fail closed: never attribute a payment to IWANNABERICH unless the
-        // expected Payment Link is configured and exactly matches the session.
-        if (!configuredPaymentLink) {
-          console.error('STRIPE_PAYMENT_LINK_ID is missing; refusing to record a Payment Link checkout.')
-          return new Response('Payment Link is not configured', { status: 500 })
+        // Legacy Payment Links are accepted only when their exact ID is configured.
+        // The first-party Checkout flow is separately identified by server-set metadata.
+        const isLegacyPaymentLink = Boolean(
+          session.payment_link &&
+          configuredPaymentLink &&
+          session.payment_link === configuredPaymentLink
+        )
+        const isFirstPartyCheckout = session.metadata?.source === 'iwannaberich-web'
+
+        if (session.payment_link && !isLegacyPaymentLink) {
+          return Response.json({ ok: true, ignored: true, reason: 'different_or_unconfigured_payment_link' })
         }
 
-        if (session.payment_link !== configuredPaymentLink) {
-          return Response.json({
-            ok: true,
-            ignored: true,
-            reason: session.payment_link ? 'different_payment_link' : 'missing_payment_link',
-          })
+        if (!isLegacyPaymentLink && !isFirstPartyCheckout) {
+          return Response.json({ ok: true, ignored: true, reason: 'unknown_checkout_source' })
         }
 
         if (session.payment_status !== 'paid') {
