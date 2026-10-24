@@ -31,3 +31,8 @@ verify_jwt = true
 
 [functions.admin-growth-review]
 verify_jwt = true
+
+# Stripe sends signed webhook requests without a Supabase JWT.
+# The function validates the Stripe test-mode signature internally and never writes to the live ledger.
+[functions.stripe-webhook-test]
+verify_jwt = false
