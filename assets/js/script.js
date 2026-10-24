@@ -384,7 +384,7 @@
             apikey: SUPABASE_KEY,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ amount: amountCents / 100 }),
+          body: JSON.stringify({ amount: amountCents / 100, analytics: window.IWBRAnalytics?.getConversionContext?.() || {} }),
         });
         const payload = await response.json().catch(() => ({}));
 
