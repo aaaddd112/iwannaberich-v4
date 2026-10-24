@@ -53,11 +53,36 @@ export default {
           const paidAt = new Date((session.created ?? Math.floor(Date.now() / 1000)) * 1000).toISOString()
           const { error } = await ctx.supabaseAdmin.rpc('record_stripe_contribution', { p_checkout_session_id: session.id, p_payment_intent_id: paymentIntent, p_payment_link_id: session.payment_link ?? null, p_event_id: event.id, p_amount_cents: amount, p_currency: currency, p_paid_at: paidAt, p_nickname: nickname })
           if (error) return new Response('Database write failed', { status: 500 })
+        }
+
+        // Claim notifications atomically so concurrent/retried Stripe deliveries
+        // cannot send duplicate emails for the same Checkout Session.
+        const { data: notificationClaimed, error: notificationClaimError } = await ctx.supabaseAdmin.rpc(
+          'claim_stripe_contribution_notification',
+          { p_checkout_session_id: session.id },
+        )
+        if (notificationClaimError) return new Response('Notification claim failed', { status: 500 })
+        if (notificationClaimed === true) {
           const amountEur = (amount / 100).toFixed(2)
           const subject = `IWANNABERICH — new contribution €${amountEur}`
-          const text = ['A new Stripe contribution was received.', '', `Amount: €${amountEur}`, `Nickname: ${nickname ?? 'Anonymous'}`, `Paid at: ${paidAt}`, `Checkout session: ${session.id}`, `Payment intent: ${paymentIntent ?? 'n/a'}`].join('\\n')
+          const paidAt = new Date((session.created ?? Math.floor(Date.now() / 1000)) * 1000).toISOString()
+          const text = [
+            'A new Stripe contribution was received.',
+            '',
+            `Amount: €${amountEur}`,
+            `Nickname: ${nickname ?? 'Anonymous'}`,
+            `Paid at: ${paidAt}`,
+            `Checkout session: ${session.id}`,
+            `Payment intent: ${paymentIntent ?? 'n/a'}`,
+          ].join('\\n')
           const html = `<h2>New contribution received</h2><p><strong>Amount:</strong> €${htmlText(amountEur)}</p><p><strong>Nickname:</strong> ${htmlText(nickname ?? 'Anonymous')}</p><p><strong>Paid at:</strong> ${htmlText(paidAt)}</p><p><strong>Checkout session:</strong> ${htmlText(session.id)}</p><p><strong>Payment intent:</strong> ${htmlText(paymentIntent ?? 'n/a')}</p>`
-          await sendOwnerNotification(subject, text, html)
+          const notificationSent = await sendOwnerNotification(subject, text, html)
+          const { error: notificationFinishError } = await ctx.supabaseAdmin.rpc(
+            'finish_stripe_contribution_notification',
+            { p_checkout_session_id: session.id, p_sent: notificationSent },
+          )
+          if (notificationFinishError) return new Response('Notification status update failed', { status: 500 })
+          if (!notificationSent) return new Response('Owner notification failed', { status: 500 })
         }
 
         // The database's partial unique index is the concurrency-safe guard.
