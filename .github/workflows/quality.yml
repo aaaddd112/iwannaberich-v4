@@ -103,6 +103,48 @@ jobs:
               print(f'OK {path}')
           PY
 
+      - name: Verify Stripe conversion idempotency safeguards
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          migration = Path('supabase/migrations/20261024190000_unique_confirmed_conversion_per_checkout.sql').read_text(encoding='utf-8')
+          webhook = Path('supabase/functions/stripe-webhook/index.ts').read_text(encoding='utf-8')
+          test_webhook = Path('supabase/functions/stripe-webhook-test/index.ts').read_text(encoding='utf-8')
+          config = Path('supabase/config.toml').read_text(encoding='utf-8')
+
+          checks = {
+              'partial unique index scoped to confirmed conversion events': (
+                  'CREATE UNIQUE INDEX IF NOT EXISTS' in migration
+                  and "event_name = 'contribution_completed'" in migration
+                  and "metadata ->> 'checkout_session_id'" in migration
+              ),
+              'webhook handles unique conflicts only after exact-session verification': (
+                  "conversionInsertError.code !== '23505'" in webhook
+                  and "contains('metadata', { checkout_session_id: session.id })" in webhook
+                  and 'duplicateReadError || !duplicateConversion' in webhook
+              ),
+              'test webhook validates signatures and avoids database writes': (
+                  'constructEventAsync' in test_webhook
+                  and 'STRIPE_TEST_WEBHOOK_SIGNING_SECRET' in test_webhook
+                  and '.from(' not in test_webhook
+                  and 'sendOwnerNotification' not in test_webhook
+              ),
+              'test webhook accepts Stripe requests without Supabase JWT': (
+                  '[functions.stripe-webhook-test]' in config
+                  and 'verify_jwt = false' in config.split('[functions.stripe-webhook-test]', 1)[1].split('[', 1)[0]
+              ),
+          }
+
+          for label, passed in checks.items():
+              print(('OK' if passed else 'FAIL') + ': ' + label)
+          failed = [label for label, passed in checks.items() if not passed]
+          if failed:
+              raise SystemExit('Stripe safeguards missing: ' + '; '.join(failed))
+          PY
+
       - name: Check tracked files for accidental secret values
         shell: bash
         run: |
