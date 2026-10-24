@@ -415,14 +415,14 @@
     "ja": "うまくいく？たぶん無理。でも記録しない理由になる？それもたぶん違う。",
     "ar": "هل سينجح؟ على الأرجح لا. هل هذا سبب لعدم توثيقه؟ على الأرجح لا أيضًا."
   },
-  "MAKE A QUESTIONABLE DECISION": {
-    "es": "TOMA UNA DECISIÓN CUESTIONABLE",
-    "fr": "PRENEZ UNE DÉCISION DOUTEUSE",
-    "de": "TRIFF EINE FRAGWÜRDIGE ENTSCHEIDUNG",
-    "pt": "TOME UMA DECISÃO QUESTIONÁVEL",
-    "zh": "做一个值得怀疑的决定",
-    "ja": "怪しい決断をする",
-    "ar": "اتخذ قرارًا مشكوكًا فيه"
+  "SUPPORT THE EXPERIMENT": {
+    "es": "APOYA EL EXPERIMENTO",
+    "fr": "SOUTENIR L’EXPÉRIENCE",
+    "de": "DAS EXPERIMENT UNTERSTÜTZEN",
+    "pt": "APOIE O EXPERIMENTO",
+    "zh": "支持这项实验",
+    "ja": "この実験を支援する",
+    "ar": "ادعم التجربة"
   },
   "Read the terrible plan": {
     "es": "Lee el terrible plan",
