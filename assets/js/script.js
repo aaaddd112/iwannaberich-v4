@@ -324,7 +324,11 @@
     });
 
     amountInput?.addEventListener("input", () => {
-      amountButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
+      const hasCustomValue = Boolean(amountInput.value.trim());
+      amountButtons.forEach((button) => {
+        const isSelectedPreset = !hasCustomValue && Number(button.dataset.donationAmount) === selectedAmount;
+        button.setAttribute("aria-pressed", String(isSelectedPreset));
+      });
       if (error) error.textContent = "";
     });
 
