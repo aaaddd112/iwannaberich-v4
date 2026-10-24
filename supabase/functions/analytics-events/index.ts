@@ -9,7 +9,7 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const ALLOWED_EVENTS = new Set([
-  "page_view","cta_click","contribution_open","stripe_checkout","contribution_completed","prediction_submit","telegram_click","scroll_50","scroll_90",
+  "page_view","cta_click","contribution_open","stripe_checkout","prediction_submit","telegram_click","scroll_50","scroll_90",
   "prediction_open","signup_start","signup_complete","login_success","profile_complete","community_reply","community_reaction","share_click","referral_visit","external_widget_view","external_widget_interaction",
 ]);
 const MAX_BODY_BYTES = 16384;
