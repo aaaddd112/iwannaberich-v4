@@ -110,12 +110,23 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
-          migration = Path('supabase/migrations/20261024190000_unique_confirmed_conversion_per_checkout.sql').read_text(encoding='utf-8')
+          migration = Path('supabase/migrations/20261024210531_unique_confirmed_conversion_per_checkout.sql').read_text(encoding='utf-8')
           webhook = Path('supabase/functions/stripe-webhook/index.ts').read_text(encoding='utf-8')
           test_webhook = Path('supabase/functions/stripe-webhook-test/index.ts').read_text(encoding='utf-8')
+          analytics_endpoint = Path('supabase/functions/analytics-events/index.ts').read_text(encoding='utf-8')
+          notification_migration = Path('supabase/migrations/20261025193000_dedupe_stripe_contribution_notifications.sql').read_text(encoding='utf-8')
           config = Path('supabase/config.toml').read_text(encoding='utf-8')
 
+          allowed_events = analytics_endpoint.split('const ALLOWED_EVENTS = new Set([', 1)[1].split(']);', 1)[0]
+
           checks = {
+              'public analytics endpoint cannot forge confirmed conversions': 'contribution_completed' not in allowed_events,
+              'notification deduplication uses a private per-session claim table': (
+                  'CREATE TABLE IF NOT EXISTS public.stripe_contribution_notifications' in notification_migration
+                  and 'claim_stripe_contribution_notification' in notification_migration
+                  and 'finish_stripe_contribution_notification' in notification_migration
+                  and 'claim_stripe_contribution_notification' in webhook
+              ),
               'partial unique index scoped to confirmed conversion events': (
                   'CREATE UNIQUE INDEX IF NOT EXISTS' in migration
                   and "event_name = 'contribution_completed'" in migration
