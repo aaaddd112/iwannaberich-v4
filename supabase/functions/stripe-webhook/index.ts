@@ -74,7 +74,7 @@ export default {
             `Paid at: ${paidAt}`,
             `Checkout session: ${session.id}`,
             `Payment intent: ${paymentIntent ?? 'n/a'}`,
-          ].join('\\n')
+          ].join('\n')
           const html = `<h2>New contribution received</h2><p><strong>Amount:</strong> €${htmlText(amountEur)}</p><p><strong>Nickname:</strong> ${htmlText(nickname ?? 'Anonymous')}</p><p><strong>Paid at:</strong> ${htmlText(paidAt)}</p><p><strong>Checkout session:</strong> ${htmlText(session.id)}</p><p><strong>Payment intent:</strong> ${htmlText(paymentIntent ?? 'n/a')}</p>`
           const notificationSent = await sendOwnerNotification(subject, text, html)
           const { error: notificationFinishError } = await ctx.supabaseAdmin.rpc(
