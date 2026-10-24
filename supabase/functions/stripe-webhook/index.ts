@@ -30,15 +30,25 @@ export default {
 
     console.log(`Stripe event received: ${event.id} (${event.type})`)
 
-    const configuredPaymentLink = Deno.env.get('STRIPE_PAYMENT_LINK_ID') || null
+    const configuredPaymentLink = Deno.env.get('STRIPE_PAYMENT_LINK_ID')?.trim() || null
 
     try {
       if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Only count the payment link used by IWANNABERICH when the ID is configured.
-        if (configuredPaymentLink && session.payment_link !== configuredPaymentLink) {
-          return Response.json({ ok: true, ignored: true, reason: 'different_payment_link' })
+        // Fail closed: never attribute a payment to IWANNABERICH unless the
+        // expected Payment Link is configured and exactly matches the session.
+        if (!configuredPaymentLink) {
+          console.error('STRIPE_PAYMENT_LINK_ID is missing; refusing to record a Payment Link checkout.')
+          return new Response('Payment Link is not configured', { status: 500 })
+        }
+
+        if (session.payment_link !== configuredPaymentLink) {
+          return Response.json({
+            ok: true,
+            ignored: true,
+            reason: session.payment_link ? 'different_payment_link' : 'missing_payment_link',
+          })
         }
 
         if (session.payment_status !== 'paid') {
