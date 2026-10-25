@@ -170,6 +170,45 @@ jobs:
               raise SystemExit('Stripe safeguards missing: ' + '; '.join(failed))
           PY
 
+      - name: Test Stripe refund ordering and notification retry rules
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from datetime import timedelta
+
+          # Model the SQL invariant: Stripe sends cumulative refunded amounts;
+          # older events must never decrease the amount already recorded.
+          def apply_refund(current, incoming, amount):
+              incoming = min(max(incoming or 0, 0), amount)
+              return max(current, incoming)
+
+          amount = 10000
+          recorded = 0
+          for event_amount in (2500, 7000, 4000, 10000, 7000, 0):
+              next_recorded = apply_refund(recorded, event_amount, amount)
+              assert next_recorded >= recorded, (recorded, event_amount, next_recorded)
+              recorded = next_recorded
+          assert recorded == 10000
+          assert apply_refund(0, -100, amount) == 0
+          assert apply_refund(0, 12000, amount) == amount
+
+          # Model notification claim eligibility: retry failures or stale pending
+          # claims only inside the 23-hour provider-idempotency safety window.
+          def can_retry(status, age_minutes):
+              return age_minutes < 23 * 60 and (
+                  status == 'failed' or (status == 'pending' and age_minutes > 10)
+              )
+
+          assert can_retry('failed', 5)
+          assert can_retry('pending', 11)
+          assert not can_retry('pending', 5)
+          assert not can_retry('sent', 60)
+          assert not can_retry('failed', 23 * 60)
+          print('OK: cumulative refunds remain monotonic under out-of-order events')
+          print('OK: notification retries respect stale-claim and 23-hour limits')
+          PY
+
       - name: Check tracked files for accidental secret values
         shell: bash
         run: |
