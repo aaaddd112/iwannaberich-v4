@@ -36,10 +36,18 @@ BEGIN
     RETURN true;
   END IF;
 
+  -- Resend retains idempotency keys for 24 hours. Reclaim failed claims,
+  -- or claims stuck for 10+ minutes, only inside a 23-hour safe retry window.
+  -- Older pending/failed rows require manual reconciliation instead of a
+  -- potentially duplicate email after the provider's idempotency window expires.
   UPDATE public.stripe_contribution_notifications
      SET status = 'pending', updated_at = now()
    WHERE stripe_checkout_session_id = p_checkout_session_id
-     AND status = 'failed'
+     AND updated_at > now() - interval '23 hours'
+     AND (
+       status = 'failed'
+       OR (status = 'pending' AND updated_at < now() - interval '10 minutes')
+     )
   RETURNING stripe_checkout_session_id INTO v_claimed;
 
   RETURN v_claimed IS NOT NULL;
