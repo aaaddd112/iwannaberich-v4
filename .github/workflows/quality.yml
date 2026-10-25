@@ -25,12 +25,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          deno check \\
-            supabase/functions/create-checkout/index.ts \\
-            supabase/functions/stripe-webhook/index.ts \\
-            supabase/functions/stripe-webhook-test/index.ts \\
-            supabase/functions/analytics-events/index.ts \\
-            supabase/functions/_shared/notify.ts
+          deno check supabase/functions/create-checkout/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/stripe-webhook-test/index.ts supabase/functions/analytics-events/index.ts supabase/functions/_shared/notify.ts
 
       - name: Validate JavaScript syntax
         shell: bash
