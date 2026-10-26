@@ -19,6 +19,7 @@
     initMicroInteractions();
     initPersonalityLayer();
     initCommunityExperiment();
+    initExperimentShare();
     initShareMoment();
     loadDonations();
     initGlobalCurrencyCounter();
@@ -657,6 +658,8 @@
       const chosen = localStorage.getItem(STORAGE_KEY);
       buttons.forEach((button) => button.classList.toggle("is-selected", button.dataset.option === chosen));
       if (chosen) buttons.forEach((button) => { button.disabled = true; });
+      const shareActions = $("experimentShareActions");
+      if (shareActions) shareActions.style.display = chosen ? "flex" : "none";
     };
 
     const load = async () => {
@@ -685,6 +688,7 @@
         });
         if (!response.ok) throw new Error(`Vote returned ${response.status}`);
         localStorage.setItem(STORAGE_KEY, option);
+        window.IWBRAnalytics?.trackEvent("homepage_experiment_vote", { option });
         await load();
       } catch (error) {
         console.error("Experiment vote failed:", error);
@@ -694,19 +698,67 @@
     load();
   }
 
+  function createShareUrl(campaign, content) {
+    const url = new URL("https://iwannaberich.xyz/");
+    url.searchParams.set("utm_source", "share");
+    url.searchParams.set("utm_medium", "organic_social");
+    url.searchParams.set("utm_campaign", campaign);
+    url.searchParams.set("utm_content", content);
+    return url;
+  }
+
+  function initExperimentShare() {
+    const button = $("shareExperimentButton");
+    if (!button) return;
+    const labels = {
+      sell: "flip something",
+      digital: "build and sell a tiny digital product",
+      hustle: "try a ridiculous internet hustle"
+    };
+    button.addEventListener("click", async () => {
+      const choice = localStorage.getItem("iwbr_next_experiment_vote_v2");
+      if (!choice || !labels[choice]) return;
+      const url = createShareUrl("homepage_vote", choice);
+      url.hash = "current-experiment";
+      const text = `I voted to ${labels[choice]} with the €13 in this public experiment. What would you choose?`;
+      const channel = navigator.share ? "native" : "x";
+      window.IWBRAnalytics?.trackEvent("share_click", { channel, placement: "homepage_vote", choice });
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: "What should happen with €13?", text, url: url.toString() });
+        } else {
+          const intent = new URL("https://twitter.com/intent/tweet");
+          intent.searchParams.set("text", text);
+          intent.searchParams.set("url", url.toString());
+          window.open(intent.toString(), "_blank", "noopener,noreferrer");
+        }
+      } catch (error) {
+        if (error?.name !== "AbortError") console.warn("Vote share failed:", error);
+      }
+    });
+  }
+
   function initShareMoment() {
     const button = $("shareMomentButton");
     if (!button) return;
     button.addEventListener("click", async () => {
       const amount = $("missionWealthValue")?.textContent || "—";
-      const text = `IWANNABERICH is at ${amount} and trying to reach €100. Follow the experiment: https://iwannaberich.xyz/`;
+      const url = createShareUrl("wealth_moment", "mission_100");
+      const text = `IWANNABERICH is at ${amount} and trying to reach €100. Follow the experiment.`;
+      const channel = navigator.share ? "native" : navigator.clipboard ? "copy" : "x";
+      window.IWBRAnalytics?.trackEvent("share_click", { channel, placement: "wealth_moment" });
       try {
         if (navigator.share) {
-          await navigator.share({ title: "IWANNABERICH", text, url: "https://iwannaberich.xyz/" });
+          await navigator.share({ title: "IWANNABERICH", text, url: url.toString() });
         } else if (navigator.clipboard) {
-          await navigator.clipboard.writeText(text);
+          await navigator.clipboard.writeText(`${text} ${url.toString()}`);
           button.textContent = window.IWBRI18N?.format?.("script.copied") || "Copied";
           setTimeout(() => { button.textContent = window.IWBRI18N?.format?.("script.shareMoment") || "Share this moment"; }, 1800);
+        } else {
+          const intent = new URL("https://twitter.com/intent/tweet");
+          intent.searchParams.set("text", text);
+          intent.searchParams.set("url", url.toString());
+          window.open(intent.toString(), "_blank", "noopener,noreferrer");
         }
       } catch (error) {
         if (error?.name !== "AbortError") console.warn("Share failed:", error);
