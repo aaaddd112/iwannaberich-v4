@@ -13,7 +13,7 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSess
 
 const MAX_DAYS = 90;
 const MAX_ROWS = 50000;
-const ALLOWED_EVENTS = new Set(["page_view","cta_click","contribution_open","stripe_checkout","prediction_submit","telegram_click","scroll_50","scroll_90"]);
+const ALLOWED_EVENTS = new Set(["page_view","cta_click","contribution_open","stripe_checkout","prediction_submit","telegram_click","scroll_50","scroll_90","share_click","referral_visit","external_widget_view","external_widget_interaction"]);
 const FILTER_KEYS = ["page","source","country","device","browser","os","language","utm_source","utm_medium","utm_campaign","referrer"] as const;
 
 type FilterKey = typeof FILTER_KEYS[number];
@@ -55,6 +55,50 @@ function eventCounts(events: any[]) {
   const map = new Map<string, number>();
   for (const e of events) map.set(e.event_name,(map.get(e.event_name)||0)+1);
   return Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).map(([event,count])=>({event,count}));
+}
+function trafficSourceFunnel(events: any[]) {
+  const groups = new Map<string, any>();
+  for (const event of events) {
+    const source = metaValue(event, "last_touch_source") || metaValue(event, "referrer_host") || "direct/unknown";
+    const medium = metaValue(event, "last_touch_medium") || "unknown";
+    const campaign = metaValue(event, "last_touch_campaign") || metaValue(event, "utm_campaign") || "";
+    const key = JSON.stringify([source, medium, campaign]);
+    let row = groups.get(key);
+    if (!row) {
+      row = {
+        source, medium, campaign, page_views: 0, visitors: new Set<string>(), sessions: new Set<string>(),
+        engaged_sessions: new Set<string>(), scroll_50: 0, scroll_90: 0, cta_clicks: 0,
+        prediction_submits: 0, shares: 0, referral_visits: 0,
+      };
+      groups.set(key, row);
+    }
+
+    const visitor = metaValue(event, "visitor_id");
+    const session = metaValue(event, "session_id");
+    if (event.event_name === "page_view") {
+      row.page_views += 1;
+      if (visitor) row.visitors.add(visitor);
+      if (session) row.sessions.add(session);
+    } else if (session) {
+      row.engaged_sessions.add(session);
+    }
+    if (event.event_name === "scroll_50") row.scroll_50 += 1;
+    if (event.event_name === "scroll_90") row.scroll_90 += 1;
+    if (event.event_name === "cta_click") row.cta_clicks += 1;
+    if (event.event_name === "prediction_submit") row.prediction_submits += 1;
+    if (event.event_name === "share_click") row.shares += 1;
+    if (event.event_name === "referral_visit") row.referral_visits += 1;
+  }
+
+  return Array.from(groups.values())
+    .sort((a, b) => b.page_views - a.page_views || (b.prediction_submits + b.shares) - (a.prediction_submits + a.shares))
+    .slice(0, 15)
+    .map(({ visitors, sessions, engaged_sessions, ...row }) => ({
+      ...row,
+      unique_visitors: visitors.size,
+      unique_sessions: sessions.size,
+      engaged_sessions: engaged_sessions.size,
+    }));
 }
 function dayKey(d: Date) { return d.toISOString().slice(0,10); }
 function buildDaily(events: any[], from: Date, to: Date) {
@@ -145,7 +189,7 @@ Deno.serve(async (req) => {
       generated_at:new Date().toISOString(),
       range:{from:range.from.toISOString(),to:range.to.toISOString(),max_days:MAX_DAYS,truncated:events.length>=MAX_ROWS},
       summary:{events:events.length,page_views:pageViews.length,unique_visitors:visitors,unique_sessions:sessions,engaged_sessions:engagedSessions,bounce_like_sessions:Math.max(0,sessions-engagedSessions),engagement_rate:sessions?Math.round(engagedSessions/sessions*100):0},
-      funnel, audience, facets, daily:buildDaily(events,range.from,range.to), top_pages:rankPage(pageViews), event_counts:eventCounts(events), recent:exportMode?events:events.slice(0,50),
+      funnel, audience, traffic_sources:trafficSourceFunnel(events), facets, daily:buildDaily(events,range.from,range.to), top_pages:rankPage(pageViews), event_counts:eventCounts(events), recent:exportMode?events:events.slice(0,50),
     });
   } catch (error) { console.error(error); return jsonResponse({error:"Unexpected dashboard error."},500); }
 });
