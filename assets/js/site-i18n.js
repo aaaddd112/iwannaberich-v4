@@ -30,6 +30,7 @@ const T={
 'Suggest':['Sugerir','Suggérer','Vorschlagen','Sugerir','提出','提案','اقتراح'],
 'Vote':['Votar','Voter','Abstimmen','Votar','投票','投票','تصويت'],
 'Try':['Probar','Essayer','Ausprobieren','Tentar','尝试','試す','تجربة'],
+'Vote: will it work?':['Vota: ¿funcionará?','Voter : est-ce que ça va marcher ?','Abstimmen: Wird es funktionieren?','Vote: vai dar certo?','投票：这会成功吗？','投票：うまくいく？','صوّت: هل ستنجح؟'],
 'See the result':['Ver el resultado','Voir le résultat','Ergebnis ansehen','Ver o resultado','查看结果','結果を見る','رؤية النتيجة'],
 'CURRENT EXPERIMENT':['EXPERIMENTO ACTUAL','EXPÉRIENCE ACTUELLE','AKTUELLES EXPERIMENT','EXPERIMENTO ATUAL','当前实验','現在の実験','التجربة الحالية'],
 'VOTING OPEN':['VOTACIÓN ABIERTA','VOTE OUVERT','ABSTIMMUNG OFFEN','VOTAÇÃO ABERTA','投票进行中','投票受付中','التصويت مفتوح'],
