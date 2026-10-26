@@ -56,3 +56,37 @@ html[dir="rtl"] .logo { direction: ltr; unicode-bidi: isolate; }
 .profile-identity-hero h1, .public-profile-hero h1, .thread-detail h1, .thread-new h1, .profile-control-name, .profile-settings-card, .community-composer, .forum-thread-row, .thread-detail, .thread-new { min-width: 0; }
 .profile-identity-hero h1, .public-profile-hero h1, .thread-detail h1, .thread-new h1, .profile-control-name { overflow-wrap: anywhere; }
 img, svg, video, canvas { max-width: 100%; }
+
+/* Give the long-term ambition equal visual weight without obscuring the first milestone. */
+.hero-goal-longterm {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 28px;
+  padding: 15px 19px 17px;
+  border: 1px solid rgba(165, 140, 255, .58);
+  border-radius: 14px;
+  background: linear-gradient(115deg, rgba(124, 92, 255, .2), rgba(124, 92, 255, .055));
+  box-shadow: 0 0 32px rgba(124, 92, 255, .13), inset 0 1px rgba(255,255,255,.07);
+}
+.hero-goal-longterm-label {
+  color: #c2b2ff;
+  font: 700 10px "DM Mono", monospace;
+  letter-spacing: .18em;
+}
+.hero-goal-longterm-amount {
+  color: #f5f1ff;
+  font-size: clamp(28px, 3.1vw, 42px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.055em;
+  white-space: nowrap;
+  text-shadow: 0 0 24px rgba(165, 140, 255, .22);
+}
+@media (max-width: 600px) {
+  .hero-goal-longterm { margin-top: 22px; padding: 14px 15px 16px; }
+  .hero-goal-longterm-amount { font-size: clamp(27px, 8vw, 36px); }
+}
