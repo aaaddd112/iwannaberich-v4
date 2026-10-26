@@ -17,7 +17,12 @@ function getNotificationConfig() {
   return { apiKey, to, from }
 }
 
-export async function sendOwnerNotification(subject: string, text: string, html: string): Promise<boolean> {
+export async function sendOwnerNotification(
+  subject: string,
+  text: string,
+  html: string,
+  idempotencyKey?: string,
+): Promise<boolean> {
   const { apiKey, to, from } = getNotificationConfig()
 
   // Notifications are intentionally best-effort: a failed email must never
@@ -28,12 +33,15 @@ export async function sendOwnerNotification(subject: string, text: string, html:
   }
 
   try {
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    }
+    if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey
+
     const response = await fetch(RESEND_API_URL, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         from,
         to: [to],

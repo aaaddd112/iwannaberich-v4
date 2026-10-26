@@ -415,14 +415,23 @@
     "ja": "うまくいく？たぶん無理。でも記録しない理由になる？それもたぶん違う。",
     "ar": "هل سينجح؟ على الأرجح لا. هل هذا سبب لعدم توثيقه؟ على الأرجح لا أيضًا."
   },
-  "MAKE A QUESTIONABLE DECISION": {
-    "es": "TOMA UNA DECISIÓN CUESTIONABLE",
-    "fr": "PRENEZ UNE DÉCISION DOUTEUSE",
-    "de": "TRIFF EINE FRAGWÜRDIGE ENTSCHEIDUNG",
-    "pt": "TOME UMA DECISÃO QUESTIONÁVEL",
-    "zh": "做一个值得怀疑的决定",
-    "ja": "怪しい決断をする",
-    "ar": "اتخذ قرارًا مشكوكًا فيه"
+  "SUPPORT THE EXPERIMENT": {
+    "es": "APOYA EL EXPERIMENTO",
+    "fr": "SOUTENIR L’EXPÉRIENCE",
+    "de": "DAS EXPERIMENT UNTERSTÜTZEN",
+    "pt": "APOIE O EXPERIMENTO",
+    "zh": "支持这项实验",
+    "ja": "この実験を支援する",
+    "ar": "ادعم التجربة"
+  },
+  "Voluntary support. No equity, no returns.": {
+    "es": "Apoyo voluntario. Sin participaciones ni rentabilidad.",
+    "fr": "Soutien volontaire. Aucune participation, aucun rendement.",
+    "de": "Freiwillige Unterstützung. Keine Anteile, keine Rendite.",
+    "pt": "Apoio voluntário. Sem participação societária, sem retorno.",
+    "zh": "自愿支持。不提供股权，也不承诺回报。",
+    "ja": "任意の支援です。持分もリターンもありません。",
+    "ar": "دعم طوعي. لا حصص ملكية ولا عوائد."
   },
   "Read the terrible plan": {
     "es": "Lee el terrible plan",

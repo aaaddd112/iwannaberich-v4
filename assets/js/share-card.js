@@ -182,14 +182,61 @@ function render(p,wealth='13',milestone=null){
   return canvas;
 }
 
+function renderVote(option,percentage=0,voteCount=0){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#060409';ctx.fillRect(0,0,W,H);
+  drawNebula();drawStars();drawPlanet();drawLandscape();drawFigure();
+
+  ctx.strokeStyle='rgba(198,143,255,.58)';ctx.lineWidth=1;ctx.strokeRect(20,20,W-40,H-40);
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.strokeRect(24,24,W-48,H-48);
+
+  text('IWANNABERICH',58,59,22,'#f8f5fb','700');
+  line(275,51,900,51,'rgba(205,161,255,.42)');
+  text('A PUBLIC EXPERIMENT',930,58,12,PURPLE,'600',null,3);
+
+  text('THE INTERNET GETS A SAY',58,142,18,LIGHT,'500',null,4);
+  text('I VOTED TO USE THE €13 TO',58,188,16,SOFT,'500',null,3);
+  const choice=String(option||'choose the next move').toUpperCase();
+  const choiceSize=fitText(choice,680,52,30,'700');
+  text(choice,58,260,choiceSize,'#fff','700',680);
+
+  const safePercent=Math.max(0,Math.min(100,Math.round(Number(percentage)||0)));
+  const safeVotes=Math.max(0,Math.round(Number(voteCount)||0));
+  text(`${safePercent}%`,58,350,54,LIGHT,'700');
+  text(`${safeVotes.toLocaleString('en-US')} ${safeVotes===1?'VOTE':'VOTES'} SO FAR`,210,348,20,SOFT,'500');
+  text('WHAT WOULD YOU CHOOSE?',58,424,24,'#fff','700',680);
+  text('CAST YOUR VOTE AT IWANNABERICH.XYZ',58,475,15,PURPLE,'600',680,2);
+  text('iwannaberich.xyz',58,586,20,'#aaa0b4','400');
+  line(285,578,850,578,'rgba(196,142,255,.34)');
+  text('SUGGEST.  VOTE.  SEE WHAT HAPPENS.',870,586,11,PURPLE,'500',null,3);
+  return canvas;
+}
+
+function saveCanvas(target,filename){
+  target.toBlob(blob=>{
+    if(!blob)return;
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  },'image/png');
+}
+
+async function createVoteFile(option,percentage=0,voteCount=0){
+  const card=renderVote(option,percentage,voteCount);
+  const blob=await new Promise(resolve=>card.toBlob(resolve,'image/png'));
+  if(!blob||typeof File==='undefined')return null;
+  const slug=String(option||'vote').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'vote';
+  return new File([blob],`iwannaberich-vote-${slug}.png`,{type:'image/png'});
+}
+
 window.IWBRShareCard={
   render,
-  download(filename='iwannaberich-contributor.png'){
-    canvas.toBlob(blob=>{
-      if(!blob)return;
-      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-    },'image/png');
+  renderVote,
+  createVoteFile,
+  download(filename='iwannaberich-contributor.png'){saveCanvas(canvas,filename)},
+  downloadVote(option,percentage=0,voteCount=0){
+    const card=renderVote(option,percentage,voteCount);
+    const slug=String(option||'vote').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'vote';
+    saveCanvas(card,`iwannaberich-vote-${slug}.png`);
   }
 };
 })();

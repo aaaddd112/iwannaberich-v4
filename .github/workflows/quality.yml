@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, audit/contribution-funnel-fix]
 
 permissions:
   contents: read
@@ -15,6 +15,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check Supabase Edge Functions
+        shell: bash
+        run: |
+          set -euo pipefail
+          deno check supabase/functions/create-checkout/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/stripe-webhook-test/index.ts supabase/functions/analytics-events/index.ts supabase/functions/analytics-dashboard/index.ts supabase/functions/_shared/notify.ts
 
       - name: Validate JavaScript syntax
         shell: bash
@@ -101,6 +114,116 @@ jobs:
                   if result.returncode:
                       raise SystemExit(f'{path}: inline script #{index} failed syntax check:\n{result.stderr}')
               print(f'OK {path}')
+          PY
+
+      - name: Validate sitemap dates and listed pages
+        shell: bash
+        run: python scripts/check_sitemap.py
+
+      - name: Verify Stripe conversion idempotency safeguards
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          migration = Path('supabase/migrations/20261024210531_unique_confirmed_conversion_per_checkout.sql').read_text(encoding='utf-8')
+          webhook = Path('supabase/functions/stripe-webhook/index.ts').read_text(encoding='utf-8')
+          test_webhook = Path('supabase/functions/stripe-webhook-test/index.ts').read_text(encoding='utf-8')
+          analytics_endpoint = Path('supabase/functions/analytics-events/index.ts').read_text(encoding='utf-8')
+          notification_migration = Path('supabase/migrations/20261025193000_dedupe_stripe_contribution_notifications.sql').read_text(encoding='utf-8')
+          config = Path('supabase/config.toml').read_text(encoding='utf-8')
+          notify = Path('supabase/functions/_shared/notify.ts').read_text(encoding='utf-8')
+          refund_migration = Path('supabase/migrations/20261025200000_make_stripe_refunds_monotonic.sql').read_text(encoding='utf-8')
+
+          allowed_events = analytics_endpoint.split('const ALLOWED_EVENTS = new Set([', 1)[1].split(']);', 1)[0]
+
+          checks = {
+              'public analytics endpoint cannot forge confirmed conversions': 'contribution_completed' not in allowed_events,
+              'notification deduplication uses a private per-session claim table': (
+                  'CREATE TABLE IF NOT EXISTS public.stripe_contribution_notifications' in notification_migration
+                  and 'claim_stripe_contribution_notification' in notification_migration
+                  and 'finish_stripe_contribution_notification' in notification_migration
+                  and 'claim_stripe_contribution_notification' in webhook
+              ),
+              'partial unique index scoped to confirmed conversion events': (
+                  'CREATE UNIQUE INDEX IF NOT EXISTS' in migration
+                  and "event_name = 'contribution_completed'" in migration
+                  and "metadata ->> 'checkout_session_id'" in migration
+              ),
+              'webhook handles unique conflicts only after exact-session verification': (
+                  "conversionInsertError.code !== '23505'" in webhook
+                  and "contains('metadata', { checkout_session_id: session.id })" in webhook
+                  and 'duplicateReadError || !duplicateConversion' in webhook
+              ),
+              'test webhook validates signatures and avoids database writes': (
+                  'constructEventAsync' in test_webhook
+                  and 'STRIPE_TEST_WEBHOOK_SIGNING_SECRET' in test_webhook
+                  and '.from(' not in test_webhook
+                  and 'sendOwnerNotification' not in test_webhook
+              ),
+              'test webhook accepts Stripe requests without Supabase JWT': (
+                  '[functions.stripe-webhook-test]' in config
+                  and 'verify_jwt = false' in config.split('[functions.stripe-webhook-test]', 1)[1].split('[', 1)[0]
+              ),
+              'notification retries use a stable provider idempotency key': (
+                  "headers['Idempotency-Key'] = idempotencyKey" in notify
+                  and 'stripe-contribution/\u0024{session.id}' in webhook
+              ),
+              'stale notification claims have a bounded retry window': (
+                  "status = 'pending' AND updated_at < now() - interval '10 minutes'" in notification_migration
+                  and "updated_at > now() - interval '23 hours'" in notification_migration
+              ),
+              'refund amounts cannot decrease on out-of-order events': (
+                  'refunded_cents = GREATEST(' in refund_migration
+                  and 'LEAST(GREATEST(COALESCE(p_refunded_cents, 0), 0), amount_cents)' in refund_migration
+              ),
+          }
+
+          for label, passed in checks.items():
+              print(('OK' if passed else 'FAIL') + ': ' + label)
+          failed = [label for label, passed in checks.items() if not passed]
+          if failed:
+              raise SystemExit('Stripe safeguards missing: ' + '; '.join(failed))
+          PY
+
+      - name: Test Stripe refund ordering and notification retry rules
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from datetime import timedelta
+
+          # Model the SQL invariant: Stripe sends cumulative refunded amounts;
+          # older events must never decrease the amount already recorded.
+          def apply_refund(current, incoming, amount):
+              incoming = min(max(incoming or 0, 0), amount)
+              return max(current, incoming)
+
+          amount = 10000
+          recorded = 0
+          for event_amount in (2500, 7000, 4000, 10000, 7000, 0):
+              next_recorded = apply_refund(recorded, event_amount, amount)
+              assert next_recorded >= recorded, (recorded, event_amount, next_recorded)
+              recorded = next_recorded
+          assert recorded == 10000
+          assert apply_refund(0, -100, amount) == 0
+          assert apply_refund(0, 12000, amount) == amount
+
+          # Model notification claim eligibility: retry failures or stale pending
+          # claims only inside the 23-hour provider-idempotency safety window.
+          def can_retry(status, age_minutes):
+              return age_minutes < 23 * 60 and (
+                  status == 'failed' or (status == 'pending' and age_minutes > 10)
+              )
+
+          assert can_retry('failed', 5)
+          assert can_retry('pending', 11)
+          assert not can_retry('pending', 5)
+          assert not can_retry('sent', 60)
+          assert not can_retry('failed', 23 * 60)
+          print('OK: cumulative refunds remain monotonic under out-of-order events')
+          print('OK: notification retries respect stale-claim and 23-hour limits')
           PY
 
       - name: Check tracked files for accidental secret values

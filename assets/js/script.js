@@ -3,9 +3,6 @@
 
   const GOAL = 1_000_000_000;
   
-const PAYMENT_LINKS = {
-  stripe: "https://buy.stripe.com/bJe5kDfSI9Zf5HEfgpaAw00",
-};
   const SUPABASE_URL = "https://ofcdtwrgyxjrpoxuikxg.supabase.co";
   const SUPABASE_KEY = "sb_publishable_LFdAnDWHYAiilgDgD2324w_ZjZssTpA";
   const $ = (id) => document.getElementById(id);
@@ -15,12 +12,14 @@ const PAYMENT_LINKS = {
     initMobileNav();
     initDropdownNav();
     initDonationModal();
+    initCheckoutReturnStatus();
     initScrollReveal();
     initFinancialCommentary();
     initShare();
     initMicroInteractions();
     initPersonalityLayer();
     initCommunityExperiment();
+    initExperimentShare();
     initShareMoment();
     loadDonations();
     initGlobalCurrencyCounter();
@@ -274,16 +273,69 @@ const PAYMENT_LINKS = {
   });
 }
 
+  function initCheckoutReturnStatus() {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get("payment");
+    if (paymentStatus !== "success" && paymentStatus !== "cancelled") return;
+
+    const main = document.querySelector("main");
+    if (!main) return;
+
+    const notice = document.createElement("div");
+    notice.className = "checkout-return-status";
+    notice.setAttribute("role", "status");
+    notice.setAttribute("aria-live", "polite");
+    notice.textContent = paymentStatus === "success"
+      ? "Thanks for supporting the experiment. Your contribution will appear once Stripe confirms it."
+      : "Checkout cancelled. No contribution was recorded.";
+    main.prepend(notice);
+
+    params.delete("payment");
+    const query = params.toString();
+    const cleanUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+    window.history.replaceState({}, "", cleanUrl);
+  }
+
   function initDonationModal() {
     const modal = $("donationModal");
     if (!modal) return;
     const close = $("closeDonationModal");
     const continueButton = $("continueDonation");
     const error = $("donationError");
+    const amountInput = $("donationCustomAmount");
+    const amountButtons = [...modal.querySelectorAll("[data-donation-amount]")];
     let lastFocus = null;
+    let selectedAmount = 5;
+    const originalButtonText = continueButton?.textContent || "Continue to secure checkout →";
+
+    const setPresetAmount = (amount) => {
+      selectedAmount = amount;
+      if (amountInput) amountInput.value = "";
+      amountButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(Number(button.dataset.donationAmount) === amount));
+      });
+      if (error) error.textContent = "";
+    };
+
+    amountButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const amount = Number(button.dataset.donationAmount);
+        if (Number.isFinite(amount)) setPresetAmount(amount);
+      });
+    });
+
+    amountInput?.addEventListener("input", () => {
+      const hasCustomValue = Boolean(amountInput.value.trim());
+      amountButtons.forEach((button) => {
+        const isSelectedPreset = !hasCustomValue && Number(button.dataset.donationAmount) === selectedAmount;
+        button.setAttribute("aria-pressed", String(isSelectedPreset));
+      });
+      if (error) error.textContent = "";
+    });
 
     const open = () => {
       lastFocus = document.activeElement;
+      if (error) error.textContent = "";
       window.IWBRAnalytics?.trackEvent("contribution_open");
       modal.classList.add("show");
       modal.setAttribute("aria-hidden", "false");
@@ -310,18 +362,49 @@ const PAYMENT_LINKS = {
       if (event.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
 
-    continueButton?.addEventListener("click", () => {
-      const link = PAYMENT_LINKS.stripe;
+    continueButton?.addEventListener("click", async () => {
+      if (continueButton.disabled) return;
+      const customValue = amountInput?.value.trim() || "";
+      const amount = customValue ? Number(customValue) : selectedAmount;
+      const amountCents = Math.round(amount * 100);
 
-      if (!link) {
-        if (error) error.textContent = "Stripe checkout is not available yet.";
+      if (!Number.isFinite(amount) || amountCents < 50 || amountCents > 1_000_000 || amount > 10_000) {
+        if (error) error.textContent = "Enter an amount between €0.50 and €10,000.";
+        amountInput?.focus();
         return;
       }
 
-      window.IWBRAnalytics?.trackEvent("stripe_checkout");
-      window.open(link, "_blank", "noopener,noreferrer");
-      closeModal();
+      continueButton.disabled = true;
+      continueButton.textContent = "Creating secure checkout…";
+      if (error) error.textContent = "";
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout`, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount: amountCents / 100, analytics: window.IWBRAnalytics?.getConversionContext?.() || {} }),
+        });
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || typeof payload.url !== "string" || !payload.url.startsWith("https://checkout.stripe.com/")) {
+          throw new Error(typeof payload.error === "string" ? payload.error : "Secure checkout is temporarily unavailable. Please try again.");
+        }
+
+        window.IWBRAnalytics?.trackEvent("stripe_checkout", { amount_eur: amountCents / 100 });
+        window.location.assign(payload.url);
+      } catch (checkoutError) {
+        if (error) error.textContent = checkoutError instanceof Error
+          ? checkoutError.message
+          : "Secure checkout is temporarily unavailable. Please try again.";
+        continueButton.disabled = false;
+        continueButton.textContent = originalButtonText;
+      }
     });
+
+    setPresetAmount(selectedAmount);
   }
 
   function initScrollReveal() {
@@ -575,6 +658,8 @@ const PAYMENT_LINKS = {
       const chosen = localStorage.getItem(STORAGE_KEY);
       buttons.forEach((button) => button.classList.toggle("is-selected", button.dataset.option === chosen));
       if (chosen) buttons.forEach((button) => { button.disabled = true; });
+      const shareActions = $("experimentShareActions");
+      if (shareActions) shareActions.style.display = chosen ? "flex" : "none";
     };
 
     const load = async () => {
@@ -612,19 +697,97 @@ const PAYMENT_LINKS = {
     load();
   }
 
+  function createShareUrl(campaign, content) {
+    const url = new URL("https://iwannaberich.xyz/");
+    url.searchParams.set("utm_source", "share");
+    url.searchParams.set("utm_medium", "organic_social");
+    url.searchParams.set("utm_campaign", campaign);
+    url.searchParams.set("utm_content", content);
+    return url;
+  }
+
+  function initExperimentShare() {
+    const button = $("shareExperimentButton");
+    const downloadButton = $("downloadExperimentCard");
+    const labels = {
+      sell: "flip something",
+      digital: "build and sell a tiny digital product",
+      hustle: "try a ridiculous internet hustle"
+    };
+    const selectedVote = () => {
+      const choice = localStorage.getItem("iwbr_next_experiment_vote_v2");
+      if (!choice || !labels[choice]) return null;
+      const option = document.querySelector(`#experimentOptions .experiment-option[data-option="${choice}"]`);
+      const percentText = option?.querySelector(".experiment-option-result strong")?.textContent || "0";
+      const totalText = $("experimentVoteTotal")?.textContent || "0";
+      const percent = Number(percentText.replace(/[^0-9]/g, "")) || 0;
+      const voteCount = Number(totalText.replace(/[^0-9]/g, "")) || 0;
+      return { choice, label: labels[choice], percent, voteCount };
+    };
+    const downloadCard = (vote) => {
+      if (!vote || !window.IWBRShareCard?.downloadVote) return;
+      window.IWBRShareCard.downloadVote(vote.label, vote.percent, vote.voteCount);
+    };
+
+    if (button) button.addEventListener("click", async () => {
+      const vote = selectedVote();
+      if (!vote) return;
+      const url = createShareUrl("homepage_vote", vote.choice);
+      url.hash = "current-experiment";
+      const text = `I voted to ${vote.label} with the €13 in this public experiment. What would you choose?`;
+      const channel = navigator.share ? "native" : "x";
+      window.IWBRAnalytics?.trackEvent("share_click", { channel, placement: "homepage_vote", choice: vote.choice });
+      let file = null;
+      try {
+        file = await window.IWBRShareCard?.createVoteFile?.(vote.label, vote.percent, vote.voteCount) || null;
+      } catch (error) {
+        console.warn("Could not prepare vote share card:", error);
+      }
+      try {
+        if (navigator.share) {
+          const shareData = { title: "What should happen with €13?", text, url: url.toString() };
+          if (file && navigator.canShare?.({ files: [file] })) shareData.files = [file];
+          await navigator.share(shareData);
+        } else {
+          const intent = new URL("https://twitter.com/intent/tweet");
+          intent.searchParams.set("text", text);
+          intent.searchParams.set("url", url.toString());
+          window.open(intent.toString(), "_blank", "noopener,noreferrer");
+        }
+      } catch (error) {
+        if (error?.name !== "AbortError") console.warn("Vote share failed:", error);
+      }
+    });
+
+    if (downloadButton) downloadButton.addEventListener("click", () => {
+      const vote = selectedVote();
+      if (!vote) return;
+      downloadCard(vote);
+      window.IWBRAnalytics?.trackEvent("share_click", { channel: "download", placement: "homepage_vote_card", choice: vote.choice });
+    });
+  }
+
   function initShareMoment() {
     const button = $("shareMomentButton");
     if (!button) return;
     button.addEventListener("click", async () => {
       const amount = $("missionWealthValue")?.textContent || "—";
-      const text = `IWANNABERICH is at ${amount} and trying to reach €100. Follow the experiment: https://iwannaberich.xyz/`;
+      const url = createShareUrl("wealth_moment", "mission_100");
+      const text = `IWANNABERICH is at ${amount} and trying to reach €100. Follow the experiment.`;
+      const channel = navigator.share ? "native" : navigator.clipboard ? "copy" : "x";
+      window.IWBRAnalytics?.trackEvent("share_click", { channel, placement: "wealth_moment" });
       try {
         if (navigator.share) {
-          await navigator.share({ title: "IWANNABERICH", text, url: "https://iwannaberich.xyz/" });
+          await navigator.share({ title: "IWANNABERICH", text, url: url.toString() });
         } else if (navigator.clipboard) {
-          await navigator.clipboard.writeText(text);
+          await navigator.clipboard.writeText(`${text} ${url.toString()}`);
           button.textContent = window.IWBRI18N?.format?.("script.copied") || "Copied";
           setTimeout(() => { button.textContent = window.IWBRI18N?.format?.("script.shareMoment") || "Share this moment"; }, 1800);
+        } else {
+          const intent = new URL("https://twitter.com/intent/tweet");
+          intent.searchParams.set("text", text);
+          intent.searchParams.set("url", url.toString());
+          window.open(intent.toString(), "_blank", "noopener,noreferrer");
         }
       } catch (error) {
         if (error?.name !== "AbortError") console.warn("Share failed:", error);
