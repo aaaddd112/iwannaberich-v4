@@ -719,9 +719,9 @@
       if (!choice || !labels[choice]) return null;
       const option = document.querySelector(`#experimentOptions .experiment-option[data-option="${choice}"]`);
       const percentText = option?.querySelector(".experiment-option-result strong")?.textContent || "0";
-      const countText = option?.querySelector(".experiment-option-result small")?.textContent || "0";
+      const totalText = $("experimentVoteTotal")?.textContent || "0";
       const percent = Number(percentText.replace(/[^0-9]/g, "")) || 0;
-      const voteCount = Number(countText.replace(/[^0-9]/g, "")) || 0;
+      const voteCount = Number(totalText.replace(/[^0-9]/g, "")) || 0;
       return { choice, label: labels[choice], percent, voteCount };
     };
     const downloadCard = (vote) => {
