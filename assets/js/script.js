@@ -708,23 +708,46 @@
 
   function initExperimentShare() {
     const button = $("shareExperimentButton");
-    if (!button) return;
+    const downloadButton = $("downloadExperimentCard");
     const labels = {
       sell: "flip something",
       digital: "build and sell a tiny digital product",
       hustle: "try a ridiculous internet hustle"
     };
-    button.addEventListener("click", async () => {
+    const selectedVote = () => {
       const choice = localStorage.getItem("iwbr_next_experiment_vote_v2");
-      if (!choice || !labels[choice]) return;
-      const url = createShareUrl("homepage_vote", choice);
+      if (!choice || !labels[choice]) return null;
+      const option = document.querySelector(`#experimentOptions .experiment-option[data-option="${choice}"]`);
+      const percentText = option?.querySelector(".experiment-option-result strong")?.textContent || "0";
+      const countText = option?.querySelector(".experiment-option-result small")?.textContent || "0";
+      const percent = Number(percentText.replace(/[^0-9]/g, "")) || 0;
+      const voteCount = Number(countText.replace(/[^0-9]/g, "")) || 0;
+      return { choice, label: labels[choice], percent, voteCount };
+    };
+    const downloadCard = (vote) => {
+      if (!vote || !window.IWBRShareCard?.downloadVote) return;
+      window.IWBRShareCard.downloadVote(vote.label, vote.percent, vote.voteCount);
+    };
+
+    if (button) button.addEventListener("click", async () => {
+      const vote = selectedVote();
+      if (!vote) return;
+      const url = createShareUrl("homepage_vote", vote.choice);
       url.hash = "current-experiment";
-      const text = `I voted to ${labels[choice]} with the €13 in this public experiment. What would you choose?`;
+      const text = `I voted to ${vote.label} with the €13 in this public experiment. What would you choose?`;
       const channel = navigator.share ? "native" : "x";
-      window.IWBRAnalytics?.trackEvent("share_click", { channel, placement: "homepage_vote", choice });
+      window.IWBRAnalytics?.trackEvent("share_click", { channel, placement: "homepage_vote", choice: vote.choice });
+      let file = null;
+      try {
+        file = await window.IWBRShareCard?.createVoteFile?.(vote.label, vote.percent, vote.voteCount) || null;
+      } catch (error) {
+        console.warn("Could not prepare vote share card:", error);
+      }
       try {
         if (navigator.share) {
-          await navigator.share({ title: "What should happen with €13?", text, url: url.toString() });
+          const shareData = { title: "What should happen with €13?", text, url: url.toString() };
+          if (file && navigator.canShare?.({ files: [file] })) shareData.files = [file];
+          await navigator.share(shareData);
         } else {
           const intent = new URL("https://twitter.com/intent/tweet");
           intent.searchParams.set("text", text);
@@ -734,6 +757,13 @@
       } catch (error) {
         if (error?.name !== "AbortError") console.warn("Vote share failed:", error);
       }
+    });
+
+    if (downloadButton) downloadButton.addEventListener("click", () => {
+      const vote = selectedVote();
+      if (!vote) return;
+      downloadCard(vote);
+      window.IWBRAnalytics?.trackEvent("share_click", { channel: "download", placement: "homepage_vote_card", choice: vote.choice });
     });
   }
 
