@@ -28,6 +28,7 @@
     const goalAmount=document.querySelector('.hero-goal-amount');
     const goalMeta=goal&&goal.querySelector('.hero-goal-meta');
     const goalNote=document.querySelector('.hero-goal-note');
+    const goalLong=document.querySelector('.hero-goal-longterm');
     const share=document.querySelector('.share-label');
     const disclaimer=document.querySelector('.hero-disclaimer');
     if(introEyebrow)introEyebrow.textContent=t.eyebrow;
@@ -40,6 +41,7 @@
     if(goalMeta&&goalMeta.children.length>1){goalMeta.children[0].textContent=t.goalStart;goalMeta.children[1].textContent=t.goalEnd}
     if(goal)goal.setAttribute('aria-label',t.goalAria);
     if(goalNote)goalNote.textContent=t.goalNote;
+    if(goalLong)goalLong.textContent=t.goalLong;
     if(share)share.textContent=t.share;
     if(disclaimer)disclaimer.textContent=t.disclaimer;
     if(accent)accent.textContent=t.titleAccent;
