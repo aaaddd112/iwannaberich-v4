@@ -69,13 +69,9 @@
 
   function setupSuggestionCTA() {
     const mission = document.getElementById("mission");
-    const loop = document.querySelector(".mission-loop");
-    const experiment = document.getElementById("current-experiment");
     const journal = document.getElementById("journal");
     if (!mission || !journal || mission.dataset.suggestionCtaReady === "true") return;
 
-    loop?.remove();
-    experiment?.remove();
 
     const section = document.createElement("section");
     section.className = "wrap suggestion-cta";
