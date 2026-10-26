@@ -29,6 +29,7 @@
     const goalMeta=goal&&goal.querySelector('.hero-goal-meta');
     const goalNote=document.querySelector('.hero-goal-note');
     const goalLongLabel=document.querySelector('.hero-goal-longterm-label');
+    const mobileGoalLongLabel=document.querySelector('.hero-final-goal-mobile-label');
     const share=document.querySelector('.share-label');
     const disclaimer=document.querySelector('.hero-disclaimer');
     if(introEyebrow)introEyebrow.textContent=t.eyebrow;
@@ -42,6 +43,7 @@
     if(goal)goal.setAttribute('aria-label',t.goalAria);
     if(goalNote)goalNote.textContent=t.goalNote;
     if(goalLongLabel)goalLongLabel.textContent=t.goalLongLabel;
+    if(mobileGoalLongLabel)mobileGoalLongLabel.textContent=t.goalLongLabel;
     if(share)share.textContent=t.share;
     if(disclaimer)disclaimer.textContent=t.disclaimer;
     if(accent)accent.textContent=t.titleAccent;
