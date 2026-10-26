@@ -175,6 +175,10 @@ jobs:
                   and 'GRANT EXECUTE ON FUNCTION public.apply_community_reaction(uuid, text, text)' in reaction_migration
                   and 'TO service_role' in reaction_migration
               ),
+              'experiment vote trigger helper is not directly executable by client roles': (
+                  'REVOKE ALL ON FUNCTION public.record_experiment_vote_growth_event()' in reaction_migration
+                  and 'FROM PUBLIC, anon, authenticated' in reaction_migration
+              ),
               'refund amounts cannot decrease on out-of-order events': (
                   'refunded_cents = GREATEST(' in refund_migration
                   and 'LEAST(GREATEST(COALESCE(p_refunded_cents, 0), 0), amount_cents)' in refund_migration
