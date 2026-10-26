@@ -179,6 +179,7 @@ const T={
 "Challenge someone":["Desafía a alguien","Défiez quelqu’un","Fordere jemanden heraus","Desafie alguém","向别人发起挑战","誰かに挑戦を呼びかける","تحدَّ شخصًا"],
 "Next checkpoint: the winning move gets executed and documented publicly.":["Próximo hito: se llevará a cabo la opción ganadora y se documentará públicamente.","Prochaine étape : l’option gagnante sera mise en œuvre et documentée publiquement.","Nächster Meilenstein: Die Gewinnoption wird umgesetzt und öffentlich dokumentiert.","Próxima etapa: a opção vencedora será executada e documentada publicamente.","下一步：执行得票最高的方案，并公开记录过程。","次の節目：最多票を集めた案を実行し、公開記録します。","المحطة التالية: سننفذ الخيار الفائز ونوثّقه علنًا."]
 
+,"just now":["ahora mismo","à l’instant","gerade eben","agora mesmo","刚刚","たった今","الآن"]
 };
 const original=new WeakMap();
 let lang='en', updating=false;
