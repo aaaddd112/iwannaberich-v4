@@ -106,3 +106,8 @@ img, svg, video, canvas { max-width: 100%; }
     font-size: clamp(27px, 8vw, 36px);
   }
 }
+
+@media (max-width: 900px) {
+  /* The headline callout is the mobile presentation of the long-term goal. */
+  .hero-goal > .hero-goal-longterm { display: none; }
+}
