@@ -25,13 +25,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          deno check supabase/functions/create-checkout/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/stripe-webhook-test/index.ts supabase/functions/stripe-webhook-test/handler.ts supabase/functions/analytics-events/index.ts supabase/functions/_shared/notify.ts supabase/functions/tests/stripe-webhook-test_test.ts
+          deno check supabase/functions/create-checkout/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/stripe-webhook-test/index.ts supabase/functions/stripe-webhook-test/handler.ts supabase/functions/stripe-webhook/validation.ts supabase/functions/analytics-events/index.ts supabase/functions/_shared/notify.ts supabase/functions/tests/stripe-webhook-test_test.ts supabase/functions/tests/stripe-webhook-validation_test.ts
 
       - name: Test isolated Stripe webhook behavior
         shell: bash
         run: |
           set -euo pipefail
-          deno test supabase/functions/tests/stripe-webhook-test_test.ts
+          deno test supabase/functions/tests/stripe-webhook-test_test.ts supabase/functions/tests/stripe-webhook-validation_test.ts
 
       - name: Validate JavaScript syntax
         shell: bash
