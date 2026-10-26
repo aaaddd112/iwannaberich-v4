@@ -90,3 +90,19 @@ img, svg, video, canvas { max-width: 100%; }
   .hero-goal-longterm { margin-top: 22px; padding: 14px 15px 16px; }
   .hero-goal-longterm-amount { font-size: clamp(27px, 8vw, 36px); }
 }
+
+/* Keep the final ambition visible beside the headline in the mobile hero. */
+.hero-final-goal-mobile { display: none; }
+@media (max-width: 900px) {
+  .hero-final-goal-mobile {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    margin: 24px auto 18px;
+    text-align: center;
+  }
+  .hero-final-goal-mobile .hero-goal-longterm-amount {
+    font-size: clamp(27px, 8vw, 36px);
+  }
+}
