@@ -1,0 +1,12 @@
+-- Restrict reaction mutations to the rate-limited Edge Function.
+-- The public client must not bypass the Edge Function's per-IP rate limits.
+REVOKE ALL ON FUNCTION public.apply_community_reaction(uuid, text, text)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.apply_community_reaction(uuid, text, text)
+  TO service_role;
+
+-- This helper is invoked by the existing table trigger, not directly by clients.
+-- PostgreSQL checks EXECUTE when creating a trigger; revoking client access here
+-- narrows direct grants without removing the installed trigger.
+REVOKE ALL ON FUNCTION public.record_experiment_vote_growth_event()
+  FROM PUBLIC, anon, authenticated;
