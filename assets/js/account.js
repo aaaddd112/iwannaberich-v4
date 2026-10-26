@@ -5,6 +5,10 @@
   const sb = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
+  const requestedNext = params.get("next");
+  const postAuthPath = () => { if (!requestedNext) return "profile.html"; try { const destination = new URL(requestedNext, location.origin); const name = destination.pathname.split("/").pop(); if (destination.origin !== location.origin || !["thread.html", "profile.html"].includes(name)) return "profile.html"; return `${name}${destination.search}${destination.hash}`; } catch { return "profile.html"; } };
+  const authRedirectUrl = new URL("account.html", location.origin);
+  if (requestedNext) authRedirectUrl.searchParams.set("next", requestedNext);
   const ref = params.get("ref") || params.get("g");
   if (ref) localStorage.setItem("iwbr_referral", ref.trim().toLowerCase());
   const analytics=(name,metadata={},options={})=>window.IWBRAnalytics?.trackEvent(name,metadata,options);
@@ -29,7 +33,7 @@
     const { error } = await sb.functions.invoke("create-profile", { body: { username, display_name: displayName } });
     if (error) { const status = error.context?.status; if (status === 409) message("That username is unavailable. Try another one.", "error"); else message("We couldn't create your profile. Please try again.", "error"); return false; }
     analytics("profile_complete",{method:"account"},{oncePerSession:true});
-    const storedRef = localStorage.getItem("iwbr_referral"); if (storedRef) await sb.rpc("register_referral", { p_code: storedRef, p_referred_user_id: session.user.id }); localStorage.removeItem("iwbr_referral"); location.href = "profile.html"; return true;
+    const storedRef = localStorage.getItem("iwbr_referral"); if (storedRef) await sb.rpc("register_referral", { p_code: storedRef, p_referred_user_id: session.user.id }); localStorage.removeItem("iwbr_referral"); location.href = postAuthPath(); return true;
   }
   async function refresh() {
     if (!sb) return; const { data: { session } } = await sb.auth.getSession();
@@ -45,7 +49,7 @@
     if (login && !$("forgotPassword")) { const button=document.createElement("button");button.id="forgotPassword";button.className="text-button";button.type="button";button.textContent="Forgot your password?";login.appendChild(button);button.addEventListener("click",()=>show("recovery")); }
     $("loginForm")?.addEventListener("submit", async e => { e.preventDefault(); message("Signing you in…"); const email=$("loginEmail").value.trim(), password=$("loginPassword").value; const {error}=await sb.auth.signInWithPassword({email,password}); if(error){message("Invalid email or password.","error");return;} analytics("login_success",{method:"password"},{oncePerSession:true}); await refresh(); });
     $("signupForm")?.addEventListener("focusin",()=>analytics("signup_start",{surface:"account"},{oncePerSession:true}));
-    $("signupForm")?.addEventListener("submit", async e => { e.preventDefault(); const email=$("signupEmail").value.trim(), password=$("signupPassword").value; if(password.length<8){message("Use at least 8 characters for your password.","error");return;} message("Creating your account…"); const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:`${location.origin}/account.html`}}); if(error){message(error.message,"error");return;} analytics("signup_complete",{verification_required:!Boolean(data.session)},{oncePerSession:true}); if(data.session){ show("profile"); message("Account created. Choose your public identity.","success"); } else { show("verify"); message("Check your email to verify the account.","success"); } });
+    $("signupForm")?.addEventListener("submit", async e => { e.preventDefault(); const email=$("signupEmail").value.trim(), password=$("signupPassword").value; if(password.length<8){message("Use at least 8 characters for your password.","error");return;} message("Creating your account…"); const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:authRedirectUrl.toString()}}); if(error){message(error.message,"error");return;} analytics("signup_complete",{verification_required:!Boolean(data.session)},{oncePerSession:true}); if(data.session){ show("profile"); message("Account created. Choose your public identity.","success"); } else { show("verify"); message("Check your email to verify the account.","success"); } });
     $("profileForm")?.addEventListener("submit", async e => { e.preventDefault(); const {data:{session}}=await sb.auth.getSession(); if(session) await createProfile(session); });
     $("signOut")?.addEventListener("click", async()=>{await sb.auth.signOut(); location.href="account.html";});
     $("switchSignup")?.addEventListener("click",()=>show("signup")); $("switchLogin")?.addEventListener("click",()=>show("login")); $("switchLogin2")?.addEventListener("click",()=>show("login"));
