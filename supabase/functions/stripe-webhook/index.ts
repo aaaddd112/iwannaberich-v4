@@ -1,6 +1,7 @@
 import Stripe from 'npm:stripe@^22'
 import { withSupabase } from 'npm:@supabase/server@^1'
 import { htmlText, sendOwnerNotification } from '../_shared/notify.ts'
+import { checkoutSessionIgnoreReason } from './validation.ts'
 
 const stripe = new Stripe(Deno.env.get('STRIPE_API_KEY') as string)
 const cryptoProvider = Stripe.createSubtleCryptoProvider()
@@ -22,26 +23,8 @@ export default {
       if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Only accept the legacy Payment Link when its exact ID is configured.
-        // First-party Checkout Sessions are accepted through their server-set metadata.
-        const isLegacyPaymentLink = Boolean(
-          session.payment_link &&
-          configuredPaymentLink &&
-          session.payment_link === configuredPaymentLink
-        )
-        const isNewWebCheckout = session.metadata?.source === 'iwannaberich-web'
-
-        if (session.payment_link && !isLegacyPaymentLink) {
-          return Response.json({
-            ok: true,
-            ignored: true,
-            reason: configuredPaymentLink ? 'different_payment_link' : 'payment_link_not_configured',
-          })
-        }
-        if (!isLegacyPaymentLink && !isNewWebCheckout) {
-          return Response.json({ ok: true, ignored: true, reason: 'unknown_checkout_source' })
-        }
-        if (session.payment_status !== 'paid') return Response.json({ ok: true, ignored: true, reason: 'not_paid' })
+        const ignoreReason = checkoutSessionIgnoreReason(session, configuredPaymentLink)
+        if (ignoreReason) return Response.json({ ok: true, ignored: true, reason: ignoreReason })
         const amount = session.amount_total ?? 0
         const currency = (session.currency ?? '').toLowerCase()
         const nickname = (session.metadata?.nickname ?? session.client_reference_id ?? '').trim() || null
