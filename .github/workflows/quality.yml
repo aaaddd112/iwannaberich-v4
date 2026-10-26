@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, audit/contribution-funnel-fix]
 
 permissions:
   contents: read
@@ -129,6 +129,7 @@ jobs:
           config = Path('supabase/config.toml').read_text(encoding='utf-8')
           notify = Path('supabase/functions/_shared/notify.ts').read_text(encoding='utf-8')
           refund_migration = Path('supabase/migrations/20261025200000_make_stripe_refunds_monotonic.sql').read_text(encoding='utf-8')
+          reaction_migration = Path('supabase/migrations/20261026090030_restrict_community_reaction_rpc.sql').read_text(encoding='utf-8')
 
           allowed_events = analytics_endpoint.split('const ALLOWED_EVENTS = new Set([', 1)[1].split(']);', 1)[0]
 
@@ -167,6 +168,12 @@ jobs:
               'stale notification claims have a bounded retry window': (
                   "status = 'pending' AND updated_at < now() - interval '10 minutes'" in notification_migration
                   and "updated_at > now() - interval '23 hours'" in notification_migration
+              ),
+              'community reaction mutations are restricted to service_role': (
+                  'REVOKE ALL ON FUNCTION public.apply_community_reaction(uuid, text, text)' in reaction_migration
+                  and 'FROM PUBLIC, anon, authenticated' in reaction_migration
+                  and 'GRANT EXECUTE ON FUNCTION public.apply_community_reaction(uuid, text, text)' in reaction_migration
+                  and 'TO service_role' in reaction_migration
               ),
               'refund amounts cannot decrease on out-of-order events': (
                   'refunded_cents = GREATEST(' in refund_migration
