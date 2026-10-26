@@ -40,7 +40,7 @@
     if (!session) { show("login"); return; }
     if (new URLSearchParams(location.hash.replace(/^#/, "")).get("type") === "recovery") { show("reset"); return; }
     const { data } = await sb.from("profiles").select("id,username,display_name").eq("id", session.user.id).maybeSingle();
-    if (data) location.href = "profile.html"; else show("profile");
+    if (data) location.href = postAuthPath(); else show("profile");
   }
   document.addEventListener("DOMContentLoaded", async () => {
     if (!sb) return message("Account services are unavailable.", "error");
