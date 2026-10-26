@@ -688,7 +688,6 @@
         });
         if (!response.ok) throw new Error(`Vote returned ${response.status}`);
         localStorage.setItem(STORAGE_KEY, option);
-        window.IWBRAnalytics?.trackEvent("homepage_experiment_vote", { option });
         await load();
       } catch (error) {
         console.error("Experiment vote failed:", error);
