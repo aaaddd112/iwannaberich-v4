@@ -1,5 +1,5 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { htmlText, sendOwnerNotification } from "../_shared/notify.ts";
+import { htmlText, sendOwnerNotification, sendTelegramNotification } from "../_shared/notify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://iwannaberich.xyz",
@@ -10,8 +10,8 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ownerEmail = (Deno.env.get("OWNER_EMAIL") ?? "").trim().toLowerCase();
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
-const BLOCKED_PATTERNS = [/\bf+u+c+k+\b/i,/\bf[\W_]*u[\W_]*c[\W_]*k/i,/\bs+h+i+t+\b/i,/\bs[\W_]*h[\W_]*i[\W_]*t/i,/\bb+i+t+c+h+\b/i,/\bb[\W_]*i[\W_]*t[\W_]*c[\W_]*h/i,/\ba+s+s+h+o+l+e+\b/i,/\ba[\W_]*s[\W_]*s[\W_]*h[\W_]*o[\W_]*l[\W_]*e/i,/\bc+u+n+t+\b/i,/\bn+i+g+g+e+r\b/i,/\bf+a+g+\b/i,/\bc+o+c+k+\b/i,/\bp+u+s+s+y\b/i,/\bp[uú]l[aă]\b/i,/\bmuie\b/i,/\bf[uă]t\b/i,/\bfutut\b/i,/\bpisd[aă]\b/i,/\bcurv[aă]\b/i];
-function normalizeText(text: string): string { return text.normalize("NFKC").toLowerCase().replace(/[\u0300-\u036f]/g,"").replace(/[0]/g,"o").replace(/[1]/g,"i").replace(/[3]/g,"e").replace(/[4@]/g,"a").replace(/[5$]/g,"s").replace(/[7]/g,"t").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim(); }
+const BLOCKED_PATTERNS = [/\\bf+u+c+k+\\b/i,/\\bf[\\W_]*u[\\W_]*c[\\W_]*k/i,/\\bs+h+i+t+\\b/i,/\\bs[\\W_]*h[\\W_]*i[\\W_]*t/i,/\\bb+i+t+c+h+\\b/i,/\\bb[\\W_]*i[\\W_]*t[\\W_]*c[\\W_]*h/i,/\\ba+s+s+h+o+l+e+\\b/i,/\\ba[\\W_]*s[\\W_]*s[\\W_]*h[\\W_]*o[\\W_]*l[\\W_]*e/i,/\\bc+u+n+t+\\b/i,/\\bn+i+g+g+e+r\\b/i,/\\bf+a+g+\\b/i,/\\bc+o+c+k+\\b/i,/\\bp+u+s+s+y\\b/i,/\\bp[uú]l[aă]\\b/i,/\\bmuie\\b/i,/\\bf[uă]t\\b/i,/\\bfutut\\b/i,/\\bpisd[aă]\\b/i,/\\bcurv[aă]\\b/i];
+function normalizeText(text: string): string { return text.normalize("NFKC").toLowerCase().replace(/[\\u0300-\\u036f]/g,"").replace(/[0]/g,"o").replace(/[1]/g,"i").replace(/[3]/g,"e").replace(/[4@]/g,"a").replace(/[5$]/g,"s").replace(/[7]/g,"t").replace(/[^a-z0-9]+/g," ").replace(/\\s+/g," ").trim(); }
 function containsBlockedContent(text: string): boolean { const normalized=normalizeText(text); return BLOCKED_PATTERNS.some((pattern)=>pattern.test(text)||pattern.test(normalized)); }
 async function sha256(value: string): Promise<string> { const data=new TextEncoder().encode(value); const hash=await crypto.subtle.digest("SHA-256",data); return Array.from(new Uint8Array(hash)).map((b)=>b.toString(16).padStart(2,"0")).join(""); }
 function getClientIp(req: Request): string { return req.headers.get("cf-connecting-ip")?.trim() || req.headers.get("x-real-ip")?.trim() || req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"; }
@@ -81,9 +81,12 @@ Deno.serve(async (req) => {
 
     const createdAt=inserted.created_at ?? new Date().toISOString();
     const subject=isReply ? "IWANNABERICH — new community reply" : "IWANNABERICH — new prediction";
-    const text=[isReply?"A community member replied to a community prediction.":"A community member left a new prediction.","",`Prediction: ${comment}`,`Identity: ${actorLabel}`,`Created: ${createdAt}`,`Type: ${authorType}`,`ID: ${inserted.id}`].join("\n");
+    const text=[isReply?"A community member replied to a community prediction.":"A community member left a new prediction.","",`Prediction: ${comment}`,`Identity: ${actorLabel}`,`Created: ${createdAt}`,`Type: ${authorType}`,`ID: ${inserted.id}`].join("\\n");
     const html=`<h2>${isReply?"New community reply":"New prediction"}</h2><p><strong>Prediction:</strong></p><blockquote>${htmlText(comment)}</blockquote><p><strong>Identity:</strong> ${htmlText(actorLabel)}</p><p><strong>Created:</strong> ${htmlText(createdAt)}</p><p><strong>Type:</strong> ${htmlText(authorType)}</p><p><strong>ID:</strong> ${htmlText(inserted.id)}</p>`;
-    await sendOwnerNotification(subject,text,html);
+    await Promise.all([
+      sendOwnerNotification(subject,text,html),
+      sendTelegramNotification(`🔔 IWANNABERICH — ${isReply ? "Răspuns nou" : "Predicție nouă"}\\n\\nPredicție: ${comment}\\nAutor: ${actorLabel}\\nTip: ${authorType}\\nData: ${createdAt}`),
+    ]);
     return jsonResponse({success:true,prediction:inserted});
   } catch (error) { console.error("Prediction endpoint error:",error); return jsonResponse({error:"Invalid request."},400); }
 });
