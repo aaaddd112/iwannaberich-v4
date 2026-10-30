@@ -39,11 +39,11 @@ export default {
           if (error) return new Response('Database write failed', { status: 500 })
           const amountEur = (amount / 100).toFixed(2)
           const subject = `IWANNABERICH — new contribution €${amountEur}`
-          const text = ['A new Stripe contribution was received.', '', `Amount: €${amountEur}`, `Nickname: ${nickname ?? 'Anonymous'}`, `Paid at: ${paidAt}`, `Checkout session: ${session.id}`, `Payment intent: ${paymentIntent ?? 'n/a'}`].join('\\n')
+          const text = ['A new Stripe contribution was received.', '', `Amount: €${amountEur}`, `Nickname: ${nickname ?? 'Anonymous'}`, `Paid at: ${paidAt}`, `Checkout session: ${session.id}`, `Payment intent: ${paymentIntent ?? 'n/a'}`].join('\n')
           const html = `<h2>New contribution received</h2><p><strong>Amount:</strong> €${htmlText(amountEur)}</p><p><strong>Nickname:</strong> ${htmlText(nickname ?? 'Anonymous')}</p><p><strong>Paid at:</strong> ${htmlText(paidAt)}</p><p><strong>Checkout session:</strong> ${htmlText(session.id)}</p><p><strong>Payment intent:</strong> ${htmlText(paymentIntent ?? 'n/a')}</p>`
           await Promise.all([
             sendOwnerNotification(subject, text, html),
-            sendTelegramNotification(`💶 IWANNABERICH — Donație nouă\\n\\nSumă: €${amountEur}\\nNume: ${nickname ?? 'Anonim'}\\nData: ${paidAt}`),
+            sendTelegramNotification(`💶 IWANNABERICH — Donație nouă\n\nSumă: €${amountEur}\nNume: ${nickname ?? 'Anonim'}\nData: ${paidAt}`),
           ])
         }
       }
