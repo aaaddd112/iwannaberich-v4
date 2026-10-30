@@ -67,5 +67,5 @@ export async function sendTelegramNotification(message: string): Promise<boolean
 }
 
 export function htmlText(value: string): string {
-  return escapeHtml(value).replaceAll('\\n', '<br>')
+  return escapeHtml(value).replaceAll('\n', '<br>')
 }
