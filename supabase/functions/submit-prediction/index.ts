@@ -81,11 +81,11 @@ Deno.serve(async (req) => {
 
     const createdAt=inserted.created_at ?? new Date().toISOString();
     const subject=isReply ? "IWANNABERICH — new community reply" : "IWANNABERICH — new prediction";
-    const text=[isReply?"A community member replied to a community prediction.":"A community member left a new prediction.","",`Prediction: ${comment}`,`Identity: ${actorLabel}`,`Created: ${createdAt}`,`Type: ${authorType}`,`ID: ${inserted.id}`].join("\\n");
+    const text=[isReply?"A community member replied to a community prediction.":"A community member left a new prediction.","",`Prediction: ${comment}`,`Identity: ${actorLabel}`,`Created: ${createdAt}`,`Type: ${authorType}`,`ID: ${inserted.id}`].join("\n");
     const html=`<h2>${isReply?"New community reply":"New prediction"}</h2><p><strong>Prediction:</strong></p><blockquote>${htmlText(comment)}</blockquote><p><strong>Identity:</strong> ${htmlText(actorLabel)}</p><p><strong>Created:</strong> ${htmlText(createdAt)}</p><p><strong>Type:</strong> ${htmlText(authorType)}</p><p><strong>ID:</strong> ${htmlText(inserted.id)}</p>`;
     await Promise.all([
       sendOwnerNotification(subject,text,html),
-      sendTelegramNotification(`🔔 IWANNABERICH — ${isReply ? "Răspuns nou" : "Predicție nouă"}\\n\\nPredicție: ${comment}\\nAutor: ${actorLabel}\\nTip: ${authorType}\\nData: ${createdAt}`),
+      sendTelegramNotification(`🔔 IWANNABERICH — ${isReply ? "Răspuns nou" : "Predicție nouă"}\n\nPredicție: ${comment}\nAutor: ${actorLabel}\nTip: ${authorType}\nData: ${createdAt}`),
     ]);
     return jsonResponse({success:true,prediction:inserted});
   } catch (error) { console.error("Prediction endpoint error:",error); return jsonResponse({error:"Invalid request."},400); }
